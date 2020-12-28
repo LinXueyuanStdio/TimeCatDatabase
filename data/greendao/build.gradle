@@ -1,0 +1,19 @@
+apply from: "${project.rootDir}/gradle/library_header.gradle"
+apply plugin: 'org.greenrobot.greendao'
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api 'androidx.appcompat:appcompat:1.2.0'
+    api rootProject.ext.dependencies["joda-time"]
+
+    api 'org.greenrobot:greendao:3.2.2'
+    api 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v2.1.0'
+}
+
+greendao {
+    schemaVersion 2
+    daoPackage 'com.timecat.data.greendao.dao'
+    targetGenDir 'src/main/java'
+}
+
+apply from: "${project.rootDir}/gradle/library_tail.gradle"

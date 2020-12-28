@@ -1,0 +1,42 @@
+apply from: "${project.rootDir}/gradle/library_header.gradle"
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+apply plugin: 'com.novoda.build-properties'
+
+buildProperties {
+    notThere {
+        file rootProject.file('local.properties')
+    }
+    secrets {
+        file rootProject.file('gradle.properties')
+    }
+}
+
+android {
+    useLibrary 'org.apache.http.legacy'
+    defaultConfig {
+        buildConfigField "String", "BMOB_APP_ID", (buildProperties.secrets['BMOB_APP_ID'] | buildProperties.notThere['BMOB_APP_ID']).string
+    }
+}
+
+repositories {
+    maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
+}
+
+dependencies {
+    api rootProject.ext.timecat["component-SelfArms"]
+    api rootProject.ext.timecat["component-SelfData"]
+
+    // bmob需要
+    api rootProject.ext.dependencies["retrofit-adapter-rxjava"]
+    api rootProject.ext.dependencies["retrofit-adapter-rxjava2"]
+    api rootProject.ext.dependencies["retrofit-converter-gson"]
+    api rootProject.ext.dependencies["rxjava2"]
+    api rootProject.ext.dependencies["rxandroid2"]
+
+    // Bmob
+    api 'cn.bmob.android:bmob-sdk:3.6.9'
+}
+
+apply from: "${project.rootDir}/gradle/library_tail.gradle"

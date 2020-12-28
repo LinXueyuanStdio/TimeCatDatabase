@@ -1,0 +1,48 @@
+apply from: "${project.rootDir}/gradle/library_header.gradle"
+apply plugin: 'kotlin-android'
+
+Properties properties = new Properties()
+// local.properties file in the root director
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def BILIBILI_APPKEY = properties.getProperty('BILIBILI_APPKEY')
+
+android {
+    defaultConfig {
+        consumerProguardFiles 'proguard-rules.pro'
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "String", "BILIBILI_APPKEY", "\"" + BILIBILI_APPKEY + "\""
+        }
+        release {
+            buildConfigField "String", "BILIBILI_APPKEY", "\"" + BILIBILI_APPKEY + "\""
+        }
+    }
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api rootProject.ext.timecat["component-SelfArms"]
+    api rootProject.ext.timecat["component-CommonSetting"]
+    api rootProject.ext.dependencies["fastjson"]
+    api 'org.apache.commons:commons-lang3:3.11'
+
+    api rootProject.ext.dependencies["joda-time"]
+
+    api 'net.ricecode:string-similarity:1.0.0'
+    // 工具类
+    api 'com.blankj:utilcodex:1.28.4'
+    // bmob需要
+    api rootProject.ext.dependencies["retrofit-adapter-rxjava"]
+    api rootProject.ext.dependencies["retrofit-adapter-rxjava2"]
+    api rootProject.ext.dependencies["retrofit-converter-gson"]
+    api rootProject.ext.dependencies["rxjava2"]
+    api rootProject.ext.dependencies["rxandroid2"]
+
+    api rootProject.ext.dependencies["gson"]
+    api rootProject.ext.dependencies["okhttp3:logging-interceptor"]
+    api rootProject.ext.dependencies["okhttp3"]
+}
+
+apply from: "${project.rootDir}/gradle/library_tail.gradle"
