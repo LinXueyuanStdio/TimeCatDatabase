@@ -358,7 +358,7 @@ class RequestStatistics : RequestCallback<Block2Block>() {
 }
 
 /**
- * TODO 不带groupby的查询结果，统计全部。
+ * 不带groupby的查询结果，统计全部。
  * [{
  *  "_avgFault": 1.625,
  *  "_avgFoul": 3.75,
@@ -380,7 +380,7 @@ class RequestStatistics : RequestCallback<Block2Block>() {
  * }]
  */
 /**
- * TODO 带groupby的查询结果，根据country分组统计。
+ * 带groupby的查询结果，根据country分组统计。
  * [{
  * "_avgFault": 1.6666666666666667,
  * "_avgFoul": 2.3333333333333335,
@@ -460,7 +460,7 @@ class RequestStatistics : RequestCallback<Block2Block>() {
  * }]
  */
 /**
- * TODO 带groupby和having的查询结果
+ * 带groupby和having的查询结果
  * [{
  *  "_avgFault": 1.3333333333333333,
  *  "_avgFoul": 4.666666666666667,

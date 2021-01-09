@@ -16,7 +16,7 @@ import com.timecat.identity.data.action.ACTION_RECOMMEND
  * @description null
  * @usage null
  */
-//TODO 没有加include，要哪个字段自己加
+//没有加include，要哪个字段自己加
 fun globalActionByType(
     type: Int,
     block: Block? = null
