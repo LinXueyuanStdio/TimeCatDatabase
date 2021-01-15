@@ -2,10 +2,7 @@ package com.timecat.data.bmob.ext
 
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.Block
-import com.timecat.identity.data.block.ForumBlock
-import com.timecat.identity.data.block.LeaderBoardBlock
-import com.timecat.identity.data.block.TagBlock
-import com.timecat.identity.data.block.TopicBlock
+import com.timecat.identity.data.block.*
 import com.timecat.identity.data.block.type.*
 
 /**
@@ -71,6 +68,11 @@ infix fun _User.create(builder: LeaderBoardBuilder): Block {
         structure = builder.headerBlock.toJson()
     }
 }
+infix fun _User.create(builder: AppBuilder): Block {
+    return createBlock(builder).apply {
+        structure = builder.headerBlock.toJson()
+    }
+}
 
 infix fun _User.create(builder: TopicBuilder): Block {
     return createBlock(builder).apply {
@@ -124,6 +126,12 @@ class LeaderBoardBuilder : BlockBuilder(BLOCK_LEADER_BOARD) {
 }
 
 fun LeaderBoard(create: LeaderBoardBuilder.() -> Unit) = LeaderBoardBuilder().apply(create)
+
+class AppBuilder : BlockBuilder(BLOCK_LEADER_BOARD) {
+    lateinit var headerBlock: AppBlock
+}
+
+fun App(create: AppBuilder.() -> Unit) = AppBuilder().apply(create)
 
 class TopicBuilder : BlockBuilder(BLOCK_TOPIC){
     var headerBlock : TopicBlock = TopicBlock()
