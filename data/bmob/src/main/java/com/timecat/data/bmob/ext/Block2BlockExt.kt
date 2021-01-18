@@ -24,6 +24,7 @@ fun relation(
 infix fun _User.let_Identity_has_role(identity_to_role: Pair<Block, Block>): Block2Block {
     return relation(this, identity_to_role.first, identity_to_role.second, Block2Block_Identity_has_role)
 }
+
 infix fun _User.let_Role_has_permission(role_to_permission: Pair<Block, Block>): Block2Block {
     return relation(this, role_to_permission.first, role_to_permission.second, Block2Block_Role_has_permission)
 }

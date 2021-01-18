@@ -11,5 +11,6 @@ import cn.bmob.v3.exception.BmobException;
  */
 public interface OnDaoCountListener {
     void onSuccess(Integer count);
+
     void onFail(BmobException e);
 }

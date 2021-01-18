@@ -20,7 +20,7 @@ data class Block2Block(
     var type: Int = 0,
     var structure: String = "",
     var status: Long = 0
-) : BmobObject("Block2Block"), Serializable{
+) : BmobObject("Block2Block"), Serializable {
 
     init {
         tableName = "Block2Block"
@@ -28,8 +28,8 @@ data class Block2Block(
 
     override fun toString(): String {
         return "$objectId(type=$type, user=${user.nick}, structure='$structure', status=$status, \n" +
-                "        from=$from," +
-                "        to=$to)"
+            "        from=$from," +
+            "        to=$to)"
     }
 
 

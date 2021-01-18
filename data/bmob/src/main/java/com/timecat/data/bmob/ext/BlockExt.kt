@@ -3,8 +3,8 @@ package com.timecat.data.bmob.ext
 import cn.bmob.v3.exception.BmobException
 import cn.bmob.v3.listener.UpdateListener
 import com.timecat.data.bmob.data.common.Block
-import com.timecat.data.bmob.ext.net.allFans
 import com.timecat.data.bmob.ext.bmob.requestActionCount
+import com.timecat.data.bmob.ext.net.allFans
 
 /**
  * @author 林学渊

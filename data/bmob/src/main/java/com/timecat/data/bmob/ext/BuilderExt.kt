@@ -68,6 +68,7 @@ infix fun _User.create(builder: LeaderBoardBuilder): Block {
         structure = builder.headerBlock.toJson()
     }
 }
+
 infix fun _User.create(builder: AppBuilder): Block {
     return createBlock(builder).apply {
         structure = builder.headerBlock.toJson()
@@ -89,9 +90,11 @@ infix fun _User.create(builder: TagBuilder): Block {
 infix fun _User.create(builder: PermissionBuilder): Block {
     return createBlock(builder)
 }
+
 infix fun _User.create(builder: RoleBuilder): Block {
     return createBlock(builder)
 }
+
 infix fun _User.create(builder: IdentityBuilder): Block {
     return createBlock(builder)
 }
@@ -133,14 +136,14 @@ class AppBuilder : BlockBuilder(BLOCK_LEADER_BOARD) {
 
 fun App(create: AppBuilder.() -> Unit) = AppBuilder().apply(create)
 
-class TopicBuilder : BlockBuilder(BLOCK_TOPIC){
-    var headerBlock : TopicBlock = TopicBlock()
+class TopicBuilder : BlockBuilder(BLOCK_TOPIC) {
+    var headerBlock: TopicBlock = TopicBlock()
 }
 
 fun Topic(create: TopicBuilder.() -> Unit) = TopicBuilder().apply(create)
 
 class TagBuilder : BlockBuilder(BLOCK_TAG) {
-    var headerBlock : TagBlock = TagBlock()
+    var headerBlock: TagBlock = TagBlock()
 }
 
 fun Tag(create: TagBuilder.() -> Unit) = TagBuilder().apply(create)

@@ -180,7 +180,8 @@ class BatchDeleteThenInsertor : RequestCallback<List<BatchResult>>() {
                         else -> {
                             for (i in result) {
                                 if (!i.isSuccess) {
-                                    onError?.invoke(DataError(i.error?.errorCode ?: -1, i.error?.localizedMessage))
+                                    onError?.invoke(DataError(i.error?.errorCode
+                                        ?: -1, i.error?.localizedMessage))
                                     return
                                 }
                             }

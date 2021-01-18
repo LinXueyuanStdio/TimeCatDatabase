@@ -53,10 +53,10 @@ data class InterAction(
         }
 
     override fun toString(): String {
-        return "$objectId(type=$type, activeTime=$activeTime, expireTime=$expireTime, structure='$structure', status=$status\n"+
-                "         user=${user?.objectId}, \n" +
-                "         block=$block" +
-                "         target=${target?.objectId})\n"
+        return "$objectId(type=$type, activeTime=$activeTime, expireTime=$expireTime, structure='$structure', status=$status\n" +
+            "         user=${user?.objectId}, \n" +
+            "         block=$block" +
+            "         target=${target?.objectId})\n"
     }
 
 

@@ -3,7 +3,6 @@ package com.timecat.data.bmob.ext.net
 import cn.bmob.v3.BmobQuery
 import com.timecat.data.bmob.data.common.Block
 import com.timecat.data.bmob.data.common.Block2Block
-import com.timecat.identity.data.block.LeaderBoardBlock
 import com.timecat.identity.data.block_block.Block2Block_Identity_has_role
 import com.timecat.identity.data.block_block.Block2Block_Leaderboard_has_block
 import com.timecat.identity.data.block_block.Block2Block_Role_has_permission

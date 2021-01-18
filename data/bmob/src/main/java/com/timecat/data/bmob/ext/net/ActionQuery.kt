@@ -27,6 +27,7 @@ fun globalActionByType(
     if (block != null) q.addWhereEqualTo("block", block)
     return q
 }
+
 fun globalRecommendBlock(block: Block? = null) = globalActionByType(ACTION_RECOMMEND, block)
 
 fun _User.allActionByType(

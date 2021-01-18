@@ -7,6 +7,7 @@ import cn.bmob.v3.listener.FindListener
 import cn.bmob.v3.listener.QueryListener
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.*
+import com.timecat.data.bmob.data.game.item.OwnItem
 import com.timecat.data.bmob.ext.toDataError
 import com.timecat.identity.data.one.User
 import com.timecat.identity.data.service.DataError
@@ -77,6 +78,7 @@ class RequestBlock : RequestCallback<Block>() {
     }
 }
 
+//region 是否存在
 fun requestExist(create: RequestExist.() -> Unit) = RequestExist().apply(create).also { it.build() }
 class RequestExist : SimpleRequestCallback<Boolean>() {
     lateinit var query: BmobQuery<Block>
@@ -101,8 +103,10 @@ class RequestExist : SimpleRequestCallback<Boolean>() {
         })
     }
 }
+
 fun requestInterActionExist(create: RequestInterActionExist.() -> Unit) =
     RequestInterActionExist().apply(create).also { it.build() }
+
 class RequestInterActionExist : SimpleRequestCallback<Boolean>() {
     lateinit var query: BmobQuery<InterAction>
     fun build() {
@@ -126,7 +130,9 @@ class RequestInterActionExist : SimpleRequestCallback<Boolean>() {
         })
     }
 }
+//endregion
 
+//region 请求个数
 fun requestActionCount(create: RequestActionCount.() -> Unit) =
     RequestActionCount().apply(create).also { it.build() }
 
@@ -153,6 +159,34 @@ class RequestActionCount : SimpleRequestCallback<Int>() {
         })
     }
 }
+
+fun requestBlockCount(create: RequestBlockCount.() -> Unit) =
+    RequestBlockCount().apply(create).also { it.build() }
+
+class RequestBlockCount : SimpleRequestCallback<Int>() {
+    lateinit var query: BmobQuery<Block>
+    fun build() {
+        query.count(Block::class.java, object : CountListener() {
+            override fun done(result: Int?, e: BmobException?) {
+                when {
+                    e != null -> {
+                        onError?.invoke(e.toDataError())
+                    }
+                    result == null -> {
+                        onSuccess?.invoke(0)
+                    }
+                    result <= 0 -> {
+                        onSuccess?.invoke(0)
+                    }
+                    else -> {
+                        onSuccess?.invoke(result)
+                    }
+                }
+            }
+        })
+    }
+}
+
 fun requestUserRelationCount(create: RequestUserRelationCount.() -> Unit) =
     RequestUserRelationCount().apply(create).also { it.build() }
 
@@ -179,8 +213,9 @@ class RequestUserRelationCount : SimpleRequestCallback<Int>() {
         })
     }
 }
+//endregion
 
-
+//region 请求实体
 fun requestUser(create: RequestUser.() -> Unit) = RequestUser().apply(create).also { it.build() }
 class RequestUser : RequestCallback<_User>() {
     lateinit var query: BmobQuery<_User>
@@ -326,6 +361,38 @@ class RequestInterAction : RequestCallback<InterAction>() {
         })
     }
 }
+
+
+fun requestOwnItem(create: RequestOwnItem.() -> Unit) =
+    RequestOwnItem().apply(create).also { it.build() }
+
+class RequestOwnItem : RequestCallback<OwnItem>() {
+    lateinit var query: BmobQuery<OwnItem>
+    fun build() {
+        query.findObjects(object : FindListener<OwnItem>() {
+            override fun done(result: MutableList<OwnItem>?, e: BmobException?) {
+                when {
+                    e != null -> {
+                        onError?.invoke(e.toDataError())
+                    }
+                    result == null -> {
+                        onError?.invoke(DataError(-1, "空数据"))
+                    }
+                    result.isEmpty() -> {
+                        onEmpty?.invoke()
+                    }
+                    result.size == 1 -> {
+                        onSuccess?.invoke(result[0])
+                    }
+                    else -> {
+                        onListSuccess?.invoke(result)
+                    }
+                }
+            }
+        })
+    }
+}
+//endregion
 
 fun requestStatistics(create: RequestStatistics.() -> Unit) =
     RequestStatistics().apply(create).also { it.build() }

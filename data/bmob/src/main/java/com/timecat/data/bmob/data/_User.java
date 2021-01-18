@@ -2,14 +2,13 @@ package com.timecat.data.bmob.data;
 
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-
 import com.timecat.data.bmob.data.own.Asset;
 import com.timecat.data.bmob.data.own.MiaoKey;
 
 import java.io.Serializable;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 
@@ -35,6 +34,15 @@ public class _User extends BmobUser implements Serializable {
 
     //社交、价值
     private Asset asset;
+
+    //游戏化
+    private int level;//等级
+    private long exp;//经验
+    private int star;//星级
+    private int water;//体力
+    private int last_settle_time;//上次体力的结算时间
+    private long currency;//通用货币
+    private long charge;//充值货币
 
     public _User() {
         super();

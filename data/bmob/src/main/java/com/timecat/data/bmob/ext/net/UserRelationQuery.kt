@@ -37,6 +37,7 @@ fun _User.allRelationByType(
     if (target != null) q.addWhereEqualTo("target", target)
     return q
 }
+
 fun allRelationOf(
     target: _User,
     type: Int

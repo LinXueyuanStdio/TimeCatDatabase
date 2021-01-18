@@ -81,6 +81,7 @@ data class Block(
         fun forMoment(user: _User, content: String): Block {
             return forName(user, BLOCK_MOMENT, content)
         }
+
         fun forPost(user: _User, content: String): Block {
             return forName(user, BLOCK_POST, content)
         }
@@ -139,8 +140,8 @@ data class Block(
 
     override fun toString(): String {
         return "$objectId(type=$type, subtype=$subtype, title=$title, content=$content,\n" +
-                "         structure='$structure', status=${statusDescription()}, likes=$likes, comments=$comments, relays=$relays, usedBy=$usedBy, order=$order,\n" +
-                "         parent=${parent?.objectId}, user=${user?.objectId})\n"
+            "         structure='$structure', status=${statusDescription()}, likes=$likes, comments=$comments, relays=$relays, usedBy=$usedBy, order=$order,\n" +
+            "         parent=${parent?.objectId}, user=${user?.objectId})\n"
     }
 }
 

@@ -24,21 +24,27 @@ fun allApp() = allBlockByType(BLOCK_APP)
 fun allAndroidApp() = allApp().apply {
     addWhereEqualTo("subtype", APP_AndroidApp)
 }
+
 fun alliOSApp() = allApp().apply {
     addWhereEqualTo("subtype", APP_iOS)
 }
+
 fun allWindowApp() = allApp().apply {
     addWhereEqualTo("subtype", APP_Windows)
 }
+
 fun allLinuxApp() = allApp().apply {
     addWhereEqualTo("subtype", APP_Linux)
 }
+
 fun allMacApp() = allApp().apply {
     addWhereEqualTo("subtype", APP_Mac)
 }
+
 fun allWebApp() = allApp().apply {
     addWhereEqualTo("subtype", APP_WebApp)
 }
+
 fun allPluginApp() = allApp().apply {
     addWhereEqualTo("subtype", APP_Plugin)
 }
@@ -49,9 +55,11 @@ fun allPermission() = allBlockByType(BLOCK_PERMISSION)
 fun allMetaPermission() = allPermission().apply {
     addWhereEqualTo("subtype", PERMISSION_Meta)
 }
+
 fun allHunPermission() = allPermission().apply {
     addWhereEqualTo("subtype", PERMISSION_Hun)
 }
+
 fun allBlockByType(type: Int) = BmobQuery<Block>().apply {
     addWhereEqualTo("type", type)
     include("user,parent")
@@ -64,7 +72,8 @@ fun allBlock() = BmobQuery<Block>().apply {
     order("-createdAt")
     setLimit(200)
 }
-fun allBlockByIds(ids:List<String>) = BmobQuery<Block>().apply {
+
+fun allBlockByIds(ids: List<String>) = BmobQuery<Block>().apply {
     include("user,parent")
     addWhereContainedIn("objectId", ids)
     order("-createdAt")
@@ -83,9 +92,11 @@ fun _User.allPermission() = allBlockByType(BLOCK_PERMISSION)
 fun _User.allMetaPermission() = allPermission().apply {
     addWhereEqualTo("subtype", PERMISSION_Meta)
 }
+
 fun _User.allHunPermission() = allPermission().apply {
     addWhereEqualTo("subtype", PERMISSION_Hun)
 }
+
 fun _User.allBlockByType(type: Int) = BmobQuery<Block>().apply {
     addWhereEqualTo("user", this@allBlockByType)
     addWhereEqualTo("type", type)
@@ -115,6 +126,7 @@ fun childrenOf(block: Block, type: List<Int>) = BmobQuery<Block>().apply {
     include("user,parent")
     addWhereContainedIn("type", type)
 }
+
 fun childrenOf(blocks: List<Block>, type: List<Int>) = BmobQuery<Block>().apply {
     addWhereContainedIn("parent", blocks)
     order("-createdAt")
@@ -137,6 +149,7 @@ fun checkBlockExistByTitle(title: String, type: Int): BmobQuery<Block> = BmobQue
     order("-createdAt")
     addWhereEqualTo("type", type)
 }
+
 fun checkTagExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_TAG)
 fun checkTopicExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_TOPIC)
 fun checkForumExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_FORUM)
@@ -144,6 +157,7 @@ fun checkLeaderBoardExistByTitle(title: String) = checkBlockExistByTitle(title, 
 fun checkPermissionExistByTitle(title: String, subtype: Int) = checkBlockExistByTitle(title, BLOCK_PERMISSION).apply {
     addWhereEqualTo("subtype", subtype)
 }
+
 fun checkMetaPermExistByTitle(title: String) = checkPermissionExistByTitle(title, PERMISSION_Meta)
 fun checkHunPermExistByTitle(title: String) = checkPermissionExistByTitle(title, PERMISSION_Hun)
 fun checkRoleExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_ROLE)

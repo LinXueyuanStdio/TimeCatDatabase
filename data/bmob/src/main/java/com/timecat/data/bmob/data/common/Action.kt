@@ -21,7 +21,7 @@ data class Action(
     var structure: String = "",
     var status: Long = 0
     //var like: Int, // 动作的点赞数，如坚持打卡的点赞数
-) : BmobObject("Action"), Serializable{
+) : BmobObject("Action"), Serializable {
     init {
         tableName = "Action"
     }

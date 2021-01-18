@@ -79,9 +79,9 @@ object RecommendDao {
     fun findAll_ongoing(user: _User? = null, listener: OnFindListener<Exec>? = null) {
         findAll(
             EXEC_Recommend, user, listOf(
-                RecommendBlock.RECOMMEND_WAITING_TO_CHECK,
-                RecommendBlock.RECOMMEND_RECHECK
-            ), listener
+            RecommendBlock.RECOMMEND_WAITING_TO_CHECK,
+            RecommendBlock.RECOMMEND_RECHECK
+        ), listener
         )
     }
 
@@ -129,17 +129,17 @@ object RecommendDao {
     fun findAll_finished(user: _User? = null, listener: OnFindListener<Exec>? = null) {
         findAll(
             EXEC_Recommend, user, listOf(
-                RecommendBlock.RECOMMEND_ACCEPTED,
-                RecommendBlock.RECOMMEND_RECHECK
-            ), listener
+            RecommendBlock.RECOMMEND_ACCEPTED,
+            RecommendBlock.RECOMMEND_RECHECK
+        ), listener
         )
     }
 
     fun findAll_cancel(user: _User? = null, listener: OnFindListener<Exec>? = null) {
         findAll(
             EXEC_Recommend, user, listOf(
-                RecommendBlock.RECOMMEND_CANCEL
-            ), listener
+            RecommendBlock.RECOMMEND_CANCEL
+        ), listener
         )
     }
 

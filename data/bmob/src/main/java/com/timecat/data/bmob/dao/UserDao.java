@@ -2,13 +2,12 @@ package com.timecat.data.bmob.dao;
 
 import android.text.TextUtils;
 
-import androidx.annotation.Nullable;
-
 import com.timecat.data.bmob.data._User;
 
 import java.io.File;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.BmobUser;

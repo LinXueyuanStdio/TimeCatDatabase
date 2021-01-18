@@ -30,7 +30,7 @@ fun _User.allInterActionByType(
     return q
 }
 
-fun _User.allInterActionByOneType(type:Int, block: Block? = null) = allInterActionByType(listOf(type), block)
+fun _User.allInterActionByOneType(type: Int, block: Block? = null) = allInterActionByType(listOf(type), block)
 fun _User.allRecommendBlockToSomeone(block: Block? = null) = allInterActionByOneType(INTERACTION_Recommend, block)
 fun _User.allAuthRoleToSomeone(block: Block? = null) = allInterActionByOneType(INTERACTION_Auth_Role, block)
 fun _User.allAuthIdentityToSomeone(block: Block? = null) = allInterActionByOneType(INTERACTION_Auth_Identity, block)

@@ -11,6 +11,6 @@ import com.timecat.data.bmob.data.common.Block
  */
 abstract class BaseDao(type: Int) {
     abstract fun findAll(res: (List<Block>) -> Unit)
-    abstract fun findOne(id:String, res: (Block) -> Unit)
-    fun findChildren(id:String, res: (List<Block>) -> Unit){}
+    abstract fun findOne(id: String, res: (Block) -> Unit)
+    fun findChildren(id: String, res: (List<Block>) -> Unit) {}
 }

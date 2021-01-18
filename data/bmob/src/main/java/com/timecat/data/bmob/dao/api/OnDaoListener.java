@@ -11,5 +11,6 @@ import cn.bmob.v3.exception.BmobException;
  */
 public interface OnDaoListener {
     void onSuccess();
+
     void onFail(BmobException e);
 }
