@@ -7,6 +7,7 @@ import cn.bmob.v3.listener.FindListener
 import cn.bmob.v3.listener.QueryListener
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.*
+import com.timecat.data.bmob.data.game.agent.OwnCube
 import com.timecat.data.bmob.data.game.item.OwnItem
 import com.timecat.data.bmob.ext.toDataError
 import com.timecat.identity.data.one.User
@@ -371,6 +372,35 @@ class RequestOwnItem : RequestCallback<OwnItem>() {
     fun build() {
         query.findObjects(object : FindListener<OwnItem>() {
             override fun done(result: MutableList<OwnItem>?, e: BmobException?) {
+                when {
+                    e != null -> {
+                        onError?.invoke(e.toDataError())
+                    }
+                    result == null -> {
+                        onError?.invoke(DataError(-1, "空数据"))
+                    }
+                    result.isEmpty() -> {
+                        onEmpty?.invoke()
+                    }
+                    result.size == 1 -> {
+                        onSuccess?.invoke(result[0])
+                    }
+                    else -> {
+                        onListSuccess?.invoke(result)
+                    }
+                }
+            }
+        })
+    }
+}
+fun requestOwnCube(create: RequestOwnCube.() -> Unit) =
+    RequestOwnCube().apply(create).also { it.build() }
+
+class RequestOwnCube : RequestCallback<OwnCube>() {
+    lateinit var query: BmobQuery<OwnCube>
+    fun build() {
+        query.findObjects(object : FindListener<OwnCube>() {
+            override fun done(result: MutableList<OwnCube>?, e: BmobException?) {
                 when {
                     e != null -> {
                         onError?.invoke(e.toDataError())
