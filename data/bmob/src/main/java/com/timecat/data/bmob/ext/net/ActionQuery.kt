@@ -68,6 +68,7 @@ fun Block.allDings(user: _User? = null) = allActionByType(ACTION_DING, user)
 fun _User.allAction(): BmobQuery<Action> {
     val q = BmobQuery<Action>()
     q.addWhereEqualTo("user", this)
+    q.include("user,block")
     q.order("-createdAt")
     return q
 }

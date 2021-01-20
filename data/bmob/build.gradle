@@ -37,6 +37,7 @@ dependencies {
 
     // Bmob
     api 'cn.bmob.android:bmob-sdk:3.6.9'
+//    api 'cn.leancloud:storage-android:7.1.1'
 }
 
 apply from: "${project.rootDir}/gradle/library_tail.gradle"

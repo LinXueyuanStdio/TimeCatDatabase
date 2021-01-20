@@ -2,8 +2,10 @@ package com.timecat.data.bmob.ext.net
 
 import cn.bmob.v3.BmobQuery
 import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.common.Action
 import com.timecat.data.bmob.data.game.agent.OwnCube
 import com.timecat.data.bmob.data.game.item.OwnItem
+import com.timecat.data.bmob.data.mail.OwnMail
 
 /**
  * @author 林学渊
@@ -29,4 +31,12 @@ fun _User.allOwnItem() = BmobQuery<OwnItem>().apply {
     addWhereEqualTo("user", this)
     order("-createdAt")
     include("user,item")
+}
+
+fun _User.allOwnMail(): BmobQuery<OwnMail> {
+    val q = BmobQuery<OwnMail>()
+    q.addWhereEqualTo("user", this)
+    q.include("user,block")
+    q.order("-createdAt")
+    return q
 }

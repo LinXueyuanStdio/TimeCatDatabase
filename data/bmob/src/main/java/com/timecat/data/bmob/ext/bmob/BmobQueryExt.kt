@@ -9,6 +9,7 @@ import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.*
 import com.timecat.data.bmob.data.game.agent.OwnCube
 import com.timecat.data.bmob.data.game.item.OwnItem
+import com.timecat.data.bmob.data.mail.OwnMail
 import com.timecat.data.bmob.ext.toDataError
 import com.timecat.identity.data.one.User
 import com.timecat.identity.data.service.DataError
@@ -251,6 +252,33 @@ class RequestAction : RequestCallback<Action>() {
     fun build() {
         query.findObjects(object : FindListener<Action>() {
             override fun done(result: MutableList<Action>?, e: BmobException?) {
+                when {
+                    e != null -> {
+                        onError?.invoke(e.toDataError())
+                    }
+                    result == null -> {
+                        onError?.invoke(DataError(-1, "空数据"))
+                    }
+                    result.isEmpty() -> {
+                        onEmpty?.invoke()
+                    }
+                    result.size == 1 -> {
+                        onSuccess?.invoke(result[0])
+                    }
+                    else -> {
+                        onListSuccess?.invoke(result)
+                    }
+                }
+            }
+        })
+    }
+}
+fun requestOwnMail(create: RequestOwnMail.() -> Unit) = RequestOwnMail().apply(create).also { it.build() }
+class RequestOwnMail : RequestCallback<OwnMail>() {
+    lateinit var query: BmobQuery<OwnMail>
+    fun build() {
+        query.findObjects(object : FindListener<OwnMail>() {
+            override fun done(result: MutableList<OwnMail>?, e: BmobException?) {
                 when {
                     e != null -> {
                         onError?.invoke(e.toDataError())

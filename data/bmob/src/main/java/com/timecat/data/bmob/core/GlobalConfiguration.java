@@ -44,13 +44,6 @@ public class GlobalConfiguration implements ConfigModule {
 
             @Override
             public void onCreate(@NonNull Application application) {
-                //初始化Bmob IM
-                //                if (application.getApplicationInfo().packageName.equals(getMyProcessName())) {
-                //                    LogUtil.e("BmobIM init start");
-                //                    BmobIM.init(application);
-                //                    BmobIM.registerDefaultMessageHandler(new MessageHandler(application));
-                //                    LogUtil.e("BmobIM init end");
-                //                }
                 //初始化Bmob
                 Timber.d("Bmob init start");
                 BmobConfig config = new BmobConfig.Builder(application)
@@ -65,6 +58,12 @@ public class GlobalConfiguration implements ConfigModule {
                         .build();
                 Bmob.initialize(config);
                 Timber.d("Bmob init end");
+//                Timber.d("LeanCloud init start");
+//                String APP_ID = "3sz6W20te4GdeKBAa59uWLvg-gzGzoHsz";
+//                String APP_KEY = "Uhi9xsuu7WajPk8Ng3opL4zt";
+//                String serverURL = "https://ohqhxu3m.lc-cn-n1-shared.com";
+//                AVOSCloud.initialize(application, APP_ID, APP_KEY, serverURL);
+//                Timber.d("LeanCloud init end");
             }
 
             @Override

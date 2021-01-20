@@ -17,10 +17,11 @@ import java.io.Serializable
 data class Action(
     var user: _User,
     var block: Block? = null,
-    @ActionType var type: Int = 0,
+    @ActionType
+    var type: Int = 0,
     var structure: String = "",
     var status: Long = 0
-    //var like: Int, // 动作的点赞数，如坚持打卡的点赞数
+    //var like: Int, // 动作的点赞数0，如坚持打卡的点赞数
 ) : BmobObject("Action"), Serializable {
     init {
         tableName = "Action"

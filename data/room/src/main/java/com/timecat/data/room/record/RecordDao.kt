@@ -865,6 +865,20 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         }
     }
 
+    @Query("SELECT * FROM records WHERE parent=:uuid")
+    abstract fun getAllChildren(uuid: String): MutableList<RoomRecord>
+
+    @Transaction
+    open fun getTree(record: RoomRecord, exist:MutableList<String>): TreeRecord? {
+        if (record.uuid in exist) return null
+        exist.add(record.uuid)
+        val ans = TreeRecord(record, mutableListOf())
+        val children = getAllChildren(record.uuid)
+        if (children.isEmpty()) return ans
+        ans.children.addAll(children.map { getTree(it, exist) }.filterNotNull())
+        return ans
+    }
+
     @Transaction
     open fun getAllData(all: List<RoomRecord>, listener: OnDataLoaded) {
         for (i in all) {
@@ -881,6 +895,23 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                         GOAL -> getReminderById(i.id)?.let {
                             listener.onLoadGoal(i, it)
                         }
+                        TEXT -> listener.onLoadText(i)
+                        TODO_LIST -> listener.onLoadTodoList(i)
+                        Heading1 -> listener.onLoadHeading1(i)
+                        Heading2 -> listener.onLoadHeading2(i)
+                        Heading3 -> listener.onLoadHeading3(i)
+                        Heading4 -> listener.onLoadHeading4(i)
+                        Heading5 -> listener.onLoadHeading5(i)
+                        Heading6 -> listener.onLoadHeading6(i)
+                        BULLETED_LIST -> listener.onLoadBulletedList(i)
+                        NUMBERED_LIST -> listener.onLoadNumberedList(i)
+                        TOGGLE_LIST -> {
+                            val tree = getTree(i, mutableListOf())
+                            listener.onLoadToggleList(i, tree!!)
+                        }
+                        QUOTE -> listener.onLoadQuote(i)
+                        DIVIDER -> listener.onLoadDivider(i)
+                        CALLOUT -> listener.onLoadCallout(i)
                     }
                 }
                 BLOCK_CONVERSATION -> {
@@ -889,13 +920,28 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 BLOCK_CONTAINER -> {
                     listener.onLoadContainer(i)
                 }
+                BLOCK_LINK -> {
+                    val linkedUuid = i.title
+                    val linkedRecord = getByUuid(linkedUuid)
+                    listener.onLoadLink(i, linkedRecord)
+                }
+                BLOCK_PATH -> {
+                    listener.onLoadPath(i)
+                }
+                BLOCK_BUTTON -> {
+                    listener.onLoadButton(i)
+                }
+                BLOCK_MEDIA -> {
+                    listener.onLoadMedia(i)
+                }
             }
 
         }
     }
 
     interface OnDataLoaded : OnConversationLoaded,
-        OnHabitDataLoaded, OnReminderDataLoaded, OnNoteDataLoaded, OnGoalDataLoaded, OnContainerLoaded
+        OnHabitDataLoaded, OnReminderDataLoaded, OnNoteDataLoaded, OnGoalDataLoaded, OnContainerLoaded,
+        OnLinkLoaded, OnPathLoaded, OnButtonLoaded, OnBasicLoaded, OnMediaLoaded
 
     interface OnConversationLoaded {
         fun onLoadConversation(record: RoomRecord)
@@ -903,6 +949,38 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     interface OnContainerLoaded {
         fun onLoadContainer(record: RoomRecord)
+    }
+
+    interface OnLinkLoaded {
+        fun onLoadLink(record: RoomRecord, linkedRecord: RoomRecord?)
+    }
+
+    interface OnPathLoaded {
+        fun onLoadPath(record: RoomRecord)
+    }
+
+    interface OnButtonLoaded {
+        fun onLoadButton(record: RoomRecord)
+    }
+    interface OnMediaLoaded {
+        fun onLoadMedia(record: RoomRecord)
+    }
+
+    interface OnBasicLoaded {
+        fun onLoadText(record: RoomRecord)
+        fun onLoadTodoList(record: RoomRecord)
+        fun onLoadHeading1(record: RoomRecord)
+        fun onLoadHeading2(record: RoomRecord)
+        fun onLoadHeading3(record: RoomRecord)
+        fun onLoadHeading4(record: RoomRecord)
+        fun onLoadHeading5(record: RoomRecord)
+        fun onLoadHeading6(record: RoomRecord)
+        fun onLoadBulletedList(record: RoomRecord)
+        fun onLoadNumberedList(record: RoomRecord)
+        fun onLoadToggleList(record: RoomRecord, list: TreeRecord)
+        fun onLoadQuote(record: RoomRecord)
+        fun onLoadDivider(record: RoomRecord)
+        fun onLoadCallout(record: RoomRecord)
     }
 
     @Query("SELECT * FROM HabitReminder WHERE habitId = :habitId")
