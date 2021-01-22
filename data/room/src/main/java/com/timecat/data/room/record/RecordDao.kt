@@ -109,6 +109,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         }
     }
 
+    @Query("DELETE FROM records WHERE uuid IN (:uuids)")
+    abstract fun hardDeleteBatch(uuids: List<String>)
+
     @Insert
     abstract fun insertRoomRecords(vararg records: RoomRecord): LongArray
 
@@ -869,7 +872,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     abstract fun getAllChildren(uuid: String): MutableList<RoomRecord>
 
     @Transaction
-    open fun getTree(record: RoomRecord, exist:MutableList<String>): TreeRecord? {
+    open fun getTree(record: RoomRecord, exist: MutableList<String>): TreeRecord? {
         if (record.uuid in exist) return null
         exist.add(record.uuid)
         val ans = TreeRecord(record, mutableListOf())
@@ -962,6 +965,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     interface OnButtonLoaded {
         fun onLoadButton(record: RoomRecord)
     }
+
     interface OnMediaLoaded {
         fun onLoadMedia(record: RoomRecord)
     }
