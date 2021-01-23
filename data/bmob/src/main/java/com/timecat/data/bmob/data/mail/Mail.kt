@@ -1,8 +1,7 @@
 package com.timecat.data.bmob.data.mail
 
-import cn.bmob.v3.BmobObject
+import cn.leancloud.AVObject
 import com.timecat.data.bmob.data.common.Block
-import com.timecat.data.bmob.data.game.item.Item
 import java.io.Serializable
 
 /**
@@ -12,23 +11,49 @@ import java.io.Serializable
  * @description 邮件
  * @usage null
  */
-data class Mail(
+class Mail(
     /**
      * 邮件名称
      */
-    var name: String = "",
+    name: String = "",
     /**
      * 邮件内容
      */
-    var content: String = "",
+    content: String = "",
     /**
      * 邮件类型
      */
-    var type: Int = 0,
+    type: Int = 0,
     /**
      * 邮件奖励描述：{ items }
      */
-    var items: List<Block> = emptyList()
-) : BmobObject("Mail"), Serializable {
+    items: MutableList<Block> = mutableListOf()
+) : AVObject("Mail"), Serializable {
+    var name: String
+        get() = getString("name")
+        set(value) {
+            put("name", value)
+        }
+    var content: String
+        get() = getString("content")
+        set(value) {
+            put("content", value)
+        }
+    var type: Int
+        get() = getInt("type")
+        set(value) {
+            put("type", value)
+        }
+    var items: MutableList<Block>
+        get() = getList("items") as MutableList<Block>
+        set(value) {
+            put("items", value)
+        }
 
+    init {
+        this.name = name
+        this.content = content
+        this.type = type
+        this.items = items
+    }
 }

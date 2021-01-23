@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.data.game.item
 
-import cn.bmob.v3.BmobObject
+import cn.leancloud.AVObject
 import java.io.Serializable
 
 /**
@@ -33,6 +33,6 @@ data class Item(
      * 随机宝箱：{ items:[Item], prob_of_each_item:[int] }
      */
     var structure: String
-) : BmobObject("Item"), Serializable {
+) : AVObject("Item"), Serializable {
 
 }

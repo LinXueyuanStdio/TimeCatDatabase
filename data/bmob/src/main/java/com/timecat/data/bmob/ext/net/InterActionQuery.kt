@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.ext.net
 
-import cn.bmob.v3.BmobQuery
+import cn.leancloud.AVQuery
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.Block
 import com.timecat.data.bmob.data.common.InterAction
@@ -20,11 +20,11 @@ import com.timecat.identity.data.action.INTERACTION_Recommend
 fun _User.allInterActionByType(
     type: List<Int>,
     block: Block? = null
-): BmobQuery<InterAction> {
-    val q = BmobQuery<InterAction>()
-    q.addWhereEqualTo("user", this)
-    if (block != null) q.addWhereEqualTo("block", block)
-    q.addWhereContainedIn("type", type)
+): AVQuery<InterAction> {
+    val q = AVQuery<InterAction>("InterAction")
+    q.whereEqualTo("user", this)
+    if (block != null) q.whereEqualTo("block", block)
+    q.whereContainedIn("type", type)
     q.order("-createdAt")
     q.include("user,block,target")
     return q
@@ -42,11 +42,11 @@ fun _User.allAuthToSomeone(block: Block? = null) = allInterActionByType(listOf(
 fun _User.allInterActionTargetedByType(
     type: Int,
     block: Block? = null
-): BmobQuery<InterAction> {
-    val q = BmobQuery<InterAction>()
-    q.addWhereEqualTo("target", this)
-    if (block != null) q.addWhereEqualTo("block", block)
-    q.addWhereEqualTo("type", type)
+): AVQuery<InterAction> {
+    val q = AVQuery<InterAction>("InterAction")
+    q.whereEqualTo("target", this)
+    if (block != null) q.whereEqualTo("block", block)
+    q.whereEqualTo("type", type)
     q.order("-createdAt")
     q.include("user,block,target")
     return q
@@ -55,11 +55,11 @@ fun _User.allInterActionTargetedByType(
 fun _User.allInterActionTargetedByType(
     type: List<Int>,
     block: Block? = null
-): BmobQuery<InterAction> {
-    val q = BmobQuery<InterAction>()
-    q.addWhereEqualTo("target", this)
-    if (block != null) q.addWhereEqualTo("block", block)
-    q.addWhereContainedIn("type", type)
+): AVQuery<InterAction> {
+    val q = AVQuery<InterAction>("InterAction")
+    q.whereEqualTo("target", this)
+    if (block != null) q.whereEqualTo("block", block)
+    q.whereContainedIn("type", type)
     q.order("-createdAt")
     q.include("user,block,target")
     return q
@@ -94,22 +94,22 @@ fun Block.allInterActionByType(
     type: Int,
     user: _User? = null,
     target: _User? = null
-): BmobQuery<InterAction> {
-    val q = BmobQuery<InterAction>()
-    q.addWhereEqualTo("block", this)
+): AVQuery<InterAction> {
+    val q = AVQuery<InterAction>("InterAction")
+    q.whereEqualTo("block", this)
     q.order("-createdAt")
-    q.addWhereEqualTo("type", type)
-    if (user != null) q.addWhereEqualTo("user", user)
-    if (target != null) q.addWhereEqualTo("target", target)
+    q.whereEqualTo("type", type)
+    if (user != null) q.whereEqualTo("user", user)
+    if (target != null) q.whereEqualTo("target", target)
     return q
 }
 
 fun Block.asRole_allAuthAction(user: _User? = null, target: _User? = null) =
     allInterActionByType(INTERACTION_Auth_Role, user, target)
 
-fun _User.allInterAction(): BmobQuery<InterAction> {
-    val q = BmobQuery<InterAction>()
-    q.addWhereEqualTo("user", this)
+fun _User.allInterAction(): AVQuery<InterAction> {
+    val q = AVQuery<InterAction>("InterAction")
+    q.whereEqualTo("user", this)
     q.order("-createdAt")
     return q
 }

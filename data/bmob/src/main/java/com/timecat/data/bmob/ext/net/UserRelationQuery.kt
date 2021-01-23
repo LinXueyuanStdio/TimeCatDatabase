@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.ext.net
 
-import cn.bmob.v3.BmobQuery
+import cn.leancloud.AVQuery
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.Block
 import com.timecat.data.bmob.data.common.User2User
@@ -19,8 +19,8 @@ import com.timecat.identity.data.user_user.User2User_Score
  * @description null
  * @usage null
  */
-fun oneUserRelationOf(id: String) = BmobQuery<User2User>().apply {
-    addWhereEqualTo("objectId", id)
+fun oneUserRelationOf(id: String) = AVQuery<User2User>("User2User").apply {
+    whereEqualTo("objectId", id)
     include("user,target")
     order("-createdAt")
     setLimit(1)
@@ -29,23 +29,23 @@ fun oneUserRelationOf(id: String) = BmobQuery<User2User>().apply {
 fun _User.allRelationByType(
     type: Int,
     target: _User? = null
-): BmobQuery<User2User> {
-    val q = BmobQuery<User2User>()
-    q.addWhereEqualTo("author", this)
-    q.addWhereEqualTo("type", type)
+): AVQuery<User2User> {
+    val q = AVQuery<User2User>("User2User")
+    q.whereEqualTo("author", this)
+    q.whereEqualTo("type", type)
     q.order("-createdAt")
-    if (target != null) q.addWhereEqualTo("target", target)
+    if (target != null) q.whereEqualTo("target", target)
     return q
 }
 
 fun allRelationOf(
     target: _User,
     type: Int
-): BmobQuery<User2User> {
-    val q = BmobQuery<User2User>()
-    q.addWhereEqualTo("type", type)
+): AVQuery<User2User> {
+    val q = AVQuery<User2User>("User2User")
+    q.whereEqualTo("type", type)
     q.order("-createdAt")
-    q.addWhereEqualTo("target", target)
+    q.whereEqualTo("target", target)
     return q
 }
 
@@ -56,11 +56,11 @@ fun _User.allFollow(target: _User? = null) = allRelationByType(User2User_Follow,
 fun fansOf(user: _User) = allRelationOf(user, User2User_Follow)
 
 
-fun childrenOf(user: _User, type: List<Int>) = BmobQuery<Block>().apply {
-    addWhereEqualTo("user", user)
+fun childrenOf(user: _User, type: List<Int>) = AVQuery<Block>("Block").apply {
+    whereEqualTo("user", user)
     include("user,parent")
     order("-createdAt")
-    addWhereContainedIn("type", type)
+    whereContainedIn("type", type)
 }
 
 fun _User.findAllPost() = childrenOf(this, listOf(BLOCK_POST))

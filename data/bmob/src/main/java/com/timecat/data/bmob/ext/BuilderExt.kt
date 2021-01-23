@@ -28,7 +28,7 @@ class UserBlockPack(
         ).apply {
             title = b.title
             content = b.content
-            tableName = b.tableName
+            className = b.tableName
         }
     }
 }
@@ -53,7 +53,7 @@ infix fun _User.createBlock(builder: BlockBuilder): Block {
         title = builder.title,
         content = builder.content
     ).apply {
-        tableName = builder.tableName
+        className = builder.tableName
     }
 }
 

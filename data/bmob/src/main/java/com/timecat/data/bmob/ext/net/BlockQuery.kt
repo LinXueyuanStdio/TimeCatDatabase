@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.ext.net
 
-import cn.bmob.v3.BmobQuery
+import cn.leancloud.AVQuery
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.Block
 import com.timecat.identity.data.block.*
@@ -22,60 +22,60 @@ fun allRole() = allBlockByType(BLOCK_ROLE)
 fun allIdentity() = allBlockByType(BLOCK_IDENTITY)
 fun allApp() = allBlockByType(BLOCK_APP)
 fun allAndroidApp() = allApp().apply {
-    addWhereEqualTo("subtype", APP_AndroidApp)
+    whereEqualTo("subtype", APP_AndroidApp)
 }
 
 fun alliOSApp() = allApp().apply {
-    addWhereEqualTo("subtype", APP_iOS)
+    whereEqualTo("subtype", APP_iOS)
 }
 
 fun allWindowApp() = allApp().apply {
-    addWhereEqualTo("subtype", APP_Windows)
+    whereEqualTo("subtype", APP_Windows)
 }
 
 fun allLinuxApp() = allApp().apply {
-    addWhereEqualTo("subtype", APP_Linux)
+    whereEqualTo("subtype", APP_Linux)
 }
 
 fun allMacApp() = allApp().apply {
-    addWhereEqualTo("subtype", APP_Mac)
+    whereEqualTo("subtype", APP_Mac)
 }
 
 fun allWebApp() = allApp().apply {
-    addWhereEqualTo("subtype", APP_WebApp)
+    whereEqualTo("subtype", APP_WebApp)
 }
 
 fun allPluginApp() = allApp().apply {
-    addWhereEqualTo("subtype", APP_Plugin)
+    whereEqualTo("subtype", APP_Plugin)
 }
 
 fun allLeaderBoard() = allBlockByType(BLOCK_LEADER_BOARD)
 
 fun allPermission() = allBlockByType(BLOCK_PERMISSION)
 fun allMetaPermission() = allPermission().apply {
-    addWhereEqualTo("subtype", PERMISSION_Meta)
+    whereEqualTo("subtype", PERMISSION_Meta)
 }
 
 fun allHunPermission() = allPermission().apply {
-    addWhereEqualTo("subtype", PERMISSION_Hun)
+    whereEqualTo("subtype", PERMISSION_Hun)
 }
 
-fun allBlockByType(type: Int) = BmobQuery<Block>().apply {
-    addWhereEqualTo("type", type)
+fun allBlockByType(type: Int) = AVQuery<Block>("Block").apply {
+    whereEqualTo("type", type)
     include("user,parent")
     order("-createdAt")
     setLimit(200)
 }
 
-fun allBlock() = BmobQuery<Block>().apply {
+fun allBlock() = AVQuery<Block>("Block").apply {
     include("user,parent")
     order("-createdAt")
     setLimit(200)
 }
 
-fun allBlockByIds(ids: List<String>) = BmobQuery<Block>().apply {
+fun allBlockByIds(ids: List<String>) = AVQuery<Block>("Block").apply {
     include("user,parent")
-    addWhereContainedIn("objectId", ids)
+    whereContainedIn("objectId", ids)
     order("-createdAt")
     setLimit(200)
 }
@@ -90,64 +90,64 @@ fun _User.allRole() = allBlockByType(BLOCK_ROLE)
 fun _User.allIdentity() = allBlockByType(BLOCK_IDENTITY)
 fun _User.allPermission() = allBlockByType(BLOCK_PERMISSION)
 fun _User.allMetaPermission() = allPermission().apply {
-    addWhereEqualTo("subtype", PERMISSION_Meta)
+    whereEqualTo("subtype", PERMISSION_Meta)
 }
 
 fun _User.allHunPermission() = allPermission().apply {
-    addWhereEqualTo("subtype", PERMISSION_Hun)
+    whereEqualTo("subtype", PERMISSION_Hun)
 }
 
-fun _User.allBlockByType(type: Int) = BmobQuery<Block>().apply {
-    addWhereEqualTo("user", this@allBlockByType)
-    addWhereEqualTo("type", type)
+fun _User.allBlockByType(type: Int) = AVQuery<Block>("Block").apply {
+    whereEqualTo("user", this@allBlockByType)
+    whereEqualTo("type", type)
     include("user,parent")
     order("-createdAt")
     setLimit(200)
 }
 
-fun _User.allBlock() = BmobQuery<Block>().apply {
+fun _User.allBlock() = AVQuery<Block>("Block").apply {
     include("user,parent")
     order("-createdAt")
     setLimit(200)
 }
 //endregion
 
-fun oneBlockOf(id: String) = BmobQuery<Block>().apply {
-    addWhereEqualTo("objectId", id)
+fun oneBlockOf(id: String) = AVQuery<Block>("Block").apply {
+    whereEqualTo("objectId", id)
     order("-createdAt")
     include("user,parent")
     setLimit(1)
 }
 
 //region children of block
-fun childrenOf(block: Block, type: List<Int>) = BmobQuery<Block>().apply {
-    addWhereEqualTo("parent", block)
+fun childrenOf(block: Block, type: List<Int>) = AVQuery<Block>("Block").apply {
+    whereEqualTo("parent", block)
     order("-createdAt")
     include("user,parent")
-    addWhereContainedIn("type", type)
+    whereContainedIn("type", type)
 }
 
-fun childrenOf(blocks: List<Block>, type: List<Int>) = BmobQuery<Block>().apply {
-    addWhereContainedIn("parent", blocks)
+fun childrenOf(blocks: List<Block>, type: List<Int>) = AVQuery<Block>("Block").apply {
+    whereContainedIn("parent", blocks)
     order("-createdAt")
     include("user,parent")
-    addWhereContainedIn("type", type)
+    whereContainedIn("type", type)
 }
 
 fun Block.findAllPost() = childrenOf(this, listOf(BLOCK_POST))
 fun Block.findAllMoment() = childrenOf(this, listOf(BLOCK_MOMENT))
 fun Block.findAllComment() = childrenOf(this, listOf(BLOCK_COMMENT))
-fun Block.findAllBlock() = BmobQuery<Block>().apply {
-    addWhereEqualTo("parent", this@findAllBlock)
+fun Block.findAllBlock() = AVQuery<Block>("Block").apply {
+    whereEqualTo("parent", this@findAllBlock)
     order("-updatedAt")
     setLimit(200)
 }
 //endregion
 
-fun checkBlockExistByTitle(title: String, type: Int): BmobQuery<Block> = BmobQuery<Block>().apply {
-    addWhereEqualTo("title", title)
+fun checkBlockExistByTitle(title: String, type: Int): AVQuery<Block> = AVQuery<Block>("Block").apply {
+    whereEqualTo("title", title)
     order("-createdAt")
-    addWhereEqualTo("type", type)
+    whereEqualTo("type", type)
 }
 
 fun checkTagExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_TAG)
@@ -155,7 +155,7 @@ fun checkTopicExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_
 fun checkForumExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_FORUM)
 fun checkLeaderBoardExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_LEADER_BOARD)
 fun checkPermissionExistByTitle(title: String, subtype: Int) = checkBlockExistByTitle(title, BLOCK_PERMISSION).apply {
-    addWhereEqualTo("subtype", subtype)
+    whereEqualTo("subtype", subtype)
 }
 
 fun checkMetaPermExistByTitle(title: String) = checkPermissionExistByTitle(title, PERMISSION_Meta)

@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.ext.net
 
-import cn.bmob.v3.BmobQuery
+import cn.leancloud.AVQuery
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.Action
 import com.timecat.data.bmob.data.common.Block
@@ -20,11 +20,11 @@ import com.timecat.identity.data.action.ACTION_RECOMMEND
 fun globalActionByType(
     type: Int,
     block: Block? = null
-): BmobQuery<Action> {
-    val q = BmobQuery<Action>()
+): AVQuery<Action> {
+    val q = AVQuery<Action>("Action")
     q.order("-createdAt")
-    q.addWhereEqualTo("type", type)
-    if (block != null) q.addWhereEqualTo("block", block)
+    q.whereEqualTo("type", type)
+    if (block != null) q.whereEqualTo("block", block)
     return q
 }
 
@@ -33,12 +33,12 @@ fun globalRecommendBlock(block: Block? = null) = globalActionByType(ACTION_RECOM
 fun _User.allActionByType(
     type: Int,
     block: Block? = null
-): BmobQuery<Action> {
-    val q = BmobQuery<Action>()
-    q.addWhereEqualTo("user", this)
+): AVQuery<Action> {
+    val q = AVQuery<Action>("Action")
+    q.whereEqualTo("user", this)
     q.order("-createdAt")
-    q.addWhereEqualTo("type", type)
-    if (block != null) q.addWhereEqualTo("block", block)
+    q.whereEqualTo("type", type)
+    if (block != null) q.whereEqualTo("block", block)
     return q
 }
 
@@ -50,12 +50,12 @@ fun _User.allDingBlock(block: Block? = null) = allActionByType(ACTION_DING, bloc
 fun Block.allActionByType(
     type: Int,
     user: _User? = null
-): BmobQuery<Action> {
-    val q = BmobQuery<Action>()
-    q.addWhereEqualTo("block", this)
+): AVQuery<Action> {
+    val q = AVQuery<Action>("Action")
+    q.whereEqualTo("block", this)
     q.order("-createdAt")
-    q.addWhereEqualTo("type", type)
-    if (user != null) q.addWhereEqualTo("user", user)
+    q.whereEqualTo("type", type)
+    if (user != null) q.whereEqualTo("user", user)
     return q
 }
 
@@ -65,9 +65,9 @@ fun Block.allLikes(user: _User? = null) = allActionByType(ACTION_LIKE, user)
 fun Block.allDings(user: _User? = null) = allActionByType(ACTION_DING, user)
 
 
-fun _User.allAction(): BmobQuery<Action> {
-    val q = BmobQuery<Action>()
-    q.addWhereEqualTo("user", this)
+fun _User.allAction(): AVQuery<Action> {
+    val q = AVQuery<Action>("Action")
+    q.whereEqualTo("user", this)
     q.include("user,block")
     q.order("-createdAt")
     return q

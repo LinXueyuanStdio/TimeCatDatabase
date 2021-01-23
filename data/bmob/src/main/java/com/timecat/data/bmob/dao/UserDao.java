@@ -3,23 +3,20 @@ package com.timecat.data.bmob.dao;
 import android.text.TextUtils;
 
 import com.timecat.data.bmob.data._User;
+import com.timecat.data.bmob.ext.bmob.EasyRequest;
+import com.timecat.data.bmob.ext.bmob.EasyRequestUser;
+import com.timecat.data.bmob.ext.bmob.EasyRequestUserList;
+import com.timecat.data.bmob.ext.bmob.EasyRequestUserNull;
+import com.timecat.identity.data.service.DataError;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.BmobSMS;
-import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.datatype.BmobFile;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.LogInListener;
-import cn.bmob.v3.listener.SaveListener;
-import cn.bmob.v3.listener.UpdateListener;
-import cn.bmob.v3.listener.UploadFileListener;
+import cn.leancloud.AVQuery;
+import cn.leancloud.AVUser;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
+import io.reactivex.disposables.Disposable;
 
 /**
  * @author dlink
@@ -44,14 +41,14 @@ public class UserDao extends BaseModel {
     /**
      * 用户管理：2.1、注册
      */
-    public static void register(String username, String password, final LogInListener<_User> listener) {
+    public static Disposable register(String username, String password, final EasyRequestUser listener) {
         if (TextUtils.isEmpty(username)) {
-            listener.done(null, new BmobException(CODE_NULL, "请填写用户名"));
-            return;
+            listener.getOnError().invoke(new DataError(CODE_NULL, "请填写用户名"));
+            return null;
         }
         if (TextUtils.isEmpty(password)) {
-            listener.done(null, new BmobException(CODE_NULL, "请填写密码"));
-            return;
+            listener.getOnError().invoke(new DataError(CODE_NULL, "请填写密码"));
+            return null;
         }
         final _User user = new _User();
         if (_User.isEmail(username)) {
@@ -62,47 +59,35 @@ public class UserDao extends BaseModel {
         }
         user.setUsername(username);
         user.setPassword(password);
-        user.signUp(new SaveListener<_User>() {
-            @Override
-            public void done(_User user, BmobException e) {
-                if (e == null) {
-                    listener.done(null, null);
-                } else {
-                    listener.done(null, e);
-                }
-            }
-        });
+        return user.signUpInBackground().subscribe(
+                avUser -> listener.getOnSuccess().invoke(user),
+                e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+        );
     }
 
     /**
      * 用户管理：2.2、登录
      */
-    public static void login(String username, String password, final LogInListener<_User> listener) {
+    public static Disposable login(String username, String password, final EasyRequestUser listener) {
         if (TextUtils.isEmpty(username)) {
-            listener.done(null, new BmobException(CODE_NULL, "请填写用户名"));
-            return;
+            listener.getOnError().invoke(new DataError(CODE_NULL, "请填写用户名"));
+            return null;
         }
         if (TextUtils.isEmpty(password)) {
-            listener.done(null, new BmobException(CODE_NULL, "请填写密码"));
-            return;
+            listener.getOnError().invoke(new DataError(CODE_NULL, "请填写密码"));
+            return null;
         }
-        _User.loginByAccount(username, password, new LogInListener<_User>() {
-            @Override
-            public void done(_User user, BmobException e) {
-                if (e == null) {
-                    listener.done(getCurrentUser(), null);
-                } else {
-                    listener.done(user, e);
-                }
-            }
-        });
+        return _User.logIn(username, password, _User.class).subscribe(
+                avUser -> listener.getOnSuccess().invoke(avUser),
+                e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+        );
     }
 
     /**
      * 用户管理：2.3、退出登录
      */
     public static void logout() {
-        BmobUser.logOut();
+        AVUser.logOut();
     }
 
     /**
@@ -110,137 +95,111 @@ public class UserDao extends BaseModel {
      */
     @Nullable
     public static _User getCurrentUser() {
-        return BmobUser.getCurrentUser(_User.class);
-    }
-
-    /**
-     * 用户管理：2.5、查询用户
-     */
-    public static void queryUsers(String username, final int limit, final FindListener<_User> listener) {
-        BmobQuery<_User> query = new BmobQuery<>();
-        query.addWhereContains("username", username);
-        query.setLimit(limit);
-        query.order("-createdAt");
-        query.findObjects(new FindListener<_User>() {
-            @Override
-            public void done(List<_User> list, BmobException e) {
-                if (e == null) {
-                    if (list != null && list.size() > 0) {
-                        listener.done(list, e);
-                    } else {
-                        listener.done(list, new BmobException(CODE_NULL, "查无此人"));
-                    }
-                } else {
-                    listener.done(list, e);
-                }
-            }
-        });
+        return AVUser.getCurrentUser(_User.class);
     }
 
     /**
      * 用户管理：2.5、查询用户是否已被注册
      */
-    public static void queryUsersExits(String username, final int limit, final FindListener<_User> listener) {
-        BmobQuery<_User> query = new BmobQuery<>();
-        query.addWhereEqualTo("username", username);
+    public static Disposable queryUsersExits(String username, final EasyRequestUserNull listener) {
+        AVQuery<_User> query = new AVQuery<>("_User");
+        query.whereEqualTo("username", username);
+        AVQuery<_User> queryEmail = new AVQuery<>("_User");
+        queryEmail.whereEqualTo("email", username);
+        AVQuery<_User> queryPhone = new AVQuery<>("_User");
+        queryPhone.whereEqualTo("mobilePhoneNumber", username);
+        List<AVQuery<_User>> cons = new ArrayList<>();
+        cons.add(query);
+        cons.add(queryEmail);
+        cons.add(queryPhone);
+        return AVQuery.or(cons).getFirstInBackground().subscribe(
+                avUser -> listener.getOnSuccess().invoke(avUser),
+                e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+        );
+    }
+
+    /**
+     * 用户管理：2.5、查询用户
+     */
+    public static Disposable queryUsers(String username, final int limit, final EasyRequestUserList listener) {
+        AVQuery<_User> query = new AVQuery<>("_User");
+        query.whereContains("username", username);
         query.setLimit(limit);
         query.order("-createdAt");
-        query.findObjects(new FindListener<_User>() {
-            @Override
-            public void done(List<_User> list, BmobException e) {
-                if (e == null) {
-                    if (list != null && list.size() == 0) {
-                        listener.done(list, null);
-                    } else {
-                        listener.done(list, new BmobException(CODE_NULL, "该用户名已被注册"));
-                    }
-                } else {
-                    listener.done(list, e);
-                }
-            }
-        });
+        return query.findInBackground().subscribe(
+                avUser -> listener.getOnSuccess().invoke(avUser),
+                e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+        );
     }
 
     /**
      * 用户管理：2.5、查询用户邮箱是否存在，list == null && e == null 则存在且唯一
      */
-    public static void queryEmail(String email, final int limit, final FindListener<_User> listener) {
-        BmobQuery<_User> query = new BmobQuery<>();
-        query.addWhereEqualTo("email", email);
+    public static Disposable queryEmail(String email, final int limit, final EasyRequestUserList listener) {
+        AVQuery<_User> query = new AVQuery<>("_User");
+        query.whereEqualTo("email", email);
         query.setLimit(limit);
         query.order("-createdAt");
-        query.findObjects(new FindListener<_User>() {
-            @Override
-            public void done(List<_User> list, BmobException e) {
-                if (e == null) {
-                    if (list != null && list.size() > 0) {
-                        listener.done(list, null);
-                    } else {
-                        listener.done(null, null);
-                    }
-                } else {
-                    listener.done(list, e);
-                }
-            }
-        });
+        return query.findInBackground().subscribe(
+                avUser -> listener.getOnSuccess().invoke(avUser),
+                e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+        );
     }
 
     /**
      * 用户管理：2.5、查询用户手机号是否存在，list == null && e == null 则存在且唯一
      */
-    public static void queryPhone(String phone, final int limit, final FindListener<_User> listener) {
-        BmobQuery<_User> query = new BmobQuery<>();
-        query.addWhereEqualTo("mobilePhoneNumber", phone);
+    public static Disposable queryPhone(String phone, final int limit, final EasyRequestUserList listener) {
+        AVQuery<_User> query = new AVQuery<>("_User");
+        query.whereEqualTo("mobilePhoneNumber", phone);
         query.setLimit(limit);
         query.order("-createdAt");
-        query.findObjects(new FindListener<_User>() {
-            @Override
-            public void done(List<_User> list, BmobException e) {
-                if (e == null) {
-                    if (list != null && list.size() > 0) {
-                        listener.done(list, null);
-                    } else {
-                        listener.done(null, null);
-                    }
-                } else {
-                    listener.done(list, e);
-                }
-            }
-        });
-    }
-
-    public static void loadAccountList(int page, int limit, final FindListener<_User> findListener) {
-        BmobQuery<_User> query = new BmobQuery<>();
-        query.setLimit(limit);
-        query.setSkip(page * limit - limit);
-        query.order("-createdAt");
-        query.findObjects(findListener);
+        return query.findInBackground().subscribe(
+                avUser -> listener.getOnSuccess().invoke(avUser),
+                e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+        );
     }
 
     /**
      * 验证邮箱
      */
-    public static void requestEmailVerify(String email, final UpdateListener listener) {
-        _User.requestEmailVerify(email, listener);
+    public static Disposable requestEmailVerify(String email, final EasyRequest listener) {
+        return _User.requestEmailVerifyInBackground(email).subscribe(
+                avUser -> listener.getOnSuccess().invoke(avUser),
+                e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+        );
     }
 
     /**
      * 找回密码
      */
-    public static void resetPasswordByEmail(String email, final UpdateListener listener) {
-        _User.resetPasswordByEmail(email, listener);
+    public static Disposable requestPasswordResetByEmail(String email, final EasyRequest listener) {
+        return _User.requestPasswordResetInBackground(email)
+                    .subscribe(
+                            avUser -> listener.getOnSuccess().invoke(avUser),
+                            e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+                    );
     }
 
-
     /**
-     * 注册用户，注册成功后自动登录
-     *
-     * @param user          ：注册用户
-     * @param smsCode：短信验证码
-     * @return 包含注册用户的Observable
+     * 找回密码
      */
-    public static Observable<_User> signOrLogin(_User user, String smsCode) {
-        return user.signOrLoginObservable(_User.class, smsCode);
+    public static Disposable requestPasswordResetBySmsCode(String phone, final EasyRequest listener) {
+        return _User.requestPasswordResetBySmsCodeInBackground(phone)
+                    .subscribe(
+                            avUser -> listener.getOnSuccess().invoke(avUser),
+                            e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+                    );
+    }
+    /**
+     * 找回密码
+     */
+    public static Disposable resetPasswordBySmsCode(String smsCode, String newPassword, final EasyRequest listener) {
+        return _User.resetPasswordBySmsCodeInBackground(smsCode, newPassword)
+                    .subscribe(
+                            avUser -> listener.getOnSuccess().invoke(avUser),
+                            e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+                    );
     }
 
     /**
@@ -250,7 +209,7 @@ public class UserDao extends BaseModel {
      * @return
      */
     public static Observable<_User> login(String phone, String password) {
-        return BmobUser.loginByAccountObservable(_User.class, phone, password);
+        return _User.logIn(phone, password, _User.class);
     }
 
     /**
@@ -259,7 +218,7 @@ public class UserDao extends BaseModel {
      * @param phone 登录用户，包含账号与密码
      * @return
      */
-    public static Observable<_User> signUp(String phone, String password) {
+    public static Observable<AVUser> signUp(String phone, String password) {
         _User user = new _User();
         user.setUsername(phone);
         if (_User.isEmail(phone)) {
@@ -268,7 +227,7 @@ public class UserDao extends BaseModel {
             user.setMobilePhoneNumber(phone);
         }
         user.setPassword(password);
-        return user.signUpObservable(_User.class);
+        return user.signUpInBackground();
     }
 
     /**
@@ -280,19 +239,7 @@ public class UserDao extends BaseModel {
      */
     public static Observable<_User> loginBySMS(final String phone, final String smsCode) {
         //转换为Observable对象，方便使用RxJava处理
-        return Observable.create((final ObservableEmitter<_User> emitter) -> {
-            BmobUser.loginBySMSCode(phone, smsCode, new LogInListener<_User>() {
-                @Override
-                public void done(_User user, BmobException e) {
-                    if (e == null) {
-                        emitter.onNext(user);
-                    } else {
-                        emitter.onError(e);
-                    }
-                }
-
-            });
-        });
+        return _User.loginBySMSCode(phone, smsCode, _User.class);
     }
 
     /**
@@ -300,102 +247,11 @@ public class UserDao extends BaseModel {
      *
      * @param phone
      */
-    public static void requestSmsCode(String phone) {
-        BmobSMS.requestSMSCodeObservable(phone, "one").subscribe();
-    }
-
-    /**
-     * 更改当前登录用户的密码。
-     * 将回调接口转换为Observable为难点
-     *
-     * @param passwordOld
-     * @param passwordNew
-     * @return
-     */
-    public static Observable<Void> updatePassword(final String passwordOld, final String passwordNew) {
-        return Observable.create((final ObservableEmitter<Void> subscriber) -> {
-            BmobUser.updateCurrentUserPassword(passwordOld, passwordNew, new UpdateListener() {
-                @Override
-                public void done(BmobException e) {
-                    if (e == null) {
-                        subscriber.onNext(null);
-                    } else {
-                        subscriber.onError(e);
-                    }
-                }
-            });
-        });
-    }
-    //endregion
-
-    //region 查询、修改用户信息
-    public interface QueryUserListener {
-
-        void done(_User s, BmobException e);
-    }
-
-    /**
-     * 用户管理：2.6、查询指定用户信息
-     */
-    public static void queryUserInfo(String objectId, final QueryUserListener listener) {
-        BmobQuery<_User> query = new BmobQuery<>();
-        query.addWhereEqualTo("objectId", objectId);
-        query.findObjects(new FindListener<_User>() {
-            @Override
-            public void done(List<_User> list, BmobException e) {
-                if (e == null) {
-                    if (list != null && list.size() > 0) {
-                        listener.done(list.get(0), null);
-                    } else {
-                        listener.done(null, new BmobException(000, "查无此人"));
-                    }
-                } else {
-                    listener.done(null, e);
-                }
-            }
-        });
-    }
-
-    public interface UpdateUserAvatar {
-        void onUpdateAvatarFail(BmobException e);
-
-        void onUpdateAvatarSuccess(_User avatarUrl);
-    }
-
-    public static void updateAvatar(File uri, UpdateUserAvatar updateUserAvatar) {
-        final BmobFile file = new BmobFile(uri);
-        file.uploadblock(new UploadFileListener() {
-            @Override
-            public void done(BmobException e) {
-                if (e == null) {
-                    _User current_user = UserDao.getCurrentUser();
-                    if (current_user == null) {
-                        updateUserAvatar.onUpdateAvatarFail(null);
-                        return;
-                    }
-                    current_user.setheadPortrait(file);
-                    current_user.update(new UpdateListener() {
-                        @Override
-                        public void done(BmobException e) {
-                            if (e == null) {
-                                updateUserAvatar.onUpdateAvatarSuccess(current_user);
-                            } else {
-                                updateUserAvatar.onUpdateAvatarFail(e);
-                            }
-                        }
-                    });
-                } else {
-                    updateUserAvatar.onUpdateAvatarFail(e);
-                }
-            }
-        });
-    }
-
-    /**
-     * 将图片上传到 Bmob
-     */
-    public static void updateAvatar(String uri, UpdateUserAvatar updateUserAvatar) {
-        updateAvatar(new File(uri), updateUserAvatar);
+    public static Disposable requestSmsCode(String phone, final EasyRequest listener) {
+        return _User.requestLoginSmsCodeInBackground(phone).subscribe(
+                avUser -> listener.getOnSuccess().invoke(avUser),
+                e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+        );
     }
     //endregion
 }

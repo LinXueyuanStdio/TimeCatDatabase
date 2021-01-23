@@ -6,14 +6,12 @@ import android.content.Context;
 import com.jess.arms.base.delegate.AppLifecycles;
 import com.jess.arms.di.module.GlobalConfigModule;
 import com.jess.arms.integration.ConfigModule;
-import com.timecat.data.bmob.BuildConfig;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
-import cn.bmob.v3.Bmob;
-import cn.bmob.v3.BmobConfig;
+import cn.leancloud.AVOSCloud;
 import timber.log.Timber;
 
 /**
@@ -45,25 +43,26 @@ public class GlobalConfiguration implements ConfigModule {
             @Override
             public void onCreate(@NonNull Application application) {
                 //初始化Bmob
-                Timber.d("Bmob init start");
-                BmobConfig config = new BmobConfig.Builder(application)
-                        //设置appkey
-                        .setApplicationId(BuildConfig.BMOB_APP_ID)
-                        //请求超时时间（单位为秒）：默认15s
-                        .setConnectTimeout(10)
-                        //文件分片上传时每片的大小（单位字节），默认512*1024
-                        .setUploadBlockSize(1024 * 1024)
-                        //文件的过期时间(单位为秒)：默认1800s
-                        .setFileExpiration(1800)
-                        .build();
-                Bmob.initialize(config);
-                Timber.d("Bmob init end");
-//                Timber.d("LeanCloud init start");
-//                String APP_ID = "3sz6W20te4GdeKBAa59uWLvg-gzGzoHsz";
-//                String APP_KEY = "Uhi9xsuu7WajPk8Ng3opL4zt";
-//                String serverURL = "https://ohqhxu3m.lc-cn-n1-shared.com";
-//                AVOSCloud.initialize(application, APP_ID, APP_KEY, serverURL);
-//                Timber.d("LeanCloud init end");
+//                Timber.d("Bmob init start");
+//                BmobConfig config = new BmobConfig.Builder(application)
+//                        //设置appkey
+//                        .setApplicationId(BuildConfig.BMOB_APP_ID)
+//                        //请求超时时间（单位为秒）：默认15s
+//                        .setConnectTimeout(10)
+//                        //文件分片上传时每片的大小（单位字节），默认512*1024
+//                        .setUploadBlockSize(1024 * 1024)
+//                        //文件的过期时间(单位为秒)：默认1800s
+//                        .setFileExpiration(1800)
+//                        .build();
+//                Bmob.initialize(config);
+//                Timber.d("Bmob init end");
+                Timber.d("LeanCloud init start");
+                String APP_ID = "lVumM4aviuXnmOCmyODnHaEs-MdYXbMMI";
+                String APP_KEY = "Cy0x5uhPiNlFPCp5W8YWKKJw";
+//                String serverURL = "https://app.timecat.online";
+                AVOSCloud.initialize(application, APP_ID, APP_KEY);
+//                AVOSCloud.initializeSecurely(application, APP_ID, null);
+                Timber.d("LeanCloud init end");
             }
 
             @Override

@@ -1,6 +1,5 @@
 package com.timecat.data.bmob.ext
 
-import cn.bmob.v3.datatype.BmobDate
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.Block
 import com.timecat.data.bmob.data.common.InterAction
@@ -8,7 +7,6 @@ import com.timecat.identity.data.action.INTERACTION_Auth_Identity
 import com.timecat.identity.data.action.INTERACTION_Auth_Permission
 import com.timecat.identity.data.action.INTERACTION_Auth_Role
 import com.timecat.identity.data.action.InterActionType
-import java.util.*
 
 /**
  * @author 林学渊
@@ -22,7 +20,7 @@ fun interaction(
     source: Block,
     target: _User,
     @InterActionType type: Int
-) = InterAction(author, source, target, type, BmobDate(Date()), BmobDate(Date()), "", 0)
+) = InterAction(author, source, target, type)
 
 infix fun _User.auth_Identity(p: Pair<Block, _User>): InterAction {
     return interaction(this, p.first, p.second, INTERACTION_Auth_Identity)

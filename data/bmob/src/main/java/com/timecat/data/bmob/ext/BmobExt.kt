@@ -1,6 +1,5 @@
 package com.timecat.data.bmob.ext
 
-import cn.bmob.v3.exception.BmobException
 import com.timecat.identity.data.service.DataError
 
 /**
@@ -10,6 +9,4 @@ import com.timecat.identity.data.service.DataError
  * @description null
  * @usage null
  */
-fun BmobException.toDataError(): DataError = DataError(this.errorCode, this.message)
-
-fun DataError.toBmobException(): BmobException = BmobException(this.code, this.message)
+fun Throwable.toDataError(): DataError = DataError(0, this.message)

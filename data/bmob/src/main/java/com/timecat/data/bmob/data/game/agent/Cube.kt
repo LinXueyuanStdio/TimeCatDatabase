@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.data.game.agent
 
-import cn.bmob.v3.BmobObject
+import cn.leancloud.AVObject
 import java.io.Serializable
 
 /**
@@ -31,6 +31,6 @@ data class Cube(
      * 方块结构描述
      */
     var structure: String
-) : BmobObject("Cube"), Serializable {
+) : AVObject("Cube"), Serializable {
 
 }

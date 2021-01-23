@@ -1,6 +1,7 @@
 package com.timecat.data.bmob.data.game.item
 
-import cn.bmob.v3.BmobObject
+import cn.leancloud.AVObject
+import cn.leancloud.annotation.AVClassName
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.Block
 import java.io.Serializable
@@ -12,9 +13,32 @@ import java.io.Serializable
  * @description 用户拥有物品
  * @usage null
  */
-data class OwnItem(
-    var user: _User,
-    var item: Block,
-    var count: Int,
-) : BmobObject("OwnItem"), Serializable {
+class OwnItem(
+    user: _User,
+    item: Block,
+    count: Int,
+) : AVObject("OwnItem"), Serializable {
+
+    var user: _User
+        get() = getAVObject("user")
+        set(value) {
+            put("user", value)
+        }
+    var item: Block
+        get() = getAVObject("item")
+        set(value) {
+            put("item", value)
+        }
+    var count: Int
+        get() = getInt("count")
+        set(value) {
+            put("count", value)
+        }
+
+    init {
+        this.user = user
+        this.item = item
+        this.count = count
+    }
+
 }

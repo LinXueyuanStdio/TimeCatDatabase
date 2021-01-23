@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.ext.net
 
-import cn.bmob.v3.BmobQuery
+import cn.leancloud.AVQuery
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.Block
 
@@ -11,17 +11,17 @@ import com.timecat.data.bmob.data.common.Block
  * @description null
  * @usage null
  */
-fun allUsers(query: String? = null) = BmobQuery<_User>().apply {
+fun allUsers(query: String? = null) = AVQuery<_User>("_User").apply {
     order("-createdAt")
 }
 
-fun oneUserOf(id: String) = BmobQuery<_User>().apply {
-    addWhereEqualTo("objectId", id)
+fun oneUserOf(id: String) = AVQuery<_User>("_User").apply {
+    whereEqualTo("objectId", id)
     order("-createdAt")
     setLimit(1)
 }
 
-fun blocksOf(user: _User) = BmobQuery<Block>().apply {
+fun blocksOf(user: _User) = AVQuery<Block>("Block").apply {
     order("-createdAt")
-    addWhereEqualTo("user", user)
+    whereEqualTo("user", user)
 }

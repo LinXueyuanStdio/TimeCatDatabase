@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.data.mail
 
-import cn.bmob.v3.BmobObject
+import cn.leancloud.AVObject
 import com.timecat.data.bmob.data._User
 import java.io.Serializable
 
@@ -11,9 +11,31 @@ import java.io.Serializable
  * @description 用户拥有物品
  * @usage null
  */
-data class OwnMail(
-    var user: _User,
-    var mail: Mail,
-    var receive: Boolean = false,
-) : BmobObject("OwnMail"), Serializable {
+class OwnMail(
+    user: _User,
+    mail: Mail,
+    receive: Boolean = false,
+) : AVObject("OwnMail"), Serializable {
+
+    var user: _User
+        get() = getAVObject("user")
+        set(value) {
+            put("user", value)
+        }
+    var mail: Mail
+        get() = getAVObject("mail")
+        set(value) {
+            put("mail", value)
+        }
+    var receive: Boolean
+        get() = getBoolean("receive")
+        set(value) {
+            put("receive", value)
+        }
+
+    init {
+        this.user = user
+        this.mail = mail
+        this.receive = receive
+    }
 }
