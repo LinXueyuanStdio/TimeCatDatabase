@@ -13,6 +13,7 @@ import java.io.Serializable
  * @description 用户拥有物品
  * @usage null
  */
+@AVClassName("OwnItem")
 class OwnItem(
     user: _User,
     item: Block,

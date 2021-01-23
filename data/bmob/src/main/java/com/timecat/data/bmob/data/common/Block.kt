@@ -1,6 +1,7 @@
 package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
+import cn.leancloud.annotation.AVClassName
 import com.alibaba.fastjson.JSONObject
 import com.timecat.data.bmob.data._User
 import com.timecat.identity.data.base.IStatus
@@ -19,6 +20,7 @@ import java.io.Serializable
  *   type 必须线性增长，当 View 渲染大于某个数的 type 表示当前版本过低，收到较高版本，需要用户升级
  *   status 因 type 的不同而不同 写在 TaskHeader 里查询不方便，因为很多都有 delete 状态
  */
+@AVClassName("Block")
 class Block(
     user: _User,
     @BlockType

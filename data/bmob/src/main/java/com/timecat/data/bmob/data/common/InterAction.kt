@@ -1,6 +1,7 @@
 package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
+import cn.leancloud.annotation.AVClassName
 import cn.leancloud.types.AVDate
 import com.timecat.data.bmob.data._User
 import com.timecat.identity.data.action.InterActionType
@@ -22,6 +23,7 @@ import java.io.Serializable
  * @usage
  *   status 因 type 的不同而不同，很多都有 delete 状态
  */
+@AVClassName("InterAction")
 class InterAction(
     //动作发起者
     user: _User,

@@ -3,12 +3,14 @@ package com.timecat.data.bmob.data
 import android.text.TextUtils
 import cn.leancloud.AVFile
 import cn.leancloud.AVUser
+import cn.leancloud.annotation.AVClassName
 import java.io.Serializable
 import java.util.regex.Pattern
 
 /**
  * Created by yc on 2018/2/2.
  */
+@AVClassName("_User")
 class _User() : AVUser(), Serializable {
     //region getter and setter
     //个性

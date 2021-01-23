@@ -1,6 +1,7 @@
 package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
+import cn.leancloud.annotation.AVClassName
 import com.timecat.data.bmob.data._User
 import com.timecat.identity.data.user_user.User2UserType
 import java.io.Serializable
@@ -12,6 +13,7 @@ import java.io.Serializable
  * @description 人与人之间的关系
  * @usage null
  */
+@AVClassName("User2User")
 class User2User(
     author: _User,
     target: _User,

@@ -1,6 +1,7 @@
 package com.timecat.data.bmob.data.game.agent
 
 import cn.leancloud.AVObject
+import cn.leancloud.annotation.AVClassName
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.Block
 import java.io.Serializable
@@ -12,6 +13,7 @@ import java.io.Serializable
  * @description 用户拥有方块
  * @usage null
  */
+@AVClassName("OwnCube")
 class OwnCube(
     user: _User,
     cube: Block,

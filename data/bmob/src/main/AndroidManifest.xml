@@ -9,14 +9,14 @@
             android:name="com.timecat.data.bmob.core.GlobalConfiguration"
             android:value="ConfigModule" />
 
-        <provider
-            android:name="cn.bmob.v3.util.BmobContentProvider"
-            android:authorities="${applicationId}.BmobContentProvider" />
-        <meta-data
-            android:name="BMOB_CHANNEL"
-            android:value="timecat-testing" />
-        <activity
-            android:name="cn.bmob.v3.update.UpdateDialogActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+<!--        <provider-->
+<!--            android:name="cn.bmob.v3.util.BmobContentProvider"-->
+<!--            android:authorities="${applicationId}.BmobContentProvider" />-->
+<!--        <meta-data-->
+<!--            android:name="BMOB_CHANNEL"-->
+<!--            android:value="timecat-testing" />-->
+<!--        <activity-->
+<!--            android:name="cn.bmob.v3.update.UpdateDialogActivity"-->
+<!--            android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->
     </application>
 </manifest>

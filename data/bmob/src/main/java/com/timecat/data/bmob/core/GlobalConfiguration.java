@@ -6,12 +6,22 @@ import android.content.Context;
 import com.jess.arms.base.delegate.AppLifecycles;
 import com.jess.arms.di.module.GlobalConfigModule;
 import com.jess.arms.integration.ConfigModule;
+import com.timecat.data.bmob.data._User;
+import com.timecat.data.bmob.data.common.Action;
+import com.timecat.data.bmob.data.common.Block;
+import com.timecat.data.bmob.data.common.Block2Block;
+import com.timecat.data.bmob.data.common.InterAction;
+import com.timecat.data.bmob.data.common.User2User;
+import com.timecat.data.bmob.data.game.agent.OwnCube;
+import com.timecat.data.bmob.data.game.item.OwnItem;
+import com.timecat.data.bmob.data.mail.OwnMail;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import cn.leancloud.AVOSCloud;
+import cn.leancloud.AVObject;
 import timber.log.Timber;
 
 /**
@@ -57,6 +67,16 @@ public class GlobalConfiguration implements ConfigModule {
 //                Bmob.initialize(config);
 //                Timber.d("Bmob init end");
                 Timber.d("LeanCloud init start");
+                AVObject.registerSubclass(_User.class);
+                AVObject.registerSubclass(Action.class);
+                AVObject.registerSubclass(Block.class);
+                AVObject.registerSubclass(Block2Block.class);
+                AVObject.registerSubclass(User2User.class);
+                AVObject.registerSubclass(InterAction.class);
+                AVObject.registerSubclass(OwnCube.class);
+                AVObject.registerSubclass(OwnItem.class);
+                AVObject.registerSubclass(OwnMail.class);
+
                 String APP_ID = "lVumM4aviuXnmOCmyODnHaEs-MdYXbMMI";
                 String APP_KEY = "Cy0x5uhPiNlFPCp5W8YWKKJw";
 //                String serverURL = "https://app.timecat.online";

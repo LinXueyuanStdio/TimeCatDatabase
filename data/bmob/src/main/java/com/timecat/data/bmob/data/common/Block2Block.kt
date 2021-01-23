@@ -1,6 +1,7 @@
 package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
+import cn.leancloud.annotation.AVClassName
 import com.timecat.data.bmob.data._User
 import com.timecat.identity.data.action.InterActionType
 import com.timecat.identity.data.block_block.Block2BlockType
@@ -13,6 +14,7 @@ import java.io.Serializable
  * @description null
  * @usage null
  */
+@AVClassName("Block2Block")
 class Block2Block(
     user: _User,
     from: Block,
