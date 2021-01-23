@@ -124,14 +124,14 @@ class _User() : AVUser(), Serializable {
         get() = nickName
     val userid: String
         get() = getObjectId()
-    var avatar: String?
+    var avatar: String
         get() = if (headPortrait == null) {
             "http://bmob-cdn-22390.b0.upaiyun.com/2019/04/17/531db7e5405a08ae8061b800ae8ad3b6.jpg"
         } else headPortrait!!.url
         set(avatar) {
             headPortrait = AVFile("avatar", avatar)
         }
-    var cover: String?
+    var cover: String
         get() = if (coverPage == null) {
             "http://d.hiphotos.baidu.com/zhidao/pic/item/bf096b63f6246b601ffeb44be9f81a4c510fa218.jpg"
         } else coverPage!!.url

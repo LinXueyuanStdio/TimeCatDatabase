@@ -37,7 +37,7 @@ class RequestList<T : AVObject> : RequestListCallback<T>() {
     }
 }
 
-class RequestSingle<T : AVObject> : RequestSingleCallback<T>() {
+class RequestSingle<T : AVObject> : RequestSingleCallback<T?>() {
     lateinit var query: AVQuery<T>
     fun build(): Disposable {
         return query.firstInBackground.subscribe({
@@ -57,6 +57,16 @@ fun requestBlockRelation(create: RequestList<Block2Block>.() -> Unit) = requestL
 fun requestInterAction(create: RequestList<InterAction>.() -> Unit) = requestList(create)
 fun requestOwnItem(create: RequestList<OwnItem>.() -> Unit) = requestList(create)
 fun requestOwnCube(create: RequestList<OwnCube>.() -> Unit) = requestList(create)
+
+fun requestOneUser(create: RequestSingle<_User>.() -> Unit) = requestOne(create)
+fun requestOneBlock(create: RequestSingle<Block>.() -> Unit) = requestOne(create)
+fun requestOneAction(create: RequestSingle<Action>.() -> Unit) = requestOne(create)
+fun requestOneOwnMail(create: RequestSingle<OwnMail>.() -> Unit) = requestOne(create)
+fun requestOneUserRelation(create: RequestSingle<User2User>.() -> Unit) = requestOne(create)
+fun requestOneBlockRelation(create: RequestSingle<Block2Block>.() -> Unit) = requestOne(create)
+fun requestOneInterAction(create: RequestSingle<InterAction>.() -> Unit) = requestOne(create)
+fun requestOneOwnItem(create: RequestSingle<OwnItem>.() -> Unit) = requestOne(create)
+fun requestOneOwnCube(create: RequestSingle<OwnCube>.() -> Unit) = requestOne(create)
 //endregion
 
 //region 是否存在

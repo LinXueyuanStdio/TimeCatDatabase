@@ -1,11 +1,22 @@
 package com.timecat.data.bmob.ext.bmob
 
 import android.util.Log
+import cn.leancloud.AVException
+import cn.leancloud.AVFile
 import cn.leancloud.AVObject
+import cn.leancloud.core.PaasClient
+import cn.leancloud.json.JSONArray
+import cn.leancloud.json.JSONObject
+import cn.leancloud.utils.AVUtils
 import com.timecat.data.bmob.data._User
 import com.timecat.data.bmob.data.common.*
 import com.timecat.data.bmob.ext.toDataError
+import io.reactivex.Observable
+import io.reactivex.ObservableSource
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 /**
  * @author 林学渊
@@ -69,12 +80,13 @@ fun saveBatch(create: BatchSaver.() -> Unit) = BatchSaver().apply(create).also {
 class BatchSaver : RequestListCallback<AVObject>() {
     lateinit var target: List<AVObject>
     fun build(): Disposable {
-        return AVObject.saveAllInBackground(target).subscribe({
-            Log.e("saveBatch", it.toJSONString())
-            onSuccess(target)
-        }, {
-            onError(it.toDataError())
-        })
+        return AVObject.saveAllInBackground(target)
+            .subscribe({
+                Log.e("saveBatch", it.toJSONString())
+                onSuccess(target)
+            }, {
+                onError(it.toDataError())
+            })
     }
 }
 
@@ -82,10 +94,11 @@ fun deleteBatch(create: BatchDeleter.() -> Unit) = BatchDeleter().apply(create).
 class BatchDeleter : RequestListCallback<AVObject>() {
     lateinit var target: List<AVObject>
     fun build(): Disposable {
-        return AVObject.deleteAllInBackground(target).subscribe({
-            onSuccess(target)
-        }, {
-            onError(it.toDataError())
-        })
+        return AVObject.deleteAllInBackground(target)
+            .subscribe({
+                onSuccess(target)
+            }, {
+                onError(it.toDataError())
+            })
     }
 }
