@@ -1,7 +1,7 @@
 package com.timecat.data.bmob.ext.net
 
 import cn.leancloud.AVQuery
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
 import com.timecat.identity.data.block.*
 import com.timecat.identity.data.block.type.*
@@ -62,19 +62,22 @@ fun allHunPermission() = allPermission().apply {
 
 fun allBlockByType(type: Int) = AVQuery<Block>("Block").apply {
     whereEqualTo("type", type)
-    include("user,parent")
+    include("user")
+    include("parent")
     order("-createdAt")
     setLimit(200)
 }
 
 fun allBlock() = AVQuery<Block>("Block").apply {
-    include("user,parent")
+    include("user")
+    include("parent")
     order("-createdAt")
     setLimit(200)
 }
 
 fun allBlockByIds(ids: List<String>) = AVQuery<Block>("Block").apply {
-    include("user,parent")
+    include("user")
+    include("parent")
     whereContainedIn("objectId", ids)
     order("-createdAt")
     setLimit(200)
@@ -82,31 +85,33 @@ fun allBlockByIds(ids: List<String>) = AVQuery<Block>("Block").apply {
 //endregion
 
 //region all block (by  type) for user
-fun _User.allMoment() = allBlockByType(BLOCK_MOMENT)
-fun _User.allForum() = allBlockByType(BLOCK_FORUM)
-fun _User.allTopic() = allBlockByType(BLOCK_TOPIC)
-fun _User.allTag() = allBlockByType(BLOCK_TAG)
-fun _User.allRole() = allBlockByType(BLOCK_ROLE)
-fun _User.allIdentity() = allBlockByType(BLOCK_IDENTITY)
-fun _User.allPermission() = allBlockByType(BLOCK_PERMISSION)
-fun _User.allMetaPermission() = allPermission().apply {
+fun User.allMoment() = allBlockByType(BLOCK_MOMENT)
+fun User.allForum() = allBlockByType(BLOCK_FORUM)
+fun User.allTopic() = allBlockByType(BLOCK_TOPIC)
+fun User.allTag() = allBlockByType(BLOCK_TAG)
+fun User.allRole() = allBlockByType(BLOCK_ROLE)
+fun User.allIdentity() = allBlockByType(BLOCK_IDENTITY)
+fun User.allPermission() = allBlockByType(BLOCK_PERMISSION)
+fun User.allMetaPermission() = allPermission().apply {
     whereEqualTo("subtype", PERMISSION_Meta)
 }
 
-fun _User.allHunPermission() = allPermission().apply {
+fun User.allHunPermission() = allPermission().apply {
     whereEqualTo("subtype", PERMISSION_Hun)
 }
 
-fun _User.allBlockByType(type: Int) = AVQuery<Block>("Block").apply {
+fun User.allBlockByType(type: Int) = AVQuery<Block>("Block").apply {
     whereEqualTo("user", this@allBlockByType)
     whereEqualTo("type", type)
-    include("user,parent")
+    include("user")
+    include("parent")
     order("-createdAt")
     setLimit(200)
 }
 
-fun _User.allBlock() = AVQuery<Block>("Block").apply {
-    include("user,parent")
+fun User.allBlock() = AVQuery<Block>("Block").apply {
+    include("user")
+    include("parent")
     order("-createdAt")
     setLimit(200)
 }
@@ -115,7 +120,8 @@ fun _User.allBlock() = AVQuery<Block>("Block").apply {
 fun oneBlockOf(id: String) = AVQuery<Block>("Block").apply {
     whereEqualTo("objectId", id)
     order("-createdAt")
-    include("user,parent")
+    include("user")
+    include("parent")
     setLimit(1)
 }
 
@@ -123,14 +129,16 @@ fun oneBlockOf(id: String) = AVQuery<Block>("Block").apply {
 fun childrenOf(block: Block, type: List<Int>) = AVQuery<Block>("Block").apply {
     whereEqualTo("parent", block)
     order("-createdAt")
-    include("user,parent")
+    include("user")
+    include("parent")
     whereContainedIn("type", type)
 }
 
 fun childrenOf(blocks: List<Block>, type: List<Int>) = AVQuery<Block>("Block").apply {
     whereContainedIn("parent", blocks)
     order("-createdAt")
-    include("user,parent")
+    include("user")
+    include("parent")
     whereContainedIn("type", type)
 }
 

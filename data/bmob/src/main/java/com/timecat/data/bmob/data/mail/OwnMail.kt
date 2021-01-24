@@ -2,7 +2,7 @@ package com.timecat.data.bmob.data.mail
 
 import cn.leancloud.AVObject
 import cn.leancloud.annotation.AVClassName
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
 import java.io.Serializable
 
@@ -15,13 +15,13 @@ import java.io.Serializable
  */
 @AVClassName("OwnMail")
 class OwnMail(
-    user: _User,
+    user: User,
     mail: Block,
     receive: Boolean = false,
 ) : AVObject("OwnMail"), Serializable {
 
-    var user: _User
-        get() = getAVObject("user")
+    var user: User
+        get() = User.transform(getAVObject("user"))
         set(value) {
             put("user", value)
         }
@@ -41,4 +41,6 @@ class OwnMail(
         this.mail = mail
         this.receive = receive
     }
+    constructor() : this(User(), Block())
+
 }

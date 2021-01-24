@@ -6,7 +6,7 @@ import android.content.Context;
 import com.jess.arms.base.delegate.AppLifecycles;
 import com.jess.arms.di.module.GlobalConfigModule;
 import com.jess.arms.integration.ConfigModule;
-import com.timecat.data.bmob.data._User;
+import com.timecat.data.bmob.data.User;
 import com.timecat.data.bmob.data.common.Action;
 import com.timecat.data.bmob.data.common.Block;
 import com.timecat.data.bmob.data.common.Block2Block;
@@ -67,7 +67,7 @@ public class GlobalConfiguration implements ConfigModule {
 //                Bmob.initialize(config);
 //                Timber.d("Bmob init end");
                 Timber.d("LeanCloud init start");
-                AVObject.registerSubclass(_User.class);
+                User.alwaysUseSubUserClass(User.class);
                 AVObject.registerSubclass(Action.class);
                 AVObject.registerSubclass(Block.class);
                 AVObject.registerSubclass(Block2Block.class);

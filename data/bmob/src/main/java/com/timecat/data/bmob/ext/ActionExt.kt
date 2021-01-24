@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.ext
 
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Action
 import com.timecat.data.bmob.data.common.Block
 import com.timecat.identity.data.action.ACTION_FOCUS
@@ -13,7 +13,7 @@ import com.timecat.identity.data.action.ACTION_RECOMMEND
  * @description null
  * @usage null
  */
-fun action(user: _User, block: Block, type: Int) = Action(user, block, type, "", 0)
+fun action(user: User, block: Block, type: Int) = Action(user, block, type, "", 0)
 
-infix fun _User.follow(target: Block): Action = action(this, target, ACTION_FOCUS)
-infix fun _User.recommend(target: Block): Action = action(this, target, ACTION_RECOMMEND)
+infix fun User.follow(target: Block): Action = action(this, target, ACTION_FOCUS)
+infix fun User.recommend(target: Block): Action = action(this, target, ACTION_RECOMMEND)

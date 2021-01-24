@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.ext
 
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
 import com.timecat.identity.data.block.*
 import com.timecat.identity.data.block.type.*
@@ -12,11 +12,11 @@ import com.timecat.identity.data.block.type.*
  * @description null
  * @usage null
  */
-infix fun _User.like(block: Block) = UserBlockPack(this, block)
+infix fun User.like(block: Block) = UserBlockPack(this, block)
 
 //region 创建一个次级块，和父块相关
 class UserBlockPack(
-    var user: _User,
+    var user: User,
     var block: Block
 ) {
     fun build(b: BlockBuilder): Block {
@@ -33,19 +33,19 @@ class UserBlockPack(
     }
 }
 
-infix fun _User.commentsOn(parent: Block) = UserBlockPack(this, parent)
+infix fun User.commentsOn(parent: Block) = UserBlockPack(this, parent)
 infix fun UserBlockPack.with(builder: CommentBuilder): Block {
     return build(builder)
 }
 
-infix fun _User.postsOn(parent: Block) = UserBlockPack(this, parent)
+infix fun User.postsOn(parent: Block) = UserBlockPack(this, parent)
 infix fun UserBlockPack.with(builder: PostBuilder): Block {
     return build(builder)
 }
 //endregion
 
 //region 创建一个顶级块，和其他块无关
-infix fun _User.createBlock(builder: BlockBuilder): Block {
+infix fun User.createBlock(builder: BlockBuilder): Block {
     return Block(
         this,
         type = builder.type,
@@ -57,45 +57,45 @@ infix fun _User.createBlock(builder: BlockBuilder): Block {
     }
 }
 
-infix fun _User.create(builder: ForumBuilder): Block {
+infix fun User.create(builder: ForumBuilder): Block {
     return createBlock(builder).apply {
         structure = builder.headerBlock.toJson()
     }
 }
 
-infix fun _User.create(builder: LeaderBoardBuilder): Block {
+infix fun User.create(builder: LeaderBoardBuilder): Block {
     return createBlock(builder).apply {
         structure = builder.headerBlock.toJson()
     }
 }
 
-infix fun _User.create(builder: AppBuilder): Block {
+infix fun User.create(builder: AppBuilder): Block {
     return createBlock(builder).apply {
         structure = builder.headerBlock.toJson()
     }
 }
 
-infix fun _User.create(builder: TopicBuilder): Block {
+infix fun User.create(builder: TopicBuilder): Block {
     return createBlock(builder).apply {
         structure = builder.headerBlock.toJson()
     }
 }
 
-infix fun _User.create(builder: TagBuilder): Block {
+infix fun User.create(builder: TagBuilder): Block {
     return createBlock(builder).apply {
         structure = builder.headerBlock.toJson()
     }
 }
 
-infix fun _User.create(builder: PermissionBuilder): Block {
+infix fun User.create(builder: PermissionBuilder): Block {
     return createBlock(builder)
 }
 
-infix fun _User.create(builder: RoleBuilder): Block {
+infix fun User.create(builder: RoleBuilder): Block {
     return createBlock(builder)
 }
 
-infix fun _User.create(builder: IdentityBuilder): Block {
+infix fun User.create(builder: IdentityBuilder): Block {
     return createBlock(builder)
 }
 //endregion

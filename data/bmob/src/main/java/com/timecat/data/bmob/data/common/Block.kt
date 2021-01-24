@@ -1,15 +1,14 @@
 package com.timecat.data.bmob.data.common
 
+import android.os.Parcel
+import android.os.Parcelable
 import cn.leancloud.AVObject
+import cn.leancloud.Transformer
 import cn.leancloud.annotation.AVClassName
-import com.alibaba.fastjson.JSONObject
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.identity.data.base.IStatus
-import com.timecat.identity.data.base.Json
-import com.timecat.identity.data.base.PrivacyScope
 import com.timecat.identity.data.block.type.*
 import org.joda.time.DateTime
-import java.io.Serializable
 
 /**
  * @author 林学渊
@@ -22,9 +21,9 @@ import java.io.Serializable
  */
 @AVClassName("Block")
 class Block(
-    user: _User,
+    user: User,
     @BlockType
-    type: Int,
+    type: Int = 0,
     subtype: Int = 0,
 
     title: String = "",
@@ -57,49 +56,14 @@ class Block(
      */
     usedBy: Int = 0, // 纯计数，单调递增 浏览量
     /**
-     * 排序
-     */
-    order: Int = 0,
-    /**
-     * 隐私域
-     */
-    privacy: PrivacyScope = PrivacyScope(isPrivate = true),
-    /**
-     * 扩展
-     */
-    ext: Json = Json(JSONObject()),
-    /**
      * Block 父节点
      */
     parent: Block? = null
-) : AVObject("Block"), Serializable, IStatus {
-
-    companion object {
-        @JvmOverloads
-        fun forName(user: _User, type: Int, name: String = ""): Block {
-            return Block(user, type, title = name, content = name)
-        }
-
-        fun forMoment(user: _User, content: String): Block {
-            return forName(user, BLOCK_MOMENT, content)
-        }
-
-        fun forPost(user: _User, content: String): Block {
-            return forName(user, BLOCK_POST, content)
-        }
-
-        fun forComment(user: _User, content: String): Block {
-            return forName(user, BLOCK_COMMENT, content)
-        }
-
-        fun forApp(user: _User, content: String): Block {
-            return forName(user, BLOCK_APP, content)
-        }
-    }
+) : AVObject("Block"), Parcelable, IStatus {
 
     //region field
-    var user: _User
-        get() = getAVObject("user")
+    var user: User
+        get() = User.transform(getAVObject("user"))
         set(value) {
             put("user", value)
         }
@@ -171,16 +135,6 @@ class Block(
         set(value) {
             put("order", value)
         }
-    var privacy: PrivacyScope
-        get() = get("privacy") as PrivacyScope
-        set(value) {
-            put("privacy", value)
-        }
-    var ext: Json
-        get() = get("ext") as Json
-        set(value) {
-            put("ext", value)
-        }
     var parent: Block?
         get() = getAVObject("parent")
         set(value) {
@@ -201,11 +155,10 @@ class Block(
         this.relays = relays
         this.followers = followers
         this.usedBy = usedBy
-        this.order = order
-        this.privacy = privacy
-        this.ext = ext
         this.parent = parent
     }
+
+    constructor() : this(User())
     //endregion
 
     fun isComment(): Boolean = type == BLOCK_COMMENT
@@ -247,10 +200,48 @@ class Block(
     override fun statusDescription(): String = ""
     //endregion
 
-    override fun toString(): String {
-        return "$objectId(type=$type, subtype=$subtype, title=$title, content=$content,\n" +
-            "         structure='$structure', status=${statusDescription()}, likes=$likes, comments=$comments, relays=$relays, usedBy=$usedBy, order=$order,\n" +
-            "         parent=${parent?.objectId}, user=${user?.objectId})\n"
+    //region Parcelable
+    override fun describeContents(): Int {
+        return 0
     }
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(toJSONString())
+    }
+
+    companion object CREATOR : Parcelable.Creator<Block> {
+        override fun createFromParcel(parcel: Parcel): Block {
+            val jsonString = parcel.readString()
+            val rawObject = parseAVObject(jsonString)
+            return Transformer.transform(rawObject, Block::class.java)
+        }
+
+        override fun newArray(size: Int): Array<Block?> {
+            return arrayOfNulls(size)
+        }
+
+        @JvmOverloads
+        fun forName(user: User, type: Int, name: String = ""): Block {
+            return Block(user, type, title = name, content = name)
+        }
+
+        fun forMoment(user: User, content: String): Block {
+            return forName(user, BLOCK_MOMENT, content)
+        }
+
+        fun forPost(user: User, content: String): Block {
+            return forName(user, BLOCK_POST, content)
+        }
+
+        fun forComment(user: User, content: String): Block {
+            return forName(user, BLOCK_COMMENT, content)
+        }
+
+        fun forApp(user: User, content: String): Block {
+            return forName(user, BLOCK_APP, content)
+        }
+    }
+    //endregion
+
 }
 

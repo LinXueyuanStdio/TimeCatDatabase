@@ -2,7 +2,9 @@ package com.timecat.data.bmob.dao;
 
 import android.text.TextUtils;
 
-import com.timecat.data.bmob.data._User;
+import com.jess.arms.utils.LogUtils;
+import com.timecat.data.bmob.StaticKt;
+import com.timecat.data.bmob.data.User;
 import com.timecat.data.bmob.ext.bmob.EasyRequest;
 import com.timecat.data.bmob.ext.bmob.EasyRequestUser;
 import com.timecat.data.bmob.ext.bmob.EasyRequestUserList;
@@ -50,11 +52,11 @@ public class UserDao extends BaseModel {
             listener.getOnError().invoke(new DataError(CODE_NULL, "请填写密码"));
             return null;
         }
-        final _User user = new _User();
-        if (_User.isEmail(username)) {
+        final User user = new User();
+        if (StaticKt.isEmail(username)) {
             user.setEmail(username);
         }
-        if (_User.isMobileNO(username)) {
+        if (StaticKt.isMobileNO(username)) {
             user.setMobilePhoneNumber(username);
         }
         user.setUsername(username);
@@ -77,7 +79,7 @@ public class UserDao extends BaseModel {
             listener.getOnError().invoke(new DataError(CODE_NULL, "请填写密码"));
             return null;
         }
-        return _User.logIn(username, password, _User.class).subscribe(
+        return User.logIn(username, password, User.class).subscribe(
                 avUser -> listener.getOnSuccess().invoke(avUser),
                 e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
         );
@@ -94,27 +96,35 @@ public class UserDao extends BaseModel {
      * 用户管理：2.4、获取当前用户
      */
     @Nullable
-    public static _User getCurrentUser() {
-        return AVUser.getCurrentUser(_User.class);
+    public static User getCurrentUser() {
+        return AVUser.getCurrentUser(User.class);
     }
 
     /**
      * 用户管理：2.5、查询用户是否已被注册
      */
     public static Disposable queryUsersExits(String username, final EasyRequestUserNull listener) {
-        AVQuery<_User> query = new AVQuery<>("_User");
+        AVQuery<User> query = User.getUserQuery(User.class);
         query.whereEqualTo("username", username);
-        AVQuery<_User> queryEmail = new AVQuery<>("_User");
+        AVQuery<User> queryEmail = User.getUserQuery(User.class);
         queryEmail.whereEqualTo("email", username);
-        AVQuery<_User> queryPhone = new AVQuery<>("_User");
+        AVQuery<User> queryPhone = User.getUserQuery(User.class);
         queryPhone.whereEqualTo("mobilePhoneNumber", username);
-        List<AVQuery<_User>> cons = new ArrayList<>();
+
+        List<AVQuery<User>> cons = new ArrayList<>();
         cons.add(query);
         cons.add(queryEmail);
         cons.add(queryPhone);
         return AVQuery.or(cons).getFirstInBackground().subscribe(
-                avUser -> listener.getOnSuccess().invoke(avUser),
-                e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
+                avUser -> {
+                    LogUtils.debugInfo("a", avUser + "");
+                    listener.getOnSuccess().invoke(avUser);
+                },
+                e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage())),
+                () -> {
+                    LogUtils.debugInfo("a", "complete");
+                    listener.getOnComplete().invoke();
+                }
         );
     }
 
@@ -122,7 +132,7 @@ public class UserDao extends BaseModel {
      * 用户管理：2.5、查询用户
      */
     public static Disposable queryUsers(String username, final int limit, final EasyRequestUserList listener) {
-        AVQuery<_User> query = new AVQuery<>("_User");
+        AVQuery<User> query = User.getUserQuery(User.class);
         query.whereContains("username", username);
         query.setLimit(limit);
         query.order("-createdAt");
@@ -136,7 +146,7 @@ public class UserDao extends BaseModel {
      * 用户管理：2.5、查询用户邮箱是否存在，list == null && e == null 则存在且唯一
      */
     public static Disposable queryEmail(String email, final int limit, final EasyRequestUserList listener) {
-        AVQuery<_User> query = new AVQuery<>("_User");
+        AVQuery<User> query = User.getUserQuery(User.class);
         query.whereEqualTo("email", email);
         query.setLimit(limit);
         query.order("-createdAt");
@@ -150,7 +160,7 @@ public class UserDao extends BaseModel {
      * 用户管理：2.5、查询用户手机号是否存在，list == null && e == null 则存在且唯一
      */
     public static Disposable queryPhone(String phone, final int limit, final EasyRequestUserList listener) {
-        AVQuery<_User> query = new AVQuery<>("_User");
+        AVQuery<User> query = User.getUserQuery(User.class);
         query.whereEqualTo("mobilePhoneNumber", phone);
         query.setLimit(limit);
         query.order("-createdAt");
@@ -164,7 +174,7 @@ public class UserDao extends BaseModel {
      * 验证邮箱
      */
     public static Disposable requestEmailVerify(String email, final EasyRequest listener) {
-        return _User.requestEmailVerifyInBackground(email).subscribe(
+        return User.requestEmailVerifyInBackground(email).subscribe(
                 avUser -> listener.getOnSuccess().invoke(avUser),
                 e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
         );
@@ -174,8 +184,8 @@ public class UserDao extends BaseModel {
      * 找回密码
      */
     public static Disposable requestPasswordResetByEmail(String email, final EasyRequest listener) {
-        return _User.requestPasswordResetInBackground(email)
-                    .subscribe(
+        return User.requestPasswordResetInBackground(email)
+                   .subscribe(
                             avUser -> listener.getOnSuccess().invoke(avUser),
                             e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
                     );
@@ -185,18 +195,19 @@ public class UserDao extends BaseModel {
      * 找回密码
      */
     public static Disposable requestPasswordResetBySmsCode(String phone, final EasyRequest listener) {
-        return _User.requestPasswordResetBySmsCodeInBackground(phone)
-                    .subscribe(
+        return User.requestPasswordResetBySmsCodeInBackground(phone)
+                   .subscribe(
                             avUser -> listener.getOnSuccess().invoke(avUser),
                             e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
                     );
     }
+
     /**
      * 找回密码
      */
     public static Disposable resetPasswordBySmsCode(String smsCode, String newPassword, final EasyRequest listener) {
-        return _User.resetPasswordBySmsCodeInBackground(smsCode, newPassword)
-                    .subscribe(
+        return User.resetPasswordBySmsCodeInBackground(smsCode, newPassword)
+                   .subscribe(
                             avUser -> listener.getOnSuccess().invoke(avUser),
                             e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
                     );
@@ -208,8 +219,8 @@ public class UserDao extends BaseModel {
      * @param phone 登录用户，包含账号与密码
      * @return
      */
-    public static Observable<_User> login(String phone, String password) {
-        return _User.logIn(phone, password, _User.class);
+    public static Observable<User> login(String phone, String password) {
+        return User.logIn(phone, password, User.class);
     }
 
     /**
@@ -219,11 +230,11 @@ public class UserDao extends BaseModel {
      * @return
      */
     public static Observable<AVUser> signUp(String phone, String password) {
-        _User user = new _User();
+        User user = new User();
         user.setUsername(phone);
-        if (_User.isEmail(phone)) {
+        if (StaticKt.isEmail(phone)) {
             user.setEmail(phone);
-        } else if (_User.isMobileNO(phone)) {
+        } else if (StaticKt.isMobileNO(phone)) {
             user.setMobilePhoneNumber(phone);
         }
         user.setPassword(password);
@@ -237,9 +248,9 @@ public class UserDao extends BaseModel {
      * @param smsCode
      * @return
      */
-    public static Observable<_User> loginBySMS(final String phone, final String smsCode) {
+    public static Observable<User> loginBySMS(final String phone, final String smsCode) {
         //转换为Observable对象，方便使用RxJava处理
-        return _User.loginBySMSCode(phone, smsCode, _User.class);
+        return User.loginBySMSCode(phone, smsCode, User.class);
     }
 
     /**
@@ -248,7 +259,7 @@ public class UserDao extends BaseModel {
      * @param phone
      */
     public static Disposable requestSmsCode(String phone, final EasyRequest listener) {
-        return _User.requestLoginSmsCodeInBackground(phone).subscribe(
+        return User.requestLoginSmsCodeInBackground(phone).subscribe(
                 avUser -> listener.getOnSuccess().invoke(avUser),
                 e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
         );

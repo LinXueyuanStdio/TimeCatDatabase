@@ -1,7 +1,7 @@
 package com.timecat.data.bmob.ext.net
 
 import cn.leancloud.AVQuery
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Action
 import com.timecat.data.bmob.data.common.Block
 import com.timecat.identity.data.action.ACTION_DING
@@ -30,7 +30,7 @@ fun globalActionByType(
 
 fun globalRecommendBlock(block: Block? = null) = globalActionByType(ACTION_RECOMMEND, block)
 
-fun _User.allActionByType(
+fun User.allActionByType(
     type: Int,
     block: Block? = null
 ): AVQuery<Action> {
@@ -42,14 +42,14 @@ fun _User.allActionByType(
     return q
 }
 
-fun _User.allFollowBlock(block: Block? = null) = allActionByType(ACTION_FOCUS, block)
-fun _User.allRecommendBlock(block: Block? = null) = allActionByType(ACTION_RECOMMEND, block)
-fun _User.allLikeBlock(block: Block? = null) = allActionByType(ACTION_LIKE, block)
-fun _User.allDingBlock(block: Block? = null) = allActionByType(ACTION_DING, block)
+fun User.allFollowBlock(block: Block? = null) = allActionByType(ACTION_FOCUS, block)
+fun User.allRecommendBlock(block: Block? = null) = allActionByType(ACTION_RECOMMEND, block)
+fun User.allLikeBlock(block: Block? = null) = allActionByType(ACTION_LIKE, block)
+fun User.allDingBlock(block: Block? = null) = allActionByType(ACTION_DING, block)
 
 fun Block.allActionByType(
     type: Int,
-    user: _User? = null
+    user: User? = null
 ): AVQuery<Action> {
     val q = AVQuery<Action>("Action")
     q.whereEqualTo("block", this)
@@ -60,15 +60,16 @@ fun Block.allActionByType(
 }
 
 
-fun Block.allFans(user: _User? = null) = allActionByType(ACTION_FOCUS, user)
-fun Block.allLikes(user: _User? = null) = allActionByType(ACTION_LIKE, user)
-fun Block.allDings(user: _User? = null) = allActionByType(ACTION_DING, user)
+fun Block.allFans(user: User? = null) = allActionByType(ACTION_FOCUS, user)
+fun Block.allLikes(user: User? = null) = allActionByType(ACTION_LIKE, user)
+fun Block.allDings(user: User? = null) = allActionByType(ACTION_DING, user)
 
 
-fun _User.allAction(): AVQuery<Action> {
+fun User.allAction(): AVQuery<Action> {
     val q = AVQuery<Action>("Action")
     q.whereEqualTo("user", this)
-    q.include("user,block")
+    q.include("user")
+    q.include("block")
     q.order("-createdAt")
     return q
 }

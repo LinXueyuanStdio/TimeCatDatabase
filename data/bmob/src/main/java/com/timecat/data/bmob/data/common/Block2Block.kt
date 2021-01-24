@@ -2,8 +2,7 @@ package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
 import cn.leancloud.annotation.AVClassName
-import com.timecat.data.bmob.data._User
-import com.timecat.identity.data.action.InterActionType
+import com.timecat.data.bmob.data.User
 import com.timecat.identity.data.block_block.Block2BlockType
 import java.io.Serializable
 
@@ -16,7 +15,7 @@ import java.io.Serializable
  */
 @AVClassName("Block2Block")
 class Block2Block(
-    user: _User,
+    user: User,
     from: Block,
     to: Block,
     @Block2BlockType
@@ -25,8 +24,8 @@ class Block2Block(
     status: Long = 0
 ) : AVObject("Block2Block"), Serializable {
     //region field
-    var user: _User
-        get() = getAVObject("user")
+    var user: User
+        get() = User.transform(getAVObject("user"))
         set(value) {
             put("user", value)
         }
@@ -72,6 +71,7 @@ class Block2Block(
             "        from=$from," +
             "        to=$to)"
     }
+    constructor() : this(User(), Block(), Block())
 
 
 }

@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.ext
 
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
 import com.timecat.data.bmob.data.common.InterAction
 import com.timecat.identity.data.action.INTERACTION_Auth_Identity
@@ -16,20 +16,20 @@ import com.timecat.identity.data.action.InterActionType
  * @usage null
  */
 fun interaction(
-    author: _User,
+    author: User,
     source: Block,
-    target: _User,
+    target: User,
     @InterActionType type: Int
 ) = InterAction(author, source, target, type)
 
-infix fun _User.auth_Identity(p: Pair<Block, _User>): InterAction {
+infix fun User.auth_Identity(p: Pair<Block, User>): InterAction {
     return interaction(this, p.first, p.second, INTERACTION_Auth_Identity)
 }
 
-infix fun _User.auth_Role(p: Pair<Block, _User>): InterAction {
+infix fun User.auth_Role(p: Pair<Block, User>): InterAction {
     return interaction(this, p.first, p.second, INTERACTION_Auth_Role)
 }
 
-infix fun _User.auth_Permission(p: Pair<Block, _User>): InterAction {
+infix fun User.auth_Permission(p: Pair<Block, User>): InterAction {
     return interaction(this, p.first, p.second, INTERACTION_Auth_Permission)
 }

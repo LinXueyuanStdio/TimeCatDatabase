@@ -2,7 +2,8 @@ package com.timecat.data.bmob.ext.bmob
 
 import cn.leancloud.AVObject
 import cn.leancloud.AVQuery
-import com.timecat.data.bmob.data._User
+import cn.leancloud.search.AVSearchQuery
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.*
 import com.timecat.data.bmob.data.game.agent.OwnCube
 import com.timecat.data.bmob.data.game.item.OwnItem
@@ -26,29 +27,33 @@ class RequestList<T : AVObject> : RequestListCallback<T>() {
     fun build(): Disposable {
         return query.findInBackground()
             .subscribe({
-            if (it.isEmpty()) {
-                onEmpty()
-            } else {
-                onSuccess(it)
-            }
-        }, {
-            onError(it.toDataError())
-        })
+                if (it.isEmpty()) {
+                    onEmpty()
+                } else {
+                    onSuccess(it)
+                }
+            }, {
+                onError(it.toDataError())
+            }, {
+                onComplete()
+            })
     }
 }
 
-class RequestSingle<T : AVObject> : RequestSingleCallback<T?>() {
+class RequestSingle<T : AVObject> : RequestSingleCallback<T>() {
     lateinit var query: AVQuery<T>
     fun build(): Disposable {
         return query.firstInBackground.subscribe({
             onSuccess(it)
         }, {
             onError(it.toDataError())
+        }, {
+            onComplete()
         })
     }
 }
 
-fun requestUser(create: RequestList<_User>.() -> Unit) = requestList(create)
+fun requestUser(create: RequestList<User>.() -> Unit) = requestList(create)
 fun requestBlock(create: RequestList<Block>.() -> Unit) = requestList(create)
 fun requestAction(create: RequestList<Action>.() -> Unit) = requestList(create)
 fun requestOwnMail(create: RequestList<OwnMail>.() -> Unit) = requestList(create)
@@ -58,7 +63,7 @@ fun requestInterAction(create: RequestList<InterAction>.() -> Unit) = requestLis
 fun requestOwnItem(create: RequestList<OwnItem>.() -> Unit) = requestList(create)
 fun requestOwnCube(create: RequestList<OwnCube>.() -> Unit) = requestList(create)
 
-fun requestOneUser(create: RequestSingle<_User>.() -> Unit) = requestOne(create)
+fun requestOneUser(create: RequestSingle<User>.() -> Unit) = requestOne(create)
 fun requestOneBlock(create: RequestSingle<Block>.() -> Unit) = requestOne(create)
 fun requestOneAction(create: RequestSingle<Action>.() -> Unit) = requestOne(create)
 fun requestOneOwnMail(create: RequestSingle<OwnMail>.() -> Unit) = requestOne(create)
@@ -89,7 +94,7 @@ class RequestExist<T : AVObject> : SimpleRequestCallback<Boolean>() {
 fun requestExistInterAction(create: RequestExist<InterAction>.() -> Unit) = requestExist(create)
 fun requestExistBlock(create: RequestExist<Block>.() -> Unit) = requestExist(create)
 fun requestExistAction(create: RequestExist<Action>.() -> Unit) = requestExist(create)
-fun requestExistUser(create: RequestExist<_User>.() -> Unit) = requestExist(create)
+fun requestExistUser(create: RequestExist<User>.() -> Unit) = requestExist(create)
 //endregion
 
 //region 请求个数
@@ -109,4 +114,30 @@ class RequestCount<T : AVObject> : SimpleRequestCallback<Int>() {
 fun requestActionCount(create: RequestCount<Action>.() -> Unit) = requestCount(create)
 fun requestBlockCount(create: RequestCount<Block>.() -> Unit) = requestCount(create)
 fun requestUserRelationCount(create: RequestCount<User2User>.() -> Unit) = requestCount(create)
+//endregion
+
+//region 搜索
+fun <T : AVObject> searchList(create: SearchList<T>.() -> Unit) = SearchList<T>().apply(create).also { it.build() }
+
+class SearchList<T : AVObject> : RequestListCallback<T>() {
+    lateinit var query: AVSearchQuery<T>
+    fun build(): Disposable {
+        return query.findInBackground()
+            .subscribe({
+                if (it.isEmpty()) {
+                    onEmpty()
+                } else {
+                    onSuccess(it)
+                }
+            }, {
+                onError(it.toDataError())
+            })
+    }
+}
+
+fun searchUser(create: SearchList<User>.() -> Unit) = searchList(create)
+fun searchBlock(create: SearchList<Block>.() -> Unit) = searchList(create)
+
+fun userQuery(q: String?) = AVSearchQuery<User>(q)
+fun blockQuery(q: String?) = AVSearchQuery<Block>(q)
 //endregion

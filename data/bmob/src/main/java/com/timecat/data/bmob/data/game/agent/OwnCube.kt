@@ -2,7 +2,7 @@ package com.timecat.data.bmob.data.game.agent
 
 import cn.leancloud.AVObject
 import cn.leancloud.annotation.AVClassName
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
 import java.io.Serializable
 
@@ -15,7 +15,7 @@ import java.io.Serializable
  */
 @AVClassName("OwnCube")
 class OwnCube(
-    user: _User,
+    user: User,
     cube: Block,
     exp: Long = 0,//经验
     level: Int = 0,//等级
@@ -29,8 +29,8 @@ class OwnCube(
     equipment_6: Block? = null,//装备
 ) : AVObject("OwnCube"), Serializable {
     //region field
-    var user: _User
-        get() = getAVObject("user")
+    var user: User
+        get() = User.transform(getAVObject("user"))
         set(value) {
             put("user", value)
         }
@@ -112,5 +112,6 @@ class OwnCube(
         this.equipment_6 = equipment_6
     }
     //endregion
+    constructor() : this(User(), Block())
 
 }

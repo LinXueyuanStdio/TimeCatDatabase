@@ -2,9 +2,8 @@ package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
 import cn.leancloud.annotation.AVClassName
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.identity.data.action.ActionType
-import com.timecat.identity.data.action.InterActionType
 import java.io.Serializable
 
 /**
@@ -18,7 +17,7 @@ import java.io.Serializable
  */
 @AVClassName("Action")
 class Action(
-    user: _User,
+    user: User,
     block: Block,
     @ActionType
     type: Int = 0,
@@ -27,8 +26,8 @@ class Action(
     //var like: Int, // 动作的点赞数0，如坚持打卡的点赞数
 ) : AVObject("Action"), Serializable {
     //region field
-    var user: _User
-        get() = getAVObject("user")
+    var user: User
+        get() = User.transform(getAVObject("user"))
         set(value) {
             put("user", value)
         }
@@ -62,6 +61,7 @@ class Action(
         this.structure = structure
         this.status = status
     }
+    constructor() : this(User(), Block())
     //endregion
 
 }

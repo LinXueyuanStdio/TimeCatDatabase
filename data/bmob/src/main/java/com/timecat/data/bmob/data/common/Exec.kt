@@ -1,8 +1,7 @@
 package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
-import com.timecat.data.bmob.data._User
-import com.timecat.identity.data.action.InterActionType
+import com.timecat.data.bmob.data.User
 import com.timecat.identity.data.exec.EXEC_Recommend
 import com.timecat.identity.data.exec.ExecType
 import java.io.Serializable
@@ -15,21 +14,21 @@ import java.io.Serializable
  * @usage null
  */
 class Exec(
-    user: _User,
+    user: User,
     @ExecType
     type: Int = 0,
     structure: String = "",
     status: Long = 0
 ) : AVObject("Exec"), Serializable {
     companion object {
-        fun forRecommend(user: _User): Exec {
+        fun forRecommend(user: User): Exec {
             return Exec(user, EXEC_Recommend)
         }
     }
 
     //region field
-    var user: _User
-        get() = getAVObject("user")
+    var user: User
+        get() = User.transform(getAVObject("user"))
         set(value) {
             put("user", value)
         }

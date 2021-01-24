@@ -1,6 +1,6 @@
 package com.timecat.data.bmob.ext
 
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.User2User
 import com.timecat.identity.data.user_user.*
 
@@ -11,10 +11,10 @@ import com.timecat.identity.data.user_user.*
  * @description null
  * @usage null
  */
-fun relation(source: _User, target: _User, @User2UserType type: Int) = User2User(source, target, type, "", 0)
+fun relation(source: User, target: User, @User2UserType type: Int) = User2User(source, target, type, "", 0)
 
-infix fun _User.like(target: _User): User2User = relation(this, target, User2User_Like)
-infix fun _User.follow(target: _User): User2User = relation(this, target, User2User_Follow)
-infix fun _User.ding(target: _User): User2User = relation(this, target, User2User_Ding)
-infix fun _User.score(target: _User): User2User = relation(this, target, User2User_Score)
+infix fun User.like(target: User): User2User = relation(this, target, User2User_Like)
+infix fun User.follow(target: User): User2User = relation(this, target, User2User_Follow)
+infix fun User.ding(target: User): User2User = relation(this, target, User2User_Ding)
+infix fun User.score(target: User): User2User = relation(this, target, User2User_Score)
 

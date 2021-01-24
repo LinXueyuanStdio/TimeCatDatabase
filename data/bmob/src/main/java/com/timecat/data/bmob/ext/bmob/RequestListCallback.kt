@@ -1,7 +1,7 @@
 package com.timecat.data.bmob.ext.bmob
 
 import cn.leancloud.types.AVNull
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.identity.data.service.DataError
 
 /**
@@ -15,13 +15,16 @@ open class RequestListCallback<T> {
     var onError: (DataError) -> Unit = {}
     var onEmpty: () -> Unit = {}
     var onSuccess: (List<T>) -> Unit = {}
+    var onComplete: () -> Unit = {}
 }
 
-open class RequestSingleCallback<T> : SimpleRequestCallback<T>()
+open class RequestSingleCallback<T> : SimpleRequestCallback<T>() {
+    var onComplete: () -> Unit = {}
+}
 class EasyRequest : RequestSingleCallback<AVNull>()
-class EasyRequestUser : RequestSingleCallback<_User>()
-class EasyRequestUserNull : RequestSingleCallback<_User?>()
-class EasyRequestUserList : RequestSingleCallback<List<_User>>()
+class EasyRequestUser : RequestSingleCallback<User>()
+class EasyRequestUserNull : RequestSingleCallback<User>()
+class EasyRequestUserList : RequestSingleCallback<List<User>>()
 open class SimpleRequestCallback<T> {
     var onError: (DataError) -> Unit = {}
     var onSuccess: (T) -> Unit = {}

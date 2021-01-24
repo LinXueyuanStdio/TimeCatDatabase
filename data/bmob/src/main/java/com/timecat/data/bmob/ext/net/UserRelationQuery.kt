@@ -1,7 +1,7 @@
 package com.timecat.data.bmob.ext.net
 
 import cn.leancloud.AVQuery
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
 import com.timecat.data.bmob.data.common.User2User
 import com.timecat.identity.data.block.type.BLOCK_COMMENT
@@ -21,14 +21,15 @@ import com.timecat.identity.data.user_user.User2User_Score
  */
 fun oneUserRelationOf(id: String) = AVQuery<User2User>("User2User").apply {
     whereEqualTo("objectId", id)
-    include("user,target")
+    include("user")
+    include("target")
     order("-createdAt")
     setLimit(1)
 }
 
-fun _User.allRelationByType(
+fun User.allRelationByType(
     type: Int,
-    target: _User? = null
+    target: User? = null
 ): AVQuery<User2User> {
     val q = AVQuery<User2User>("User2User")
     q.whereEqualTo("author", this)
@@ -39,7 +40,7 @@ fun _User.allRelationByType(
 }
 
 fun allRelationOf(
-    target: _User,
+    target: User,
     type: Int
 ): AVQuery<User2User> {
     val q = AVQuery<User2User>("User2User")
@@ -49,20 +50,21 @@ fun allRelationOf(
     return q
 }
 
-fun _User.allLike(target: _User? = null) = allRelationByType(User2User_Like, target)
-fun _User.allDing(target: _User? = null) = allRelationByType(User2User_Ding, target)
-fun _User.allScore(target: _User? = null) = allRelationByType(User2User_Score, target)
-fun _User.allFollow(target: _User? = null) = allRelationByType(User2User_Follow, target)
-fun fansOf(user: _User) = allRelationOf(user, User2User_Follow)
+fun User.allLike(target: User? = null) = allRelationByType(User2User_Like, target)
+fun User.allDing(target: User? = null) = allRelationByType(User2User_Ding, target)
+fun User.allScore(target: User? = null) = allRelationByType(User2User_Score, target)
+fun User.allFollow(target: User? = null) = allRelationByType(User2User_Follow, target)
+fun fansOf(user: User) = allRelationOf(user, User2User_Follow)
 
 
-fun childrenOf(user: _User, type: List<Int>) = AVQuery<Block>("Block").apply {
+fun childrenOf(user: User, type: List<Int>) = AVQuery<Block>("Block").apply {
     whereEqualTo("user", user)
-    include("user,parent")
+    include("user")
+    include("parent")
     order("-createdAt")
     whereContainedIn("type", type)
 }
 
-fun _User.findAllPost() = childrenOf(this, listOf(BLOCK_POST))
-fun _User.findAllMoment() = childrenOf(this, listOf(BLOCK_MOMENT))
-fun _User.findAllComment() = childrenOf(this, listOf(BLOCK_COMMENT))
+fun User.findAllPost() = childrenOf(this, listOf(BLOCK_POST))
+fun User.findAllMoment() = childrenOf(this, listOf(BLOCK_MOMENT))
+fun User.findAllComment() = childrenOf(this, listOf(BLOCK_COMMENT))

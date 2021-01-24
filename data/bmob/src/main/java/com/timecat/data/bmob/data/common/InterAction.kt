@@ -3,7 +3,7 @@ package com.timecat.data.bmob.data.common
 import cn.leancloud.AVObject
 import cn.leancloud.annotation.AVClassName
 import cn.leancloud.types.AVDate
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.identity.data.action.InterActionType
 import org.joda.time.DateTime
 import java.io.Serializable
@@ -26,13 +26,13 @@ import java.io.Serializable
 @AVClassName("InterAction")
 class InterAction(
     //动作发起者
-    user: _User,
+    user: User,
     //分配块
     block: Block,
     //动作接收者
-    target: _User,
+    target: User,
     @InterActionType
-    type: Int,
+    type: Int = 0,
     activeTime: AVDate = AVDate(DateTime().toString(AVDate.DEFAULT_FORMAT)),
     expireTime: AVDate = AVDate(DateTime().toString(AVDate.DEFAULT_FORMAT)),
     structure: String = "",
@@ -40,8 +40,8 @@ class InterAction(
 ) : AVObject("InterAction"), Serializable {
 
     //region field
-    var user: _User
-        get() = getAVObject("user")
+    var user: User
+        get() = User.transform(getAVObject("user"))
         set(value) {
             put("user", value)
         }
@@ -50,7 +50,7 @@ class InterAction(
         set(value) {
             put("block", value)
         }
-    var target: _User
+    var target: User
         get() = getAVObject("target")
         set(value) {
             put("target", value)
@@ -111,6 +111,7 @@ class InterAction(
             "         target=${target.objectId})\n"
     }
 
+    constructor() : this(User(), Block(), User())
 
 }
 

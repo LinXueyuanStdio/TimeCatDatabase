@@ -2,7 +2,7 @@ package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
 import cn.leancloud.annotation.AVClassName
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.identity.data.user_user.User2UserType
 import java.io.Serializable
 
@@ -15,22 +15,22 @@ import java.io.Serializable
  */
 @AVClassName("User2User")
 class User2User(
-    author: _User,
-    target: _User,
+    author: User,
+    target: User,
     @User2UserType
     type: Int = 0,
     structure: String = "",
     status: Long = 0
 ) : AVObject("User2User"), Serializable {
     //region field
-    var author: _User
-        get() = getAVObject("author")
+    var author: User
+        get() = User.transform(getAVObject("author"))
         set(value) {
             put("author", value)
         }
 
-    var target: _User
-        get() = getAVObject("target")
+    var target: User
+        get() = User.transform(getAVObject("target"))
         set(value) {
             put("target", value)
         }
@@ -58,5 +58,5 @@ class User2User(
         this.status = status
     }
     //endregion
-
+    constructor() : this(User(), User())
 }

@@ -1,7 +1,7 @@
 package com.timecat.data.bmob.ext.net
 
 import cn.leancloud.AVQuery
-import com.timecat.data.bmob.data._User
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.game.agent.OwnCube
 import com.timecat.data.bmob.data.game.item.OwnItem
 import com.timecat.data.bmob.data.mail.OwnMail
@@ -13,7 +13,7 @@ import com.timecat.data.bmob.data.mail.OwnMail
  * @description null
  * @usage null
  */
-fun _User.allOwnCube() = AVQuery<OwnCube>("OwnCube").apply {
+fun User.allOwnCube() = AVQuery<OwnCube>("OwnCube").apply {
     whereEqualTo("user", this)
     order("-createdAt")
     include("user," +
@@ -26,16 +26,18 @@ fun _User.allOwnCube() = AVQuery<OwnCube>("OwnCube").apply {
         "equipment_6")
 }
 
-fun _User.allOwnItem() = AVQuery<OwnItem>("OwnItem").apply {
+fun User.allOwnItem() = AVQuery<OwnItem>("OwnItem").apply {
     whereEqualTo("user", this)
     order("-createdAt")
-    include("user,item")
+    include("user")
+    include("item")
 }
 
-fun _User.allOwnMail(): AVQuery<OwnMail> {
+fun User.allOwnMail(): AVQuery<OwnMail> {
     val q = AVQuery<OwnMail>("OwnMail")
     q.whereEqualTo("user", this)
-    q.include("user,block")
+    q.include("user")
+    q.include("block")
     q.order("-createdAt")
     return q
 }

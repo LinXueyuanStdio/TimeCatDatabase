@@ -1,11 +1,8 @@
 package com.timecat.data.room.record
 
 import androidx.room.TypeConverter
-import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
-import com.timecat.identity.data.base.IJson
 import com.timecat.identity.data.base.Json
-import java.io.Serializable
 
 /**
  * @author 林学渊

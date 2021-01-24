@@ -1,1 +1,9 @@
-<manifest package="com.timecat.data.system" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.timecat.data.system">
+
+    <application>
+        <meta-data
+            android:name="com.timecat.data.system.core.GlobalConfiguration"
+            android:value="ConfigModule" />
+    </application>
+</manifest>
