@@ -14,20 +14,20 @@ import com.timecat.data.bmob.data.mail.OwnMail
  * @usage null
  */
 fun User.allOwnCube() = AVQuery<OwnCube>("OwnCube").apply {
-    whereEqualTo("user", this)
+    whereEqualTo("user", this@allOwnCube)
     order("-createdAt")
-    include("user," +
-        "cube," +
-        "equipment_1," +
-        "equipment_2," +
-        "equipment_3," +
-        "equipment_4," +
-        "equipment_5," +
-        "equipment_6")
+    include("user")
+    include("cube")
+    include("equipment_1")
+    include("equipment_2")
+    include("equipment_3")
+    include("equipment_4")
+    include("equipment_5")
+    include("equipment_6")
 }
 
 fun User.allOwnItem() = AVQuery<OwnItem>("OwnItem").apply {
-    whereEqualTo("user", this)
+    whereEqualTo("user", this@allOwnItem)
     order("-createdAt")
     include("user")
     include("item")

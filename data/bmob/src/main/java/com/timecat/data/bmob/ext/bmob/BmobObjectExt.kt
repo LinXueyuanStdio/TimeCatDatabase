@@ -59,18 +59,13 @@ fun deleteUser(create: Deleter<User>.() -> Unit) = delete(create)
 fun deleteUserRelation(create: Deleter<User2User>.() -> Unit) = delete(create)
 fun deleteAction(create: Deleter<Action>.() -> Unit) = delete(create)
 fun deleteInterAction(create: Deleter<InterAction>.() -> Unit) = delete(create)
-fun <T : AVObject> delete(create: Deleter<T>.() -> Unit) = Deleter<T>().apply {
-    create()
-}.also { it.build() }
-
+fun <T : AVObject> delete(create: Deleter<T>.() -> Unit) = Deleter<T>().apply(create).also { it.build() }
 
 class Updater<T : AVObject> : Saver<T>()
 
 fun updateBlock(create: Updater<Block>.() -> Unit) = update(create)
 fun updateUser(create: Updater<User>.() -> Unit) = update(create)
-fun <T : AVObject> update(create: Updater<T>.() -> Unit) = Updater<T>().apply {
-    create()
-}.also { it.build() }
+fun <T : AVObject> update(create: Updater<T>.() -> Unit) = Updater<T>().apply(create).also { it.build() }
 
 
 fun saveBatch(create: BatchSaver.() -> Unit) = BatchSaver().apply(create).also { it.build() }

@@ -3,9 +3,12 @@ package com.timecat.data.bmob.data
 import android.os.Parcel
 import android.os.Parcelable
 import cn.leancloud.AVFile
+import cn.leancloud.AVObject
 import cn.leancloud.AVUser
 import cn.leancloud.Transformer
 import cn.leancloud.annotation.AVClassName
+import cn.leancloud.json.JSONObject
+import com.jess.arms.utils.LogUtils
 import java.util.*
 
 /**
@@ -14,17 +17,29 @@ import java.util.*
 @AVClassName("User")
 class User() : AVUser(), Parcelable {
     //region getter and setter
-    //个性
+    fun getMyFile(key: String): AVFile? {
+        val res: Any? = get(key)
+        LogUtils.warnInfo("$res")
+        if (res is JSONObject) {
+            return AVObject.parseAVObject(res.toJSONString()) as AVFile?
+        }
+        if (res is Map<*, *>) {
+            val json = JSONObject.Builder.create(res as Map<String, Any>?)
+            return AVObject.parseAVObject(json.toJSONString()) as AVFile?
+        }
+        return null
+    }
+
     //头像
     var headPortrait: AVFile?
-        get() = getAVFile("avatar")
+        get() = getMyFile("avatar")
         set(value) {
             put("avatar", value)
         }
 
     //背景图
     var coverPage: AVFile?
-        get() = getAVFile("cover")
+        get() = getMyFile("cover")
         set(value) {
             put("cover", value)
         }
@@ -84,7 +99,7 @@ class User() : AVUser(), Parcelable {
 
     //上次体力的结算时间
     var lastSettleTime: Date
-        get() = getDate("lastSettleTime")
+        get() = getDate("lastSettleTime") ?: Date()
         set(value) {
             put("lastSettleTime", value)
         }
@@ -129,7 +144,7 @@ class User() : AVUser(), Parcelable {
     var avatar: String
         get() = if (headPortrait == null) {
             "https://lc-gluttony.s3.amazonaws.com/lVumM4aviuXn/fb9add291c586437b3de.png/ic_launcher.png"
-        } else headPortrait!!.url
+        } else headPortrait!!.getThumbnailUrl(true, 48, 48)
         set(avatar) {
             headPortrait = AVFile("avatar", avatar)
         }
@@ -140,10 +155,6 @@ class User() : AVUser(), Parcelable {
         set(cover) {
             coverPage = AVFile("cover", cover)
         }
-
-    constructor(parcel: Parcel) : this() {
-    }
-
     //endregion
 
     //region Parcelable
