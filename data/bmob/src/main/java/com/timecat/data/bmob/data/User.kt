@@ -10,6 +10,7 @@ import cn.leancloud.annotation.AVClassName
 import cn.leancloud.json.JSONObject
 import com.jess.arms.utils.LogUtils
 import java.util.*
+import kotlin.reflect.typeOf
 
 /**
  * Created by yc on 2018/2/2.
@@ -19,15 +20,15 @@ class User() : AVUser(), Parcelable {
     //region getter and setter
     fun getMyFile(key: String): AVFile? {
         val res: Any? = get(key)
-        LogUtils.warnInfo("$res")
-        if (res is JSONObject) {
-            return AVObject.parseAVObject(res.toJSONString()) as AVFile?
+        return when (res) {
+            is AVFile? -> res
+            is JSONObject -> AVObject.parseAVObject(res.toJSONString()) as AVFile?
+            is Map<*, *> -> {
+                val json = JSONObject.Builder.create(res as Map<String, Any>?)
+                AVObject.parseAVObject(json.toJSONString()) as AVFile?
+            }
+            else -> null
         }
-        if (res is Map<*, *>) {
-            val json = JSONObject.Builder.create(res as Map<String, Any>?)
-            return AVObject.parseAVObject(json.toJSONString()) as AVFile?
-        }
-        return null
     }
 
     //头像
