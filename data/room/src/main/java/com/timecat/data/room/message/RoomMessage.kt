@@ -73,6 +73,7 @@ enum class MessageType(val id: Int) {
     CMD(BLOCK_CMD),
     CALL(BLOCK_CALL),
     BIG_EMOTION(BLOCK_BIG_EMOTION),
+    MAIL(BLOCK_MAIL),
 }
 
 /**
@@ -428,6 +429,9 @@ fun RoomRecord.getType(): MessageType {
         }
         MessageType.BIG_EMOTION.id -> {
             return MessageType.BIG_EMOTION
+        }
+        MessageType.MAIL.id -> {
+            return MessageType.MAIL
         }
         else -> return MessageType.TXT
     }

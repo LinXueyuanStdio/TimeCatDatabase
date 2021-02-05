@@ -1,9 +1,16 @@
 package com.timecat.data.bmob.data.game.item
 
+import android.os.Parcel
+import android.os.Parcelable
 import cn.leancloud.AVObject
+import cn.leancloud.Transformer
 import cn.leancloud.annotation.AVClassName
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
+import com.timecat.identity.data.block.type.BLOCK_APP
+import com.timecat.identity.data.block.type.BLOCK_COMMENT
+import com.timecat.identity.data.block.type.BLOCK_MOMENT
+import com.timecat.identity.data.block.type.BLOCK_POST
 import java.io.Serializable
 
 /**
@@ -18,7 +25,7 @@ class OwnItem(
     user: User,
     item: Block,
     count: Int = 0,
-) : AVObject("OwnItem"), Serializable {
+) : AVObject("OwnItem"), Parcelable, Serializable {
 
     var user: User
         get() = User.transform(getAVObject("user"))
@@ -43,4 +50,25 @@ class OwnItem(
     }
     constructor() : this(User(), Block())
 
+    //region Parcelable
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(toJSONString())
+    }
+
+    companion object CREATOR : Parcelable.Creator<OwnItem> {
+        override fun createFromParcel(parcel: Parcel): OwnItem {
+            val jsonString = parcel.readString()
+            val rawObject = parseAVObject(jsonString)
+            return Transformer.transform(rawObject, OwnItem::class.java)
+        }
+
+        override fun newArray(size: Int): Array<OwnItem?> {
+            return arrayOfNulls(size)
+        }
+    }
+    //endregion
 }

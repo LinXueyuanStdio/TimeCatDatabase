@@ -851,11 +851,6 @@ data class RoomRecord(
         }
 
         @JvmStatic
-        fun forBook(id: Long, name: String): RoomRecord {
-            return forType(id, name, BLOCK_CONTAINER)
-        }
-
-        @JvmStatic
         fun forDatabase(id: Long, name: String): RoomRecord {
             return forType(id, name, BLOCK_DATABASE)
         }
@@ -868,20 +863,10 @@ data class RoomRecord(
         }
 
         @JvmStatic
-        fun forPage(id: Long, name: String): RoomRecord {
-            return forType(id, name, BLOCK_DIVIDER)
-        }
-
-        @JvmStatic
         fun forType(id: Long, name: String, type: Int): RoomRecord {
             val model = forBlock(id, name)
             model.type = type
             return model
-        }
-
-        @JvmStatic
-        fun forPage(id: Long, name: String, subType: Int, parent: String): RoomRecord {
-            return forBlock(id, name, BLOCK_DIVIDER, subType, parent)
         }
 
         @JvmStatic

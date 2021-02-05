@@ -49,6 +49,28 @@ fun allPluginApp() = allApp().apply {
     whereEqualTo("subtype", APP_Plugin)
 }
 
+fun allItem() = allBlockByType(BLOCK_ITEM)
+fun allThingItem() = allItem().apply {
+    whereEqualTo("subtype", ITEM_Thing)
+}
+
+fun allPackageItem() = allItem().apply {
+    whereEqualTo("subtype", ITEM_Package)
+}
+
+fun allDataItem() = allItem().apply {
+    whereEqualTo("subtype", ITEM_Data)
+}
+
+fun allEquipItem() = allItem().apply {
+    whereEqualTo("subtype", ITEM_Equip)
+}
+
+fun allBuffItem() = allItem().apply {
+    whereEqualTo("subtype", ITEM_Buff)
+}
+
+
 fun allLeaderBoard() = allBlockByType(BLOCK_LEADER_BOARD)
 
 fun allPermission() = allBlockByType(BLOCK_PERMISSION)
@@ -162,6 +184,8 @@ fun checkTagExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_TA
 fun checkTopicExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_TOPIC)
 fun checkForumExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_FORUM)
 fun checkLeaderBoardExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_LEADER_BOARD)
+fun checkAppExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_APP)
+fun checkItemExistByTitle(title: String) = checkBlockExistByTitle(title, BLOCK_ITEM)
 fun checkPermissionExistByTitle(title: String, subtype: Int) = checkBlockExistByTitle(title, BLOCK_PERMISSION).apply {
     whereEqualTo("subtype", subtype)
 }

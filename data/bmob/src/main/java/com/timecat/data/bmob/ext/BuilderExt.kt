@@ -75,6 +75,17 @@ infix fun User.create(builder: AppBuilder): Block {
     }
 }
 
+infix fun User.create(builder: MailBuilder): Block {
+    return createBlock(builder).apply {
+        structure = builder.headerBlock.toJson()
+    }
+}
+infix fun User.create(builder: ItemBuilder): Block {
+    return createBlock(builder).apply {
+        structure = builder.headerBlock.toJson()
+    }
+}
+
 infix fun User.create(builder: TopicBuilder): Block {
     return createBlock(builder).apply {
         structure = builder.headerBlock.toJson()
@@ -135,6 +146,18 @@ class AppBuilder : BlockBuilder(BLOCK_LEADER_BOARD) {
 }
 
 fun App(create: AppBuilder.() -> Unit) = AppBuilder().apply(create)
+
+class MailBuilder : BlockBuilder(BLOCK_MESSAGE) {
+    lateinit var headerBlock: MailBlock
+}
+
+fun Mail(create: MailBuilder.() -> Unit) = MailBuilder().apply(create)
+
+class ItemBuilder : BlockBuilder(BLOCK_ITEM) {
+    lateinit var headerBlock: ItemBlock
+}
+
+fun Item(create: ItemBuilder.() -> Unit) = ItemBuilder().apply(create)
 
 class TopicBuilder : BlockBuilder(BLOCK_TOPIC) {
     var headerBlock: TopicBlock = TopicBlock()

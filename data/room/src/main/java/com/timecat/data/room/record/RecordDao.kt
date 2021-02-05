@@ -186,7 +186,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         DEF.block().putString(DEFAULT_CONVERSATION_UUID, defaultConversation.uuid)
 
         val examplePage = RoomRecord.forBlock(20200124, "示例之页")
-        examplePage.type = BLOCK_DIVIDER
+        examplePage.type = BLOCK_CONTAINER
         examplePage.subType = PAGE_Record
         examplePage.parent = defaultBook.uuid
         examplePage.content = "页示例。"
@@ -207,14 +207,14 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         insert(exampleBook2)
 
         val examplePage2 = RoomRecord.forBlock(202001242, "示例之页")
-        examplePage2.type = BLOCK_DIVIDER
+        examplePage2.type = BLOCK_CONTAINER
         examplePage2.subType = PAGE_Record
         examplePage2.parent = exampleBook.uuid
         examplePage2.content = "页示例。"
         insert(examplePage2)
 
         val examplePage3 = RoomRecord.forBlock(202001243, "示例之页")
-        examplePage3.type = BLOCK_DIVIDER
+        examplePage3.type = BLOCK_CONTAINER
         examplePage3.subType = PAGE_Record
         examplePage3.parent = exampleBook2.uuid
         examplePage3.content = "页示例。"
@@ -541,10 +541,10 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     //endregion
 
     //region BLOCK_BOOK, BLOCK_PAGE
-    @Query("SELECT * FROM records WHERE type = $BLOCK_DIVIDER AND parent = :bookUuid ORDER BY createTime LIMIT $LIST_SIZE")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND parent = :bookUuid ORDER BY createTime LIMIT $LIST_SIZE")
     abstract fun getAll_BLOCK_PAGE(bookUuid: String): MutableList<RoomRecord>
 
-    @Query("SELECT * FROM records WHERE (type = $BLOCK_DIVIDER OR type = $BLOCK_RECORD) AND parent = :bookUuid AND (status & $TASK_DELETE) = 0 ORDER BY createTime LIMIT $LIST_SIZE")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND parent = :bookUuid AND (status & $TASK_DELETE) = 0 ORDER BY createTime LIMIT $LIST_SIZE")
     abstract fun getAllForBook_BLOCK_PAGE(bookUuid: String): MutableList<RoomRecord>
 
     @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER ORDER BY createTime LIMIT $LIST_SIZE")
@@ -628,7 +628,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER ORDER BY `order` DESC")
     abstract fun getAllBook(): MutableList<RoomRecord>
 
-    @Query("SELECT * FROM records WHERE type = $BLOCK_DIVIDER ORDER BY `order` DESC")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER ORDER BY `order` DESC")
     abstract fun getAllPage(): MutableList<RoomRecord>
 
     @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND (status & :status != 0)")
