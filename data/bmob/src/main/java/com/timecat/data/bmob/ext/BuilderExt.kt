@@ -85,6 +85,16 @@ infix fun User.create(builder: ItemBuilder): Block {
         structure = builder.headerBlock.toJson()
     }
 }
+infix fun User.create(builder: ActivityBuilder): Block {
+    return createBlock(builder).apply {
+        structure = builder.headerBlock.toJson()
+    }
+}
+infix fun User.create(builder: TaskBuilder): Block {
+    return createBlock(builder).apply {
+        structure = builder.headerBlock.toJson()
+    }
+}
 
 infix fun User.create(builder: TopicBuilder): Block {
     return createBlock(builder).apply {
@@ -158,6 +168,18 @@ class ItemBuilder : BlockBuilder(BLOCK_ITEM) {
 }
 
 fun Item(create: ItemBuilder.() -> Unit) = ItemBuilder().apply(create)
+
+class ActivityBuilder : BlockBuilder(BLOCK_ACTIVITY) {
+    lateinit var headerBlock: ActivityBlock
+}
+
+fun Activity(create: ActivityBuilder.() -> Unit) = ActivityBuilder().apply(create)
+
+class TaskBuilder : BlockBuilder(BLOCK_TASK) {
+    lateinit var headerBlock: TaskBlock
+}
+
+fun Task(create: TaskBuilder.() -> Unit) = TaskBuilder().apply(create)
 
 class TopicBuilder : BlockBuilder(BLOCK_TOPIC) {
     var headerBlock: TopicBlock = TopicBlock()

@@ -5,8 +5,10 @@ import cn.leancloud.AVQuery
 import cn.leancloud.search.AVSearchQuery
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.*
-import com.timecat.data.bmob.data.game.agent.OwnCube
-import com.timecat.data.bmob.data.game.item.OwnItem
+import com.timecat.data.bmob.data.game.OwnActivity
+import com.timecat.data.bmob.data.game.OwnCube
+import com.timecat.data.bmob.data.game.OwnItem
+import com.timecat.data.bmob.data.game.OwnTask
 import com.timecat.data.bmob.data.mail.OwnMail
 import com.timecat.data.bmob.ext.toDataError
 import io.reactivex.disposables.Disposable
@@ -62,6 +64,8 @@ fun requestBlockRelation(create: RequestList<Block2Block>.() -> Unit) = requestL
 fun requestInterAction(create: RequestList<InterAction>.() -> Unit) = requestList(create)
 fun requestOwnItem(create: RequestList<OwnItem>.() -> Unit) = requestList(create)
 fun requestOwnCube(create: RequestList<OwnCube>.() -> Unit) = requestList(create)
+fun requestOwnActivity(create: RequestList<OwnActivity>.() -> Unit) = requestList(create)
+fun requestOwnTask(create: RequestList<OwnTask>.() -> Unit) = requestList(create)
 
 fun requestOneUser(create: RequestSingle<User>.() -> Unit) = requestOne(create)
 fun requestOneBlock(create: RequestSingle<Block>.() -> Unit) = requestOne(create)
@@ -72,6 +76,8 @@ fun requestOneBlockRelation(create: RequestSingle<Block2Block>.() -> Unit) = req
 fun requestOneInterAction(create: RequestSingle<InterAction>.() -> Unit) = requestOne(create)
 fun requestOneOwnItem(create: RequestSingle<OwnItem>.() -> Unit) = requestOne(create)
 fun requestOneOwnCube(create: RequestSingle<OwnCube>.() -> Unit) = requestOne(create)
+fun requestOneOwnActivity(create: RequestSingle<OwnActivity>.() -> Unit) = requestOne(create)
+fun requestOneOwnTask(create: RequestSingle<OwnTask>.() -> Unit) = requestOne(create)
 //endregion
 
 //region 是否存在

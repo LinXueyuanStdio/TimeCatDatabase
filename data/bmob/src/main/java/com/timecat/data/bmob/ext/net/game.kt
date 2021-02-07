@@ -2,8 +2,10 @@ package com.timecat.data.bmob.ext.net
 
 import cn.leancloud.AVQuery
 import com.timecat.data.bmob.data.User
-import com.timecat.data.bmob.data.game.agent.OwnCube
-import com.timecat.data.bmob.data.game.item.OwnItem
+import com.timecat.data.bmob.data.game.OwnActivity
+import com.timecat.data.bmob.data.game.OwnCube
+import com.timecat.data.bmob.data.game.OwnItem
+import com.timecat.data.bmob.data.game.OwnTask
 import com.timecat.data.bmob.data.mail.OwnMail
 
 /**
@@ -35,6 +37,24 @@ fun User.allOwnItem() = AVQuery<OwnItem>("OwnItem").apply {
 
 fun User.allOwnMail(): AVQuery<OwnMail> {
     val q = AVQuery<OwnMail>("OwnMail")
+    q.whereEqualTo("user", this)
+    q.include("user")
+    q.include("block")
+    q.order("-createdAt")
+    return q
+}
+
+fun User.allOwnActivity(): AVQuery<OwnActivity> {//TODO
+    val q = AVQuery<OwnActivity>("OwnActivity")
+    q.whereEqualTo("user", this)
+    q.include("user")
+    q.include("block")
+    q.order("-createdAt")
+    return q
+}
+
+fun User.allOwnTask(): AVQuery<OwnTask> {//TODO
+    val q = AVQuery<OwnTask>("OwnTask")
     q.whereEqualTo("user", this)
     q.include("user")
     q.include("block")

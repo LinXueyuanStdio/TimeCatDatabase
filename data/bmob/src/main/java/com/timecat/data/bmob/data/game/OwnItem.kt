@@ -1,4 +1,4 @@
-package com.timecat.data.bmob.data.game.item
+package com.timecat.data.bmob.data.game
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -7,10 +7,6 @@ import cn.leancloud.Transformer
 import cn.leancloud.annotation.AVClassName
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
-import com.timecat.identity.data.block.type.BLOCK_APP
-import com.timecat.identity.data.block.type.BLOCK_COMMENT
-import com.timecat.identity.data.block.type.BLOCK_MOMENT
-import com.timecat.identity.data.block.type.BLOCK_POST
 import java.io.Serializable
 
 /**

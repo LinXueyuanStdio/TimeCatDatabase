@@ -12,8 +12,8 @@ import com.timecat.data.bmob.data.common.Block;
 import com.timecat.data.bmob.data.common.Block2Block;
 import com.timecat.data.bmob.data.common.InterAction;
 import com.timecat.data.bmob.data.common.User2User;
-import com.timecat.data.bmob.data.game.agent.OwnCube;
-import com.timecat.data.bmob.data.game.item.OwnItem;
+import com.timecat.data.bmob.data.game.OwnCube;
+import com.timecat.data.bmob.data.game.OwnItem;
 import com.timecat.data.bmob.data.mail.OwnMail;
 
 import java.util.List;

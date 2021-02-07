@@ -1,4 +1,4 @@
-package com.timecat.data.bmob.data.game.agent
+package com.timecat.data.bmob.data.game
 
 import cn.leancloud.AVObject
 import cn.leancloud.annotation.AVClassName

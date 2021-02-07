@@ -69,7 +69,8 @@ fun allEquipItem() = allItem().apply {
 fun allBuffItem() = allItem().apply {
     whereEqualTo("subtype", ITEM_Buff)
 }
-
+fun allActivity() = allBlockByType(BLOCK_ACTIVITY)
+fun allTask() = allBlockByType(BLOCK_TASK)
 
 fun allLeaderBoard() = allBlockByType(BLOCK_LEADER_BOARD)
 
