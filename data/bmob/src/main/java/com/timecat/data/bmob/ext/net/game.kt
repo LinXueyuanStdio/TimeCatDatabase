@@ -57,7 +57,8 @@ fun User.allOwnTask(): AVQuery<OwnTask> {//TODO
     val q = AVQuery<OwnTask>("OwnTask")
     q.whereEqualTo("user", this)
     q.include("user")
-    q.include("block")
+    q.include("activity")
+    q.include("task")
     q.order("-createdAt")
     return q
 }

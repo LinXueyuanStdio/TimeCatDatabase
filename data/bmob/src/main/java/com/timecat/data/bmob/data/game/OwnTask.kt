@@ -19,8 +19,9 @@ import java.io.Serializable
 @AVClassName("OwnTask")
 class OwnTask(
     user: User,
-    item: Block,
-    count: Int = 0,
+    activity: Block,
+    task: Block,
+    receive: Boolean = false,
 ) : AVObject("OwnTask"), Parcelable, Serializable {
 
     var user: User
@@ -28,23 +29,29 @@ class OwnTask(
         set(value) {
             put("user", value)
         }
-    var item: Block
-        get() = getAVObject("item")
+    var activity: Block
+        get() = getAVObject("activity")
         set(value) {
-            put("item", value)
+            put("activity", value)
         }
-    var count: Int
-        get() = getInt("count")
+    var task: Block
+        get() = getAVObject("task")
         set(value) {
-            put("count", value)
+            put("task", value)
+        }
+    var receive: Boolean
+        get() = getBoolean("receive")
+        set(value) {
+            put("receive", value)
         }
 
     init {
         this.user = user
-        this.item = item
-        this.count = count
+        this.activity = activity
+        this.task = task
+        this.receive = receive
     }
-    constructor() : this(User(), Block())
+    constructor() : this(User(), Block(), Block())
 
     //region Parcelable
     override fun describeContents(): Int {
