@@ -70,13 +70,6 @@ class User() : AVUser(), Parcelable {
         }
 
     //游戏化
-    //等级
-    var level: Int
-        get() = getInt("level")
-        set(value) {
-            put("level", value)
-        }
-
     //经验
     var exp: Long
         get() = getLong("exp")
