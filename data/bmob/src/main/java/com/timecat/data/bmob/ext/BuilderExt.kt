@@ -20,15 +20,12 @@ class UserBlockPack(
     var block: Block
 ) {
     fun build(b: BlockBuilder): Block {
-        return Block(
-            user,
-            type = b.type,
-            subtype = b.subtype,
-            parent = block
-        ).apply {
-            title = b.title
-            content = b.content
-            className = b.tableName
+        return Block.forName(user, b.type).apply {
+            this.subtype = b.subtype
+            this.parent = block
+            this.title = b.title
+            this.content = b.content
+            this.className = b.tableName
         }
     }
 }
@@ -46,14 +43,13 @@ infix fun UserBlockPack.with(builder: PostBuilder): Block {
 
 //region 创建一个顶级块，和其他块无关
 infix fun User.createBlock(builder: BlockBuilder): Block {
-    return Block(
-        this,
-        type = builder.type,
-        subtype = builder.subtype,
-        title = builder.title,
-        content = builder.content
-    ).apply {
-        className = builder.tableName
+    return Block.forName(this, builder.type).apply {
+        this.user = this@createBlock
+       this.type = builder.type
+       this.subtype = builder.subtype
+       this.title = builder.title
+       this.content = builder.content
+       this.className = builder.tableName
     }
 }
 

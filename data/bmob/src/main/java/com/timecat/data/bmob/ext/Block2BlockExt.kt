@@ -19,7 +19,14 @@ fun relation(
     source: Block,
     target: Block,
     @Block2BlockType type: Int
-) = Block2Block(author, source, target, type, "", 0)
+) = Block2Block().apply {
+    this.user = author
+    this.from = source
+    this.to = target
+    this.type = type
+    this.structure = ""
+    this.status = 0
+}
 
 infix fun User.let_Identity_has_role(identity_to_role: Pair<Block, Block>): Block2Block {
     return relation(this, identity_to_role.first, identity_to_role.second, Block2Block_Identity_has_role)

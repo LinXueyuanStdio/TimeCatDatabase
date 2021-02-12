@@ -40,22 +40,25 @@ class OwnCube(
         set(value) {
             put("cube", value)
         }
-
+    //经验
     var exp: Long
         get() = getLong("exp")
         set(value) {
             put("exp", value)
         }
+    //等级
     var level: Int
         get() = getInt("level")
         set(value) {
             put("level", value)
         }
+    //星级
     var star: Int
         get() = getInt("star")
         set(value) {
             put("star", value)
         }
+    //技能的开启状态
     var skill: Int
         get() = getInt("skill")
         set(value) {
@@ -66,31 +69,37 @@ class OwnCube(
         set(value) {
             put("structure", value)
         }
+    //装备
     var equipment_1: Block?
         get() = getAVObject("equipment_1")
         set(value) {
             put("equipment_1", value)
         }
+    //装备
     var equipment_2: Block?
         get() = getAVObject("equipment_2")
         set(value) {
             put("equipment_2", value)
         }
+    //装备
     var equipment_3: Block?
         get() = getAVObject("equipment_3")
         set(value) {
             put("equipment_3", value)
         }
+    //装备
     var equipment_4: Block?
         get() = getAVObject("equipment_4")
         set(value) {
             put("equipment_4", value)
         }
+    //装备
     var equipment_5: Block?
         get() = getAVObject("equipment_5")
         set(value) {
             put("equipment_5", value)
         }
+    //装备
     var equipment_6: Block?
         get() = getAVObject("equipment_6")
         set(value) {
@@ -112,6 +121,5 @@ class OwnCube(
         this.equipment_6 = equipment_6
     }
     //endregion
-    constructor() : this(User(), Block())
 
 }

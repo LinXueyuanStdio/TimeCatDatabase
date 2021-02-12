@@ -19,12 +19,7 @@ import java.io.Serializable
  * @usage null
  */
 @AVClassName("OwnActivity")
-class OwnActivity(
-    user: User,
-    activity: Block,
-    activeTime: AVDate = AVDate(DateTime().toString(AVDate.DEFAULT_FORMAT)),
-    expireTime: AVDate = AVDate(DateTime().toString(AVDate.DEFAULT_FORMAT)),
-) : AVObject("OwnActivity"), Parcelable, Serializable {
+class OwnActivity : AVObject("OwnActivity"), Parcelable, Serializable {
 
     var activeDateTime: DateTime
         get() = DateTime(activeTime.date)
@@ -56,14 +51,6 @@ class OwnActivity(
         set(value) {
             put("expireTime", value)
         }
-
-    init {
-        this.user = user
-        this.activity = activity
-        this.activeTime = activeTime
-        this.expireTime = expireTime
-    }
-    constructor() : this(User(), Block())
 
     //region Parcelable
     override fun describeContents(): Int {

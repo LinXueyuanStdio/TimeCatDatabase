@@ -16,15 +16,7 @@ import java.io.Serializable
  *   status 因 type 的不同而不同，很多都有 delete 状态
  */
 @AVClassName("Action")
-class Action(
-    user: User,
-    block: Block,
-    @ActionType
-    type: Int = 0,
-    structure: String = "",
-    status: Long = 0
-    //var like: Int, // 动作的点赞数0，如坚持打卡的点赞数
-) : AVObject("Action"), Serializable {
+class Action : AVObject("Action"), Serializable {
     //region field
     var user: User
         get() = User.transform(getAVObject("user"))
@@ -53,15 +45,6 @@ class Action(
         set(value) {
             put("status", value)
         }
-
-    init {
-        this.user = user
-        this.block = block
-        this.type = type
-        this.structure = structure
-        this.status = status
-    }
-    constructor() : this(User(), Block())
     //endregion
 
 }

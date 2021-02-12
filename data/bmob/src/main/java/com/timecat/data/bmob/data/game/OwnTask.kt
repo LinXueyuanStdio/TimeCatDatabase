@@ -17,12 +17,7 @@ import java.io.Serializable
  * @usage null
  */
 @AVClassName("OwnTask")
-class OwnTask(
-    user: User,
-    activity: Block,
-    task: Block,
-    receive: Boolean = false,
-) : AVObject("OwnTask"), Parcelable, Serializable {
+class OwnTask : AVObject("OwnTask"), Parcelable, Serializable {
 
     var user: User
         get() = User.transform(getAVObject("user"))
@@ -44,14 +39,6 @@ class OwnTask(
         set(value) {
             put("receive", value)
         }
-
-    init {
-        this.user = user
-        this.activity = activity
-        this.task = task
-        this.receive = receive
-    }
-    constructor() : this(User(), Block(), Block())
 
     //region Parcelable
     override fun describeContents(): Int {

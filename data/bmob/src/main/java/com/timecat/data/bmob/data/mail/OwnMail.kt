@@ -17,11 +17,7 @@ import java.io.Serializable
  * @usage null
  */
 @AVClassName("OwnMail")
-class OwnMail(
-    user: User,
-    mail: Block,
-    receive: Boolean = false,
-) : AVObject("OwnMail"), Parcelable, Serializable {
+class OwnMail: AVObject("OwnMail"), Parcelable, Serializable {
 
     var user: User
         get() = User.transform(getAVObject("user"))
@@ -38,14 +34,6 @@ class OwnMail(
         set(value) {
             put("receive", value)
         }
-
-    init {
-        this.user = user
-        this.mail = mail
-        this.receive = receive
-    }
-
-    constructor() : this(User(), Block())
 
     //region Parcelable
     override fun describeContents(): Int {

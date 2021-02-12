@@ -118,22 +118,12 @@ class User() : AVUser(), Parcelable {
         set(value) {
             put("charge", value)
         }
-
-    init {
-        this.headPortrait = null
-        this.coverPage = null
-        this.intro = "剑光纵横三万里，一剑光寒十九州"
-        this.nickName = "薛定谔的喵"
-        this.gender = ""
-        this.address = ""
-        this.level = 0
-        this.exp = 0
-        this.star = 0
-        this.water = 0
-        this.lastSettleTime = Date()
-        this.currency = 0
-        this.charge = 0
-    }
+    //充值货币
+    var moneyCharge: Long
+        get() = getLong("moneyCharge")
+        set(value) {
+            put("moneyCharge", value)
+        }
 
     constructor(objId: String?) : this() {
         setObjectId(objId)

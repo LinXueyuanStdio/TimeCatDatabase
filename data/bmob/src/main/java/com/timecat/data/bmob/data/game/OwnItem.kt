@@ -17,11 +17,7 @@ import java.io.Serializable
  * @usage null
  */
 @AVClassName("OwnItem")
-class OwnItem(
-    user: User,
-    item: Block,
-    count: Int = 0,
-) : AVObject("OwnItem"), Parcelable, Serializable {
+class OwnItem: AVObject("OwnItem"), Parcelable, Serializable {
 
     var user: User
         get() = User.transform(getAVObject("user"))
@@ -38,13 +34,6 @@ class OwnItem(
         set(value) {
             put("count", value)
         }
-
-    init {
-        this.user = user
-        this.item = item
-        this.count = count
-    }
-    constructor() : this(User(), Block())
 
     //region Parcelable
     override fun describeContents(): Int {

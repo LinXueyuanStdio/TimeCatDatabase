@@ -4,6 +4,7 @@ import cn.leancloud.AVObject
 import com.jess.arms.utils.LogUtils
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.*
+import com.timecat.data.bmob.data.mail.OwnMail
 import com.timecat.data.bmob.ext.toDataError
 import io.reactivex.disposables.Disposable
 
@@ -59,6 +60,7 @@ fun deleteUser(create: Deleter<User>.() -> Unit) = delete(create)
 fun deleteUserRelation(create: Deleter<User2User>.() -> Unit) = delete(create)
 fun deleteAction(create: Deleter<Action>.() -> Unit) = delete(create)
 fun deleteInterAction(create: Deleter<InterAction>.() -> Unit) = delete(create)
+fun deleteOwnMail(create: Deleter<OwnMail>.() -> Unit) = delete(create)
 fun <T : AVObject> delete(create: Deleter<T>.() -> Unit) = Deleter<T>().apply(create).also { it.build() }
 
 class Updater<T : AVObject> : Saver<T>()

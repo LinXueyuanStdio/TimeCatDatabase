@@ -13,7 +13,13 @@ import com.timecat.identity.data.action.ACTION_RECOMMEND
  * @description null
  * @usage null
  */
-fun action(user: User, block: Block, type: Int) = Action(user, block, type, "", 0)
+fun action(user: User, block: Block, type: Int) = Action().apply{
+    this.user=user
+    this.block=block
+    this.type=type
+    this.structure=""
+    this.status = 0
+}
 
 infix fun User.follow(target: Block): Action = action(this, target, ACTION_FOCUS)
 infix fun User.recommend(target: Block): Action = action(this, target, ACTION_RECOMMEND)

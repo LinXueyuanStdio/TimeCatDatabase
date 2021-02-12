@@ -6,6 +6,7 @@ import cn.leancloud.AVObject
 import cn.leancloud.Transformer
 import cn.leancloud.annotation.AVClassName
 import com.timecat.data.bmob.data.User
+import com.timecat.identity.data.action.ActionType
 import com.timecat.identity.data.base.IStatus
 import com.timecat.identity.data.block.type.*
 import org.joda.time.DateTime
@@ -20,46 +21,7 @@ import org.joda.time.DateTime
  *   status 因 type 的不同而不同 写在 TaskHeader 里查询不方便，因为很多都有 delete 状态
  */
 @AVClassName("Block")
-class Block(
-    user: User,
-    @BlockType
-    type: Int = 0,
-    subtype: Int = 0,
-
-    title: String = "",
-    content: String = "",
-
-    structure: String = "{}",
-    status: Long = 0,//不同类型 type 对 status 的解释不同
-    /**
-     * 点赞数
-     */
-    likes: Int = 0,
-    /**
-     * 评论数
-     */
-    comments: Int = 0,
-    /**
-     * 收藏数
-     */
-    stars: Int = 0,
-    /**
-     * 转发数
-     */
-    relays: Int = 0,
-    /**
-     * 关注数
-     */
-    followers: Int = 0,
-    /**
-     * 浏览量
-     */
-    usedBy: Int = 0, // 纯计数，单调递增 浏览量
-    /**
-     * Block 父节点
-     */
-    parent: Block? = null
-) : AVObject("Block"), Parcelable, IStatus {
+class Block : AVObject("Block"), Parcelable, IStatus {
 
     //region field
     var user: User
@@ -79,7 +41,7 @@ class Block(
             put("subtype", value)
         }
     var title: String
-        get() = getString("title")
+        get() = this.getString("title")
         set(value) {
             put("title", value)
         }
@@ -141,24 +103,6 @@ class Block(
             put("parent", value)
         }
 
-    init {
-        this.user = user
-        this.type = type
-        this.subtype = subtype
-        this.title = title
-        this.content = content
-        this.structure = structure
-        this.status = status
-        this.likes = likes
-        this.comments = comments
-        this.stars = stars
-        this.relays = relays
-        this.followers = followers
-        this.usedBy = usedBy
-        this.parent = parent
-    }
-
-    constructor() : this(User())
     //endregion
 
     fun isComment(): Boolean = type == BLOCK_COMMENT
@@ -222,7 +166,22 @@ class Block(
 
         @JvmOverloads
         fun forName(user: User, type: Int, name: String = ""): Block {
-            return Block(user, type, title = name, content = name)
+            return Block().apply {
+                this.user = user
+                this.type = type
+                this.title = name
+                this.content = name
+                this.subtype = 0
+                this.structure = "{}"
+                this.status = 0
+                this.likes = 0
+                this.comments = 0
+                this.stars = 0
+                this.relays = 0
+                this.followers = 0
+                this.usedBy = 0
+                this.parent = null
+            }
         }
 
         fun forMoment(user: User, content: String): Block {

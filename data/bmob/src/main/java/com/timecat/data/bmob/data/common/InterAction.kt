@@ -24,20 +24,7 @@ import java.io.Serializable
  *   status 因 type 的不同而不同，很多都有 delete 状态
  */
 @AVClassName("InterAction")
-class InterAction(
-    //动作发起者
-    user: User,
-    //分配块
-    block: Block,
-    //动作接收者
-    target: User,
-    @InterActionType
-    type: Int = 0,
-    activeTime: AVDate = AVDate(DateTime().toString(AVDate.DEFAULT_FORMAT)),
-    expireTime: AVDate = AVDate(DateTime().toString(AVDate.DEFAULT_FORMAT)),
-    structure: String = "",
-    status: Long = 0
-) : AVObject("InterAction"), Serializable {
+class InterAction : AVObject("InterAction"), Serializable {
 
     //region field
     var user: User
@@ -103,15 +90,5 @@ class InterAction(
         set(value) {
             expireTime = AVDate(value.toString(AVDate.DEFAULT_FORMAT))
         }
-
-    override fun toString(): String {
-        return "$objectId(type=$type, activeTime=$activeTime, expireTime=$expireTime, structure='$structure', status=$status\n" +
-            "         user=${user.objectId}, \n" +
-            "         block=$block" +
-            "         target=${target.objectId})\n"
-    }
-
-    constructor() : this(User(), Block(), User())
-
 }
 

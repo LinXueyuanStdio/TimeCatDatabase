@@ -13,16 +13,16 @@ import java.io.Serializable
  * @description 用户行为
  * @usage null
  */
-class Exec(
-    user: User,
-    @ExecType
-    type: Int = 0,
-    structure: String = "",
-    status: Long = 0
-) : AVObject("Exec"), Serializable {
+class Exec : AVObject("Exec"), Serializable {
     companion object {
         fun forRecommend(user: User): Exec {
-            return Exec(user, EXEC_Recommend)
+            return Exec().apply {
+                this.user = user
+                this.type = EXEC_Recommend
+                this.type = 0
+                this.structure = ""
+                this.status = 0
+            }
         }
     }
 

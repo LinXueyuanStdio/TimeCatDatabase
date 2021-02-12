@@ -30,16 +30,17 @@ fun User.allOwnCube() = AVQuery<OwnCube>("OwnCube").apply {
 
 fun User.allOwnItem() = AVQuery<OwnItem>("OwnItem").apply {
     whereEqualTo("user", this@allOwnItem)
-    order("-createdAt")
+    whereGreaterThan("count", 0)
     include("user")
     include("item")
+    order("-createdAt")
 }
 
 fun User.allOwnMail(): AVQuery<OwnMail> {
     val q = AVQuery<OwnMail>("OwnMail")
     q.whereEqualTo("user", this)
     q.include("user")
-    q.include("block")
+    q.include("mail")
     q.order("-createdAt")
     return q
 }
@@ -48,7 +49,7 @@ fun User.allOwnActivity(): AVQuery<OwnActivity> {//TODO
     val q = AVQuery<OwnActivity>("OwnActivity")
     q.whereEqualTo("user", this)
     q.include("user")
-    q.include("block")
+    q.include("activity")
     q.order("-createdAt")
     return q
 }
