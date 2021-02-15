@@ -5,10 +5,14 @@ import android.os.Parcelable
 import cn.leancloud.AVObject
 import cn.leancloud.Transformer
 import cn.leancloud.annotation.AVClassName
+import cn.leancloud.json.JSON
+import cn.leancloud.json.JSONObject
 import com.timecat.data.bmob.data.User
-import com.timecat.identity.data.action.ActionType
 import com.timecat.identity.data.base.IStatus
-import com.timecat.identity.data.block.type.*
+import com.timecat.identity.data.block.type.BLOCK_APP
+import com.timecat.identity.data.block.type.BLOCK_COMMENT
+import com.timecat.identity.data.block.type.BLOCK_MOMENT
+import com.timecat.identity.data.block.type.BLOCK_POST
 import org.joda.time.DateTime
 
 /**
@@ -52,7 +56,13 @@ class Block : AVObject("Block"), Parcelable, IStatus {
         }
 
     var structure: String
-        get() = getString("structure")
+        get() = struct.toString()
+        set(value) {
+            struct = JSON.parseObject(value)
+        }
+
+    var struct: JSONObject
+        get() = getJSONObject("structure")
         set(value) {
             put("structure", value)
         }
@@ -172,7 +182,7 @@ class Block : AVObject("Block"), Parcelable, IStatus {
                 this.title = name
                 this.content = name
                 this.subtype = 0
-                this.structure = "{}"
+                this.structure = JSONObject.Builder.create(mapOf()).toString()
                 this.status = 0
                 this.likes = 0
                 this.comments = 0

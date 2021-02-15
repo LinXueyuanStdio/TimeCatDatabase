@@ -2,6 +2,8 @@ package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
 import cn.leancloud.annotation.AVClassName
+import cn.leancloud.json.JSON
+import cn.leancloud.json.JSONObject
 import com.timecat.data.bmob.data.User
 import com.timecat.identity.data.action.ActionType
 import java.io.Serializable
@@ -36,7 +38,12 @@ class Action : AVObject("Action"), Serializable {
             put("type", value)
         }
     var structure: String
-        get() = getString("structure")
+        get() = struct.toString()
+        set(value) {
+            struct = JSON.parseObject(value)
+        }
+    var struct: JSONObject
+        get() = getJSONObject("structure")
         set(value) {
             put("structure", value)
         }

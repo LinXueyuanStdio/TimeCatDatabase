@@ -1,6 +1,8 @@
 package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
+import cn.leancloud.json.JSON
+import cn.leancloud.json.JSONObject
 import com.timecat.data.bmob.data.User
 import com.timecat.identity.data.exec.EXEC_Recommend
 import com.timecat.identity.data.exec.ExecType
@@ -20,7 +22,7 @@ class Exec : AVObject("Exec"), Serializable {
                 this.user = user
                 this.type = EXEC_Recommend
                 this.type = 0
-                this.structure = ""
+                this.structure = JSONObject.Builder.create(mapOf()).toString()
                 this.status = 0
             }
         }
@@ -38,7 +40,12 @@ class Exec : AVObject("Exec"), Serializable {
             put("type", value)
         }
     var structure: String
-        get() = getString("structure")
+        get() = struct.toString()
+        set(value) {
+            struct = JSON.parseObject(value)
+        }
+    var struct: JSONObject
+        get() = getJSONObject("structure")
         set(value) {
             put("structure", value)
         }
@@ -47,16 +54,5 @@ class Exec : AVObject("Exec"), Serializable {
         set(value) {
             put("status", value)
         }
-
-    init {
-        this.user = user
-        this.type = type
-        this.structure = structure
-        this.status = status
-    }
     //endregion
-
-    override fun toString(): String {
-        return "${user.objectId} : $type, $status : $structure"
-    }
 }

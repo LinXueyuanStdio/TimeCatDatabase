@@ -2,6 +2,8 @@ package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
 import cn.leancloud.annotation.AVClassName
+import cn.leancloud.json.JSON
+import cn.leancloud.json.JSONObject
 import cn.leancloud.types.AVDate
 import com.timecat.data.bmob.data.User
 import com.timecat.identity.data.action.InterActionType
@@ -58,7 +60,12 @@ class InterAction : AVObject("InterAction"), Serializable {
             put("expireTime", value)
         }
     var structure: String
-        get() = getString("structure")
+        get() = struct.toString()
+        set(value) {
+            struct = JSON.parseObject(value)
+        }
+    var struct: JSONObject
+        get() = getJSONObject("structure")
         set(value) {
             put("structure", value)
         }
@@ -67,17 +74,6 @@ class InterAction : AVObject("InterAction"), Serializable {
         set(value) {
             put("status", value)
         }
-
-    init {
-        this.user = user
-        this.block = block
-        this.target = target
-        this.type = type
-        this.activeTime = activeTime
-        this.expireTime = expireTime
-        this.structure = structure
-        this.status = status
-    }
     //endregion
 
     var activeDateTime: DateTime

@@ -6,7 +6,7 @@ import java.util.Random;
  * @author dlink
  * @email linxy59@mail2.sysu.edu.cn
  * @date 2019/1/31
- * @description null
+ * @description 兑换码
  * @usage null
  */
 public class MiaoKey {

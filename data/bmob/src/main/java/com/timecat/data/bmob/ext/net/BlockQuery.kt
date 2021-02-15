@@ -49,6 +49,7 @@ fun allPluginApp() = allApp().apply {
     whereEqualTo("subtype", APP_Plugin)
 }
 
+fun allCube() = allIdentity()
 fun allItem() = allBlockByType(BLOCK_ITEM)
 fun allThingItem() = allItem().apply {
     whereEqualTo("subtype", ITEM_Thing)

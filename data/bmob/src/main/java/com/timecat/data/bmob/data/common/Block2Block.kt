@@ -2,6 +2,8 @@ package com.timecat.data.bmob.data.common
 
 import cn.leancloud.AVObject
 import cn.leancloud.annotation.AVClassName
+import cn.leancloud.json.JSON
+import cn.leancloud.json.JSONObject
 import com.timecat.data.bmob.data.User
 import java.io.Serializable
 
@@ -37,7 +39,12 @@ class Block2Block : AVObject("Block2Block"), Serializable {
             put("type", value)
         }
     var structure: String
-        get() = getString("structure")
+        get() = struct.toString()
+        set(value) {
+            struct = JSON.parseObject(value)
+        }
+    var struct: JSONObject
+        get() = getJSONObject("structure")
         set(value) {
             put("structure", value)
         }
@@ -46,15 +53,6 @@ class Block2Block : AVObject("Block2Block"), Serializable {
         set(value) {
             put("status", value)
         }
-
-    init {
-        this.user = user
-        this.from = from
-        this.to = to
-        this.type = type
-        this.structure = structure
-        this.status = status
-    }
     //endregion
 }
 

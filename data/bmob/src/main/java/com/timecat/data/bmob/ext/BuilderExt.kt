@@ -44,12 +44,11 @@ infix fun UserBlockPack.with(builder: PostBuilder): Block {
 //region 创建一个顶级块，和其他块无关
 infix fun User.createBlock(builder: BlockBuilder): Block {
     return Block.forName(this, builder.type).apply {
-        this.user = this@createBlock
-       this.type = builder.type
-       this.subtype = builder.subtype
-       this.title = builder.title
-       this.content = builder.content
-       this.className = builder.tableName
+        this.subtype = builder.subtype
+        this.title = builder.title
+        this.content = builder.content
+        this.className = builder.tableName
+        this.parent = builder.parent
     }
 }
 
@@ -76,16 +75,19 @@ infix fun User.create(builder: MailBuilder): Block {
         structure = builder.headerBlock.toJson()
     }
 }
+
 infix fun User.create(builder: ItemBuilder): Block {
     return createBlock(builder).apply {
         structure = builder.headerBlock.toJson()
     }
 }
+
 infix fun User.create(builder: ActivityBuilder): Block {
     return createBlock(builder).apply {
         structure = builder.headerBlock.toJson()
     }
 }
+
 infix fun User.create(builder: TaskBuilder): Block {
     return createBlock(builder).apply {
         structure = builder.headerBlock.toJson()
@@ -115,6 +117,24 @@ infix fun User.create(builder: RoleBuilder): Block {
 infix fun User.create(builder: IdentityBuilder): Block {
     return createBlock(builder)
 }
+
+infix fun User.create(builder: CommentBuilder): Block {
+    return createBlock(builder).apply {
+        structure = builder.headerBlock.toJson()
+    }
+}
+
+infix fun User.create(builder: PostBuilder): Block {
+    return createBlock(builder).apply {
+        structure = builder.headerBlock.toJson()
+    }
+}
+
+infix fun User.create(builder: MomentBuilder): Block {
+    return createBlock(builder).apply {
+        structure = builder.headerBlock.toJson()
+    }
+}
 //endregion
 
 //region BlockBuilder
@@ -125,15 +145,26 @@ abstract class BlockBuilder(
 ) {
     var title: String = ""
     var content: String = ""
+    var parent: Block? = null
 }
 
-class CommentBuilder : BlockBuilder(BLOCK_COMMENT)
+class CommentBuilder : BlockBuilder(BLOCK_COMMENT) {
+    lateinit var headerBlock: CommentBlock
+}
 
 fun Comment(create: CommentBuilder.() -> Unit) = CommentBuilder().apply(create)
 
-class PostBuilder : BlockBuilder(BLOCK_POST)
+class PostBuilder : BlockBuilder(BLOCK_POST) {
+    lateinit var headerBlock: PostBlock
+}
 
 fun Post(create: PostBuilder.() -> Unit) = PostBuilder().apply(create)
+
+class MomentBuilder : BlockBuilder(BLOCK_MOMENT) {
+    lateinit var headerBlock: MomentBlock
+}
+
+fun Moment(create: MomentBuilder.() -> Unit) = MomentBuilder().apply(create)
 
 class ForumBuilder : BlockBuilder(BLOCK_FORUM) {
     var headerBlock: ForumBlock = ForumBlock()

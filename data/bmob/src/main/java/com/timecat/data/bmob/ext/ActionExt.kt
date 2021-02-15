@@ -13,11 +13,11 @@ import com.timecat.identity.data.action.ACTION_RECOMMEND
  * @description null
  * @usage null
  */
-fun action(user: User, block: Block, type: Int) = Action().apply{
-    this.user=user
-    this.block=block
-    this.type=type
-    this.structure=""
+fun action(user: User, block: Block, type: Int) = Action().apply {
+    this.user = user
+    this.block = block
+    this.type = type
+    this.structure = ""
     this.status = 0
 }
 
