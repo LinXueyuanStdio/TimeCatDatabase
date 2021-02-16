@@ -8,13 +8,14 @@ package com.timecat.data.bmob.ext.game
  * @usage null
  */
 
-const val WHERE_UserExp = "user/exp"
-const val WHERE_UserWater = "user/water"
-const val WHERE_UserCharge = "user/charge"
-const val WHERE_UserCurrency = "user/currency"
-const val WHERE_UserStar = "user/star"
-const val WHERE_CubeExp = "cube/exp"
-const val WHERE_CubeStar = "cube/star"
+const val WHERE_UserExp = "_User.exp"
+const val WHERE_UserWater = "_User.water"
+const val WHERE_UserCharge = "_User.charge"
+const val WHERE_UserMoneyCharge = "_User.moneyCharge"
+const val WHERE_UserCurrency = "_User.currency"
+const val WHERE_UserStar = "_User.star"
+const val WHERE_CubeExp = "OwnCube.exp"
+const val WHERE_CubeStar = "OwnCube.star"
 const val WHERE_EquipExp = "equip/exp"
 const val WHERE_EquipStar = "equip/star"
 
@@ -23,6 +24,7 @@ fun allTaskRules(): List<String> {
         WHERE_UserExp,
         WHERE_UserWater,
         WHERE_UserCharge,
+        WHERE_UserMoneyCharge,
         WHERE_UserCurrency,
         WHERE_UserStar,
         WHERE_CubeExp,

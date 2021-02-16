@@ -1,6 +1,7 @@
 package com.timecat.data.bmob.ext.net
 
 import cn.leancloud.AVQuery
+import cn.leancloud.AVUser
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
 
@@ -11,7 +12,7 @@ import com.timecat.data.bmob.data.common.Block
  * @description null
  * @usage null
  */
-fun allUsers(query: String? = null) = AVQuery<User>("_User").apply {
+fun allUsers(query: String? = null) = AVQuery<AVUser>("_User").apply {
     order("-createdAt")
 }
 

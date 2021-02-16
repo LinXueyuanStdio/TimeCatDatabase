@@ -184,7 +184,7 @@ class AppBuilder : BlockBuilder(BLOCK_LEADER_BOARD) {
 
 fun App(create: AppBuilder.() -> Unit) = AppBuilder().apply(create)
 
-class MailBuilder : BlockBuilder(BLOCK_MESSAGE) {
+class MailBuilder : BlockBuilder(BLOCK_MAIL) {
     lateinit var headerBlock: MailBlock
 }
 

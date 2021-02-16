@@ -50,6 +50,8 @@ fun allPluginApp() = allApp().apply {
 }
 
 fun allCube() = allIdentity()
+fun allMessage() = allBlockByType(BLOCK_MESSAGE)
+fun allMail() = allBlockByType(BLOCK_MAIL)
 fun allItem() = allBlockByType(BLOCK_ITEM)
 fun allThingItem() = allItem().apply {
     whereEqualTo("subtype", ITEM_Thing)

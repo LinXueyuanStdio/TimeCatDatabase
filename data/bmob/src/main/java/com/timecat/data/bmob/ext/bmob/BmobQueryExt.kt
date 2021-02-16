@@ -2,6 +2,7 @@ package com.timecat.data.bmob.ext.bmob
 
 import cn.leancloud.AVObject
 import cn.leancloud.AVQuery
+import cn.leancloud.AVUser
 import cn.leancloud.search.AVSearchQuery
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.*
@@ -21,8 +22,8 @@ import io.reactivex.disposables.Disposable
  * @usage null
  */
 //region 请求实体
-fun <T : AVObject> requestList(create: RequestList<T>.() -> Unit) = RequestList<T>().apply(create).also { it.build() }
-fun <T : AVObject> requestOne(create: RequestSingle<T>.() -> Unit) = RequestSingle<T>().apply(create).also { it.build() }
+fun <T : AVObject> requestList(create: RequestList<T>.() -> Unit) = RequestList<T>().apply(create).build()
+fun <T : AVObject> requestOne(create: RequestSingle<T>.() -> Unit) = RequestSingle<T>().apply(create).build()
 
 class RequestList<T : AVObject> : RequestListCallback<T>() {
     lateinit var query: AVQuery<T>
@@ -55,7 +56,7 @@ class RequestSingle<T : AVObject> : RequestSingleCallback<T>() {
     }
 }
 
-fun requestUser(create: RequestList<User>.() -> Unit) = requestList(create)
+fun requestUser(create: RequestList<AVUser>.() -> Unit) = requestList(create)
 fun requestBlock(create: RequestList<Block>.() -> Unit) = requestList(create)
 fun requestAction(create: RequestList<Action>.() -> Unit) = requestList(create)
 fun requestOwnMail(create: RequestList<OwnMail>.() -> Unit) = requestList(create)
@@ -81,7 +82,7 @@ fun requestOneOwnTask(create: RequestSingle<OwnTask>.() -> Unit) = requestOne(cr
 //endregion
 
 //region 是否存在
-fun <T : AVObject> requestExist(create: RequestExist<T>.() -> Unit) = RequestExist<T>().apply(create).also { it.build() }
+fun <T : AVObject> requestExist(create: RequestExist<T>.() -> Unit) = RequestExist<T>().apply(create).build()
 class RequestExist<T : AVObject> : SimpleRequestCallback<Boolean>() {
     lateinit var query: AVQuery<T>
     fun build(): Disposable {
@@ -104,7 +105,7 @@ fun requestExistUser(create: RequestExist<User>.() -> Unit) = requestExist(creat
 //endregion
 
 //region 请求个数
-fun <T : AVObject> requestCount(create: RequestCount<T>.() -> Unit) = RequestCount<T>().apply(create).also { it.build() }
+fun <T : AVObject> requestCount(create: RequestCount<T>.() -> Unit) = RequestCount<T>().apply(create).build()
 
 class RequestCount<T : AVObject> : SimpleRequestCallback<Int>() {
     lateinit var query: AVQuery<T>
@@ -123,10 +124,10 @@ fun requestUserRelationCount(create: RequestCount<User2User>.() -> Unit) = reque
 //endregion
 
 //region 搜索
-fun <T : AVObject> searchList(create: SearchList<T>.() -> Unit) = SearchList<T>().apply(create).also { it.build() }
+fun searchList(create: SearchList.() -> Unit) = SearchList().apply(create).build()
 
-class SearchList<T : AVObject> : RequestListCallback<T>() {
-    lateinit var query: AVSearchQuery<T>
+class SearchList : RequestListCallback<AVObject>() {
+    lateinit var query: AVSearchQuery<AVObject>
     fun build(): Disposable {
         return query.findInBackground()
             .subscribe({
@@ -141,9 +142,13 @@ class SearchList<T : AVObject> : RequestListCallback<T>() {
     }
 }
 
-fun searchUser(create: SearchList<User>.() -> Unit) = searchList(create)
-fun searchBlock(create: SearchList<Block>.() -> Unit) = searchList(create)
+fun searchUser(create: SearchList.() -> Unit) = searchList(create)
+fun searchBlock(create: SearchList.() -> Unit) = searchList(create)
 
-fun userQuery(q: String?) = AVSearchQuery<User>(q)
-fun blockQuery(q: String?) = AVSearchQuery<Block>(q)
+fun userQuery(q: String?) = AVSearchQuery<AVObject>(q).apply {
+    className = "_User"
+}
+fun blockQuery(q: String?) = AVSearchQuery<AVObject>(q).apply {
+    className = "Block"
+}
 //endregion

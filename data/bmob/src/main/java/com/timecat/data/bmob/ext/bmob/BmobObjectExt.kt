@@ -4,6 +4,10 @@ import cn.leancloud.AVObject
 import com.jess.arms.utils.LogUtils
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.*
+import com.timecat.data.bmob.data.game.OwnActivity
+import com.timecat.data.bmob.data.game.OwnCube
+import com.timecat.data.bmob.data.game.OwnItem
+import com.timecat.data.bmob.data.game.OwnTask
 import com.timecat.data.bmob.data.mail.OwnMail
 import com.timecat.data.bmob.ext.toDataError
 import io.reactivex.disposables.Disposable
@@ -36,6 +40,11 @@ fun saveUser(create: Saver<User>.() -> Unit) = save(create)
 fun saveUserRelation(create: Saver<User2User>.() -> Unit) = save(create)
 fun saveAction(create: Saver<Action>.() -> Unit) = save(create)
 fun saveInterAction(create: Saver<InterAction>.() -> Unit) = save(create)
+fun saveOwnMail(create: Saver<OwnMail>.() -> Unit) = save(create)
+fun saveOwnItem(create: Saver<OwnItem>.() -> Unit) = save(create)
+fun saveOwnActivity(create: Saver<OwnActivity>.() -> Unit) = save(create)
+fun saveOwnTask(create: Saver<OwnTask>.() -> Unit) = save(create)
+fun saveOwnCube(create: Saver<OwnCube>.() -> Unit) = save(create)
 fun <T : AVObject> save(create: Saver<T>.() -> Unit) = Saver<T>().apply(create).also { it.build() }
 
 
@@ -61,6 +70,9 @@ fun deleteUserRelation(create: Deleter<User2User>.() -> Unit) = delete(create)
 fun deleteAction(create: Deleter<Action>.() -> Unit) = delete(create)
 fun deleteInterAction(create: Deleter<InterAction>.() -> Unit) = delete(create)
 fun deleteOwnMail(create: Deleter<OwnMail>.() -> Unit) = delete(create)
+fun deleteOwnItem(create: Deleter<OwnItem>.() -> Unit) = delete(create)
+fun deleteOwnActivity(create: Deleter<OwnActivity>.() -> Unit) = delete(create)
+fun deleteOwnTask(create: Deleter<OwnTask>.() -> Unit) = delete(create)
 fun <T : AVObject> delete(create: Deleter<T>.() -> Unit) = Deleter<T>().apply(create).also { it.build() }
 
 class Updater<T : AVObject> : Saver<T>()

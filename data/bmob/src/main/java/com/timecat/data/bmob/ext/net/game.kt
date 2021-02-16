@@ -2,6 +2,7 @@ package com.timecat.data.bmob.ext.net
 
 import cn.leancloud.AVQuery
 import com.timecat.data.bmob.data.User
+import com.timecat.data.bmob.data.common.User2User
 import com.timecat.data.bmob.data.game.OwnActivity
 import com.timecat.data.bmob.data.game.OwnCube
 import com.timecat.data.bmob.data.game.OwnItem
@@ -62,4 +63,25 @@ fun User.allOwnTask(): AVQuery<OwnTask> {//TODO
     q.include("task")
     q.order("-createdAt")
     return q
+}
+
+fun oneOwnItemOf(id: String) = AVQuery<OwnItem>("OwnItem").apply {
+    whereEqualTo("objectId", id)
+    include("user")
+    include("item")
+    setLimit(1)
+}
+
+fun oneOwnMailOf(id: String) = AVQuery<OwnMail>("OwnMail").apply {
+    whereEqualTo("objectId", id)
+    include("user")
+    include("mail")
+    setLimit(1)
+}
+
+fun oneOwnCubeOf(id: String) = AVQuery<OwnCube>("OwnCube").apply {
+    whereEqualTo("objectId", id)
+    include("user")
+    include("cube")
+    setLimit(1)
 }

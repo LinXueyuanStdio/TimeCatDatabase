@@ -24,6 +24,7 @@ class OwnCube : AVObject("OwnCube"), Serializable {
             user: User,
             cube: Block,
             exp: Long = 0,//经验
+            maxLevel: Int = 20,//等级
             star: Int = 1,//星级
             skill_1: Int = 1,//技能1等级
             skill_2: Int = 1,//技能2等级
@@ -42,6 +43,7 @@ class OwnCube : AVObject("OwnCube"), Serializable {
                 this.user = user
                 this.cube = cube
                 this.exp = exp
+                this.maxLevel = maxLevel
                 this.star = star
                 this.skill_1 = skill_1
                 this.skill_2 = skill_2
@@ -77,6 +79,13 @@ class OwnCube : AVObject("OwnCube"), Serializable {
         get() = getLong("exp")
         set(value) {
             put("exp", value)
+        }
+
+    //最大等级
+    var maxLevel: Int
+        get() = getInt("maxLevel")
+        set(value) {
+            put("maxLevel", value)
         }
 
     //星级
@@ -127,13 +136,15 @@ class OwnCube : AVObject("OwnCube"), Serializable {
         set(value) {
             put("skill_6", value)
         }
+
+    //用户设置
     var structure: String
         get() = struct.toString()
         set(value) {
             struct = JSON.parseObject(value)
         }
     var struct: JSONObject
-        get() = getJSONObject("structure")
+        get() = getJSONObject("structure") ?: JSONObject.Builder.create(mapOf())
         set(value) {
             put("structure", value)
         }
