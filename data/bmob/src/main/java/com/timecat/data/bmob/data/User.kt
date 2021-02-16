@@ -122,9 +122,6 @@ class User() : AVUser(), Parcelable {
         setObjectId(objId)
     }
 
-    val nick: String
-        get() = nickName
-
     var avatar: String
         get() = if (headPortrait == null) {
             "https://lc-gluttony.s3.amazonaws.com/lVumM4aviuXn/fb9add291c586437b3de.png/ic_launcher.png"
