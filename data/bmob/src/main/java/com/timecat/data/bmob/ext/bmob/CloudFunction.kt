@@ -32,4 +32,18 @@ fun <T> useItem(ownItemId: String, count: Int, create: CloudFunction<T>.() -> Un
     params = mutableMapOf()
     params["ownItemId"] = ownItemId
     params["count"] = count
+    apply(create)
+}
+
+fun <T> useItem(
+    ownItemId: String,
+    count: Int,
+    targetId:String,
+    create: CloudFunction<T>.() -> Unit
+): Disposable = cloudFunction<T> {
+    params = mutableMapOf()
+    params["ownItemId"] = ownItemId
+    params["count"] = count
+    params["targetId"] = targetId
+    apply(create)
 }

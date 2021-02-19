@@ -231,7 +231,9 @@ class RoleBuilder : BlockBuilder(BLOCK_ROLE)
 
 fun Role(create: RoleBuilder.() -> Unit) = RoleBuilder().apply(create)
 
-class IdentityBuilder : BlockBuilder(BLOCK_IDENTITY)
+class IdentityBuilder : BlockBuilder(BLOCK_IDENTITY){
+    var headerBlock: IdentityBlock = IdentityBlock()
+}
 
 fun Identity(create: IdentityBuilder.() -> Unit) = IdentityBuilder().apply(create)
 //endregion

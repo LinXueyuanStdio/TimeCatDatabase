@@ -72,6 +72,7 @@ fun allEquipItem() = allItem().apply {
 fun allBuffItem() = allItem().apply {
     whereEqualTo("subtype", ITEM_Buff)
 }
+
 fun allActivity() = allBlockByType(BLOCK_ACTIVITY)
 fun allTask() = allBlockByType(BLOCK_TASK)
 
@@ -160,6 +161,14 @@ fun childrenOf(block: Block, type: List<Int>) = AVQuery<Block>("Block").apply {
     whereContainedIn("type", type)
 }
 
+fun childrenOf(block: Block, type: Int) = AVQuery<Block>("Block").apply {
+    whereEqualTo("parent", block)
+    order("-createdAt")
+    include("user")
+    include("parent")
+    whereEqualTo("type", type)
+}
+
 fun childrenOf(blocks: List<Block>, type: List<Int>) = AVQuery<Block>("Block").apply {
     whereContainedIn("parent", blocks)
     order("-createdAt")
@@ -168,9 +177,18 @@ fun childrenOf(blocks: List<Block>, type: List<Int>) = AVQuery<Block>("Block").a
     whereContainedIn("type", type)
 }
 
-fun Block.findAllPost() = childrenOf(this, listOf(BLOCK_POST))
-fun Block.findAllMoment() = childrenOf(this, listOf(BLOCK_MOMENT))
-fun Block.findAllComment() = childrenOf(this, listOf(BLOCK_COMMENT))
+fun Block.findAllPost() = childrenOf(this, BLOCK_POST)
+fun Block.findAllMoment() = childrenOf(this, BLOCK_MOMENT)
+fun Block.findAllComment() = childrenOf(this, BLOCK_COMMENT)
+fun Block.findAllSubComment() = AVQuery<Block>("Block").apply {
+    whereStartsWith("title", "$title/$objectId")
+    whereEqualTo("parent", parent)
+    whereEqualTo("type", type)
+    order("-createdAt")
+    include("user")
+    include("parent")
+}
+
 fun Block.findAllBlock() = AVQuery<Block>("Block").apply {
     whereEqualTo("parent", this@findAllBlock)
     order("-updatedAt")

@@ -56,7 +56,7 @@ class Block : AVObject("Block"), Parcelable, IStatus {
         }
 
     var structure: String
-        get() = struct.toString()
+        get() = struct.toString() ?: "{}"
         set(value) {
             struct = JSON.parseObject(value)
         }
