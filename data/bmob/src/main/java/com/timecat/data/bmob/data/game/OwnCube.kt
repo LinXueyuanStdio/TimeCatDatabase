@@ -6,6 +6,7 @@ import cn.leancloud.json.JSON
 import cn.leancloud.json.JSONObject
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
+import com.timecat.data.bmob.getUserObj
 import java.io.Serializable
 
 /**
@@ -63,7 +64,7 @@ class OwnCube : AVObject("OwnCube"), Serializable {
 
     //region field
     var user: User
-        get() = User.transform(getAVObject("user"))
+        get() = getUserObj()
         set(value) {
             put("user", value)
         }

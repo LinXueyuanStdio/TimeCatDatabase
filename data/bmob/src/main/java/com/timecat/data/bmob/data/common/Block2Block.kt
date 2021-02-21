@@ -5,6 +5,7 @@ import cn.leancloud.annotation.AVClassName
 import cn.leancloud.json.JSON
 import cn.leancloud.json.JSONObject
 import com.timecat.data.bmob.data.User
+import com.timecat.data.bmob.getUserObj
 import java.io.Serializable
 
 /**
@@ -18,7 +19,7 @@ import java.io.Serializable
 class Block2Block : AVObject("Block2Block"), Serializable {
     //region field
     var user: User
-        get() = User.transform(getAVObject("user"))
+        get() = getUserObj()
         set(value) {
             put("user", value)
         }

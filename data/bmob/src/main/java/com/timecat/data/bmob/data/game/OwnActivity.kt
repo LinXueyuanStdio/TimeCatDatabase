@@ -8,6 +8,7 @@ import cn.leancloud.annotation.AVClassName
 import cn.leancloud.types.AVDate
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
+import com.timecat.data.bmob.getUserObj
 import org.joda.time.DateTime
 import java.io.Serializable
 
@@ -32,7 +33,7 @@ class OwnActivity : AVObject("OwnActivity"), Parcelable, Serializable {
             expireTime = AVDate(value.toString(AVDate.DEFAULT_FORMAT))
         }
     var user: User
-        get() = User.transform(getAVObject("user"))
+        get() = getUserObj()
         set(value) {
             put("user", value)
         }

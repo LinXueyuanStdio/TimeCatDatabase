@@ -8,9 +8,7 @@ import cn.leancloud.AVUser
 import cn.leancloud.Transformer
 import cn.leancloud.annotation.AVClassName
 import cn.leancloud.json.JSONObject
-import com.jess.arms.utils.LogUtils
 import java.util.*
-import kotlin.reflect.typeOf
 
 /**
  * Created by yc on 2018/2/2.
@@ -25,8 +23,10 @@ class User() : AVUser(), Parcelable {
             is JSONObject -> AVObject.parseAVObject(res.toJSONString()) as AVFile?
             is Map<*, *> -> {
                 val json = JSONObject.Builder.create(res as Map<String, Any>?)
-                AVObject.parseAVObject(json.toJSONString()) as AVFile?
+                val rawObject = AVObject.parseAVObject(json.toJSONString())
+                Transformer.transform(rawObject, AVFile::class.java)
             }
+            is AVObject -> Transformer.transform(res, AVFile::class.java)
             else -> null
         }
     }
@@ -111,6 +111,7 @@ class User() : AVUser(), Parcelable {
         set(value) {
             put("charge", value)
         }
+
     //充值货币
     var moneyCharge: Long
         get() = getLong("moneyCharge")
@@ -161,6 +162,11 @@ class User() : AVUser(), Parcelable {
         @JvmStatic
         fun transform(user: AVUser): User {
             val jsonString = user.toJSONString()
+            val rawObject = parseAVObject(jsonString)
+            return Transformer.transform(rawObject, User::class.java)
+        }
+        @JvmStatic
+        fun transform(jsonString: String): User {
             val rawObject = parseAVObject(jsonString)
             return Transformer.transform(rawObject, User::class.java)
         }

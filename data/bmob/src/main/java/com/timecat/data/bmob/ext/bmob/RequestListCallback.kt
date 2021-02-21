@@ -21,6 +21,9 @@ open class RequestListCallback<T> {
 open class RequestSingleCallback<T> : SimpleRequestCallback<T>() {
     var onComplete: () -> Unit = {}
 }
+open class RequestSingleOrNullCallback<T> : RequestSingleCallback<T>() {
+    var onEmpty: () -> Unit = {}
+}
 class EasyRequest : RequestSingleCallback<AVNull>()
 class EasyRequestUser : RequestSingleCallback<User>()
 class EasyRequestUserNull : RequestSingleCallback<User>()

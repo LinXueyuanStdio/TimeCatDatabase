@@ -12,8 +12,6 @@ import com.timecat.identity.data.block.type.*
  * @description null
  * @usage null
  */
-infix fun User.like(block: Block) = UserBlockPack(this, block)
-
 //region 创建一个次级块，和父块相关
 class UserBlockPack(
     var user: User,

@@ -6,6 +6,7 @@ import cn.leancloud.json.JSON
 import cn.leancloud.json.JSONObject
 import cn.leancloud.types.AVDate
 import com.timecat.data.bmob.data.User
+import com.timecat.data.bmob.getUserObj
 import com.timecat.identity.data.action.InterActionType
 import org.joda.time.DateTime
 import java.io.Serializable
@@ -30,7 +31,7 @@ class InterAction : AVObject("InterAction"), Serializable {
 
     //region field
     var user: User
-        get() = User.transform(getAVObject("user"))
+        get() = getUserObj()
         set(value) {
             put("user", value)
         }

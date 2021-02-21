@@ -4,6 +4,7 @@ import cn.leancloud.AVObject
 import cn.leancloud.json.JSON
 import cn.leancloud.json.JSONObject
 import com.timecat.data.bmob.data.User
+import com.timecat.data.bmob.getUserObj
 import com.timecat.identity.data.exec.EXEC_Recommend
 import com.timecat.identity.data.exec.ExecType
 import java.io.Serializable
@@ -30,7 +31,7 @@ class Exec : AVObject("Exec"), Serializable {
 
     //region field
     var user: User
-        get() = User.transform(getAVObject("user"))
+        get() = getUserObj()
         set(value) {
             put("user", value)
         }

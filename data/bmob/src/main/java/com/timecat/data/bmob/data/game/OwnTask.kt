@@ -7,6 +7,7 @@ import cn.leancloud.Transformer
 import cn.leancloud.annotation.AVClassName
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
+import com.timecat.data.bmob.getUserObj
 import java.io.Serializable
 
 /**
@@ -20,7 +21,7 @@ import java.io.Serializable
 class OwnTask : AVObject("OwnTask"), Parcelable, Serializable {
 
     var user: User
-        get() = User.transform(getAVObject("user"))
+        get() = getUserObj()
         set(value) {
             put("user", value)
         }

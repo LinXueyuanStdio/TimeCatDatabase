@@ -12,6 +12,7 @@ import com.timecat.data.bmob.data.game.OwnItem
 import com.timecat.data.bmob.data.game.OwnTask
 import com.timecat.data.bmob.data.mail.OwnMail
 import com.timecat.data.bmob.ext.toDataError
+import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 
 /**
@@ -24,6 +25,7 @@ import io.reactivex.disposables.Disposable
 //region 请求实体
 fun <T : AVObject> requestList(create: RequestList<T>.() -> Unit) = RequestList<T>().apply(create).build()
 fun <T : AVObject> requestOne(create: RequestSingle<T>.() -> Unit) = RequestSingle<T>().apply(create).build()
+fun <T : AVObject> requestOneOrNull(create: RequestSingleOrNull<T>.() -> Unit) = RequestSingleOrNull<T>().apply(create).build()
 
 class RequestList<T : AVObject> : RequestListCallback<T>() {
     lateinit var query: AVQuery<T>
@@ -56,6 +58,25 @@ class RequestSingle<T : AVObject> : RequestSingleCallback<T>() {
     }
 }
 
+class RequestSingleOrNull<T : AVObject> : RequestSingleOrNullCallback<T>() {
+    lateinit var query: AVQuery<T>
+    fun build(): Disposable {
+        query.limit = 1
+        return query.findInBackground().flatMap { list: List<T> ->
+            if (list.isEmpty()) {
+                onEmpty()
+            }
+            Observable.fromIterable(list)
+        }.subscribe({
+            onSuccess(it)
+        }, {
+            onError(it.toDataError())
+        }, {
+            onComplete()
+        })
+    }
+}
+
 fun requestUser(create: RequestList<AVUser>.() -> Unit) = requestList(create)
 fun requestBlock(create: RequestList<Block>.() -> Unit) = requestList(create)
 fun requestAction(create: RequestList<Action>.() -> Unit) = requestList(create)
@@ -79,6 +100,18 @@ fun requestOneOwnItem(create: RequestSingle<OwnItem>.() -> Unit) = requestOne(cr
 fun requestOneOwnCube(create: RequestSingle<OwnCube>.() -> Unit) = requestOne(create)
 fun requestOneOwnActivity(create: RequestSingle<OwnActivity>.() -> Unit) = requestOne(create)
 fun requestOneOwnTask(create: RequestSingle<OwnTask>.() -> Unit) = requestOne(create)
+
+fun requestOneUserOrNull(create: RequestSingleOrNull<User>.() -> Unit) = requestOneOrNull(create)
+fun requestOneBlockOrNull(create: RequestSingleOrNull<Block>.() -> Unit) = requestOneOrNull(create)
+fun requestOneActionOrNull(create: RequestSingleOrNull<Action>.() -> Unit) = requestOneOrNull(create)
+fun requestOneOwnMailOrNull(create: RequestSingleOrNull<OwnMail>.() -> Unit) = requestOneOrNull(create)
+fun requestOneUserRelationOrNull(create: RequestSingleOrNull<User2User>.() -> Unit) = requestOneOrNull(create)
+fun requestOneBlockRelationOrNull(create: RequestSingleOrNull<Block2Block>.() -> Unit) = requestOneOrNull(create)
+fun requestOneInterActionOrNull(create: RequestSingleOrNull<InterAction>.() -> Unit) = requestOneOrNull(create)
+fun requestOneOwnItemOrNull(create: RequestSingleOrNull<OwnItem>.() -> Unit) = requestOneOrNull(create)
+fun requestOneOwnCubeOrNull(create: RequestSingleOrNull<OwnCube>.() -> Unit) = requestOneOrNull(create)
+fun requestOneOwnActivityOrNull(create: RequestSingleOrNull<OwnActivity>.() -> Unit) = requestOneOrNull(create)
+fun requestOneOwnTaskOrNull(create: RequestSingleOrNull<OwnTask>.() -> Unit) = requestOneOrNull(create)
 //endregion
 
 //region 是否存在
@@ -99,6 +132,7 @@ class RequestExist<T : AVObject> : SimpleRequestCallback<Boolean>() {
 }
 
 fun requestExistInterAction(create: RequestExist<InterAction>.() -> Unit) = requestExist(create)
+fun requestExistUserRelation(create: RequestExist<User2User>.() -> Unit) = requestExist(create)
 fun requestExistBlock(create: RequestExist<Block>.() -> Unit) = requestExist(create)
 fun requestExistAction(create: RequestExist<Action>.() -> Unit) = requestExist(create)
 fun requestExistUser(create: RequestExist<User>.() -> Unit) = requestExist(create)
@@ -148,6 +182,7 @@ fun searchBlock(create: SearchList.() -> Unit) = searchList(create)
 fun userQuery(q: String?) = AVSearchQuery<AVObject>(q).apply {
     className = "_User"
 }
+
 fun blockQuery(q: String?) = AVSearchQuery<AVObject>(q).apply {
     className = "Block"
 }

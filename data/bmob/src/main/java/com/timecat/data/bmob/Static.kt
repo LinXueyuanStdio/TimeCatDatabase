@@ -1,9 +1,14 @@
 package com.timecat.data.bmob
 
 import android.text.TextUtils
+import cn.leancloud.AVObject
+import cn.leancloud.AVUser
+import cn.leancloud.json.JSONObject
 import cn.leancloud.types.AVNull
 import com.timecat.data.bmob.dao.UserDao
+import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.ext.bmob.RequestSingleCallback
+import com.timecat.data.bmob.ext.bmob.asUser
 import java.util.regex.Pattern
 import kotlin.random.Random
 
@@ -49,4 +54,16 @@ fun isEmail(email: String): Boolean {
     val str = "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$"
     val p = Pattern.compile(str)
     return p.matcher(email).matches()
+}
+
+fun AVObject.getUserObj(key: String = "user"): User {
+    val obj = get(key)
+    return when (obj) {
+        is User -> obj
+        is AVUser -> User.transform(obj)
+        is AVObject -> User.transform(obj.toJSONString())
+        is JSONObject -> User.transform(obj.toJSONString())
+        is Map<*, *> -> obj.asUser()
+        else -> obj as User
+    }
 }
