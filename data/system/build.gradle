@@ -32,7 +32,7 @@ dependencies {
 
     api 'net.ricecode:string-similarity:1.0.0'
     // 工具类
-    api 'com.blankj:utilcodex:1.28.4'
+    api 'com.blankj:utilcodex:1.29.0'
     // bmob需要
     api rootProject.ext.dependencies["retrofit-adapter-rxjava"]
     api rootProject.ext.dependencies["retrofit-adapter-rxjava2"]
