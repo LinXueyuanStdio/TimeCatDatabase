@@ -3,6 +3,7 @@ package com.timecat.data.room.container
 import com.timecat.data.room.RoomClient
 import com.timecat.data.room.record.RoomRecord
 import com.timecat.identity.data.block.BLOCK_APP_WebApp
+import com.timecat.identity.data.block.type.BLOCK_APP
 
 /**
  * @author 林学渊
@@ -16,7 +17,8 @@ object RoomContainer {
     fun collectUrl(title: String, url: String) {
         val record = RoomRecord.forName(title)
         record.content = url
-        record.type = BLOCK_APP_WebApp
+        record.type = BLOCK_APP
+        record.subType = BLOCK_APP_WebApp
         RoomClient.recordDao().insert(record)
     }
 }

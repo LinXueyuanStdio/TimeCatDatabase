@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject
 import com.timecat.data.room.record.JsonTypeConverter
 import com.timecat.data.room.record.RoomRecord
 import com.timecat.identity.data.base.*
+import com.timecat.identity.data.block.type.BLOCK_MARKDOWN
 import com.timecat.identity.data.block.type.BLOCK_RECORD
 import com.timecat.identity.data.randomColor
 import org.joda.time.DateTime
@@ -19,7 +20,7 @@ import java.util.*
  */
 @DatabaseView(
     viewName = "view_markdown",
-    value = "SELECT * FROM records WHERE type = $BLOCK_RECORD AND render_type = $RENDER_TYPE_MARKDOWN"
+    value = "SELECT * FROM records WHERE type = $BLOCK_MARKDOWN"
 )
 data class Markdown(
 

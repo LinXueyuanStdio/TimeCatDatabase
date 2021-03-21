@@ -85,7 +85,7 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
 
     companion object {
         const val NAME = "timecat_room.db"
-        const val EXPORT_VERSION = 7
+        const val EXPORT_VERSION = 8
 
         const val NAME_FOR_TESTS = "test_timecat_room.db"
 
@@ -112,7 +112,12 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                     .allowMainThreadQueries() // TODO: Remove
                     .fallbackToDestructiveMigration()
                     .addMigrations(
-                        MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7
+                        MIGRATION_2_3,
+                        MIGRATION_3_4,
+                        MIGRATION_4_5,
+                        MIGRATION_5_6,
+                        MIGRATION_6_7,
+                        MIGRATION_7_8
                     )
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
@@ -249,6 +254,23 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE records ADD COLUMN icon TEXT NOT NULL DEFAULT 'R.drawable.ic_notes_hint_24dp'")
                 database.execSQL("UPDATE records SET coverImageUrl = 'R.drawable.ic_comment' WHERE coverImageUrl = 'R.drawable.dim_ic_chat'")
                 database.execSQL("UPDATE records SET icon = coverImageUrl WHERE coverImageUrl IS NOT NULL AND coverImageUrl != ''")
+                database.setTransactionSuccessful()
+                database.endTransaction()
+            }
+        }
+
+        @JvmField
+        val MIGRATION_7_8: Migration = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.beginTransaction()
+
+                var VIEW_NAME = "view_page"
+                database.execSQL("DROP VIEW `${VIEW_NAME}`")
+                database.execSQL("CREATE VIEW `${VIEW_NAME}` AS SELECT * FROM records WHERE type = 15")
+                VIEW_NAME = "view_markdown"
+                database.execSQL("DROP VIEW `${VIEW_NAME}`")
+                database.execSQL("CREATE VIEW `${VIEW_NAME}` AS SELECT * FROM records WHERE type = 3")
+
                 database.setTransactionSuccessful()
                 database.endTransaction()
             }

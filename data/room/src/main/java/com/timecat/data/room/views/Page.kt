@@ -5,8 +5,7 @@ import com.alibaba.fastjson.JSONObject
 import com.timecat.data.room.record.JsonTypeConverter
 import com.timecat.data.room.record.RoomRecord
 import com.timecat.identity.data.base.*
-import com.timecat.identity.data.block.type.BLOCK_CUBE
-import com.timecat.identity.data.block.type.BLOCK_DIVIDER
+import com.timecat.identity.data.block.type.BLOCK_CONTAINER
 import com.timecat.identity.data.block.type.BLOCK_RECORD
 import com.timecat.identity.data.randomColor
 import org.joda.time.DateTime
@@ -21,7 +20,7 @@ import java.util.*
  */
 @DatabaseView(
     viewName = "view_page",
-    value = "SELECT * FROM records WHERE type = $BLOCK_CUBE"
+    value = "SELECT * FROM records WHERE type = $BLOCK_CONTAINER"
 )
 data class Page(
     @PrimaryKey(autoGenerate = true)

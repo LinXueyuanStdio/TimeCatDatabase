@@ -898,6 +898,10 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                         GOAL -> getReminderById(i.id)?.let {
                             listener.onLoadGoal(i, it)
                         }
+                    }
+                }
+                BLOCK_MARKDOWN -> {
+                    when (i.subType) {
                         TEXT -> listener.onLoadText(i)
                         TODO_LIST -> listener.onLoadTodoList(i)
                         Heading1 -> listener.onLoadHeading1(i)
