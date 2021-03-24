@@ -1031,6 +1031,8 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     //endregion
 
     //region
+    @Query("SELECT * FROM records WHERE type = :type AND subType = :subType ORDER BY `order` DESC")
+    abstract fun getAllByTypeAndSubtype(type: Int, subType: Int): MutableList<RoomRecord>
     //endregion
 
     companion object {
