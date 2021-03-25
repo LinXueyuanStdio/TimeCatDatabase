@@ -1030,9 +1030,12 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     data class SimpleRecord(val uuid: String, val type: Int, val subType: Int, val title: String)
     //endregion
 
-    //region
+    //region search
     @Query("SELECT * FROM records WHERE type = :type AND subType = :subType ORDER BY `order` DESC")
     abstract fun getAllByTypeAndSubtype(type: Int, subType: Int): MutableList<RoomRecord>
+
+    @Query("SELECT * FROM records WHERE title LIKE :query OR content LIKE :query OR name LIKE :query LIMIT :pageSize OFFSET :offset")
+    abstract fun searchAll(query: String, offset: Int, pageSize: Int): MutableList<RoomRecord>
     //endregion
 
     companion object {
