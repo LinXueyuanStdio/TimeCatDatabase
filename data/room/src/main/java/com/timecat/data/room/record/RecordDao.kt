@@ -1026,6 +1026,8 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     //region SimpleRecord
     @Query("SELECT uuid, type, subType, title FROM records WHERE uuid = :uuid LIMIT 1")
     abstract fun getSimpleRecordByUuid(uuid: String): SimpleRecord?
+    @Query("SELECT id FROM records WHERE uuid = :uuid LIMIT 1")
+    abstract fun getIdByUuid(uuid: String): Long
 
     data class SimpleRecord(val uuid: String, val type: Int, val subType: Int, val title: String)
     //endregion
