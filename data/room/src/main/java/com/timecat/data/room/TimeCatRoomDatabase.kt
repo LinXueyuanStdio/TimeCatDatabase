@@ -8,10 +8,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.timecat.data.room.calendar.EventType
-import com.timecat.data.room.calendar.EventTypesDao
-import com.timecat.data.room.calendar.ImExport
-import com.timecat.data.room.calendar.ImportRecord
 import com.timecat.data.room.doing.DoingDao
 import com.timecat.data.room.doing.DoingRecord
 import com.timecat.data.room.habit.*
@@ -20,19 +16,14 @@ import com.timecat.data.room.reminder.Reminder
 import com.timecat.data.room.reminder.ReminderDao
 import com.timecat.data.room.tag.Tag
 import com.timecat.data.room.tag.TagDao
-import com.timecat.data.room.user.RoomUser
-import com.timecat.data.room.user.UserDao
 import com.timecat.data.room.views.*
-import com.timecat.data.room.widget.NoteWidget
-import com.timecat.data.room.widget.NoteWidgetDao
-import com.timecat.data.room.widget.Widget
-import com.timecat.data.room.widget.WidgetDao
 
+/**
+ * 时光猫超空间
+ */
 @Database(
     entities = [
-        RoomUser::class,
         RoomRecord::class,//export
-        Widget::class,
         DoingRecord::class,//export
         Reminder::class,//export
         Tag::class,//export
@@ -40,15 +31,17 @@ import com.timecat.data.room.widget.WidgetDao
         Habit::class,//export
         HabitRecord::class,//export
         HabitReminder::class,//export
-        EventType::class,
-        ImExport::class,
-        ImportRecord::class,
-        NoteWidget::class
+//        RoomUser::class,
+//        EventType::class,
+//        ImExport::class,
+//        ImportRecord::class,
+//        Widget::class,
+//        NoteWidget::class
     ],
     views = [
-        Book::class,
-        Dialog::class,
-        Event::class,
+//        Book::class,
+//        Dialog::class,
+//        Event::class,
         Markdown::class,
         Page::class,
         Thing::class
@@ -58,26 +51,27 @@ import com.timecat.data.room.widget.WidgetDao
 )
 @TypeConverters(TypeConverter::class, JsonTypeConverter::class)
 abstract class TimeCatRoomDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+    //    abstract fun userDao(): UserDao
+//    abstract fun widgetDao(): WidgetDao
     abstract fun recordDao(): RecordDao
     abstract fun tagDao(): TagDao
-    abstract fun widgetDao(): WidgetDao
     abstract fun repetitionDao(): RepetitionDao
     abstract fun doingDao(): DoingDao
     abstract fun reminderDao(): ReminderDao
     abstract fun habitDao(): HabitDao
     abstract fun habitRecordDao(): HabitRecordDao
     abstract fun habitReminderDao(): HabitReminderDao
+
     abstract fun noteDao(): NoteDao
     abstract fun folderDao(): FolderDao
-    abstract fun noteWidgetDao(): NoteWidgetDao
     abstract fun transDao(): TransDao
-    abstract fun eventTypesDao(): EventTypesDao
+//    abstract fun noteWidgetDao(): NoteWidgetDao
+//    abstract fun eventTypesDao(): EventTypesDao
 
     //view
-    abstract fun BookDao(): BookDao
-    abstract fun DialogDao(): DialogDao
-    abstract fun EventDao(): EventDao
+//    abstract fun BookDao(): BookDao
+//    abstract fun DialogDao(): DialogDao
+//    abstract fun EventDao(): EventDao
     abstract fun MarkdownDao(): MarkdownDao
     abstract fun PageDao(): PageDao
     abstract fun ThingDao(): ThingDao
@@ -85,7 +79,7 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
 
     companion object {
         const val NAME = "timecat_room.db"
-        const val EXPORT_VERSION = 8
+        const val EXPORT_VERSION = 9
 
         const val NAME_FOR_TESTS = "test_timecat_room.db"
 
@@ -117,7 +111,8 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                         MIGRATION_4_5,
                         MIGRATION_5_6,
                         MIGRATION_6_7,
-                        MIGRATION_7_8
+                        MIGRATION_7_8,
+                        MIGRATION_8_9,
                     )
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
@@ -270,6 +265,41 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                 VIEW_NAME = "view_markdown"
                 database.execSQL("DROP VIEW `${VIEW_NAME}`")
                 database.execSQL("CREATE VIEW `${VIEW_NAME}` AS SELECT * FROM records WHERE type = 3")
+
+                database.setTransactionSuccessful()
+                database.endTransaction()
+            }
+        }
+
+        @JvmField
+        val MIGRATION_8_9: Migration = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.beginTransaction()
+
+                var VIEW_NAME = "view_book"
+                database.execSQL("DROP VIEW `${VIEW_NAME}`")
+                VIEW_NAME = "view_dialog"
+                database.execSQL("DROP VIEW `${VIEW_NAME}`")
+                VIEW_NAME = "view_event"
+                database.execSQL("DROP VIEW `${VIEW_NAME}`")
+
+                var TABLE_NAME = "users"
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
+                TABLE_NAME = "Widget"
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
+                TABLE_NAME = "event_types"
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
+                TABLE_NAME = "import_export"
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
+                TABLE_NAME = "import_record"
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
+                TABLE_NAME = "note_widget"
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
+                TABLE_NAME = "records"
+                database.execSQL("ALTER TABLE `${TABLE_NAME}` DROP COLUMN lifeCycles_type")
+                database.execSQL("ALTER TABLE `${TABLE_NAME}` DROP COLUMN lifeCycles_start")
+                database.execSQL("ALTER TABLE `${TABLE_NAME}` DROP COLUMN lifeCycles_totalLen")
+                database.execSQL("ALTER TABLE `${TABLE_NAME}` DROP COLUMN lifeCycles_cycles")
 
                 database.setTransactionSuccessful()
                 database.endTransaction()

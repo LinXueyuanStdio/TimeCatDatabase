@@ -66,8 +66,6 @@ data class RoomRecord(
     var blockTime: Long = createTime,
     var startTime: Long = createTime,
     var totalLength: Long = LifeCycle.totalLengthFromNow2endOfToday(createTime),
-    @Embedded(prefix = "lifeCycles_")
-    var lifeCycles: LifeCycle = LifeCycle.now2endOfToday(),
     @TaskLabel
     var label: Int = TASK_LABEL_NOT_IMPORTANT_NOT_URGENT,
     var status: Long = TASK_MODE_INIT, //状态集
@@ -92,7 +90,7 @@ data class RoomRecord(
     var attachmentItems: AttachmentTail = AttachmentTail(mutableListOf())
 
 ) : Serializable, Parcelable,
-    ITaskStatus, ITaskLabel, ITaskLifeCycle, IAttachmentTail, IJson {
+    ITaskStatus, ITaskLabel, IAttachmentTail, IJson {
 
     override fun toString(): String {
         return "#$id ($type, $subType) $title / $uuid --> $parent\n"
@@ -188,14 +186,12 @@ data class RoomRecord(
     //endregion
 
     //region 3. ILifeCycle
-    override fun getLifeCycle(): LifeCycle = lifeCycles
-
     fun status(): Pair<TaskState, Long> {
         val state: TaskState
         val time: Long
         val curDate = DateTime()
-        val beginDate = lifeCycles.beginTs().toDateTime()
-        val endDate = lifeCycles.endTs().toDateTime()
+        val beginDate = beginTs().toDateTime()
+        val endDate = endTs().toDateTime()
         val curTs: Long = curDate.millis
         //默认 checkable 为 true
         if (isFinished()) {
@@ -643,7 +639,6 @@ data class RoomRecord(
         jsonObject["tags"] = tags
         jsonObject["topics"] = topics
         jsonObject["parent"] = parent
-        jsonObject["lifeCycles"] = lifeCycles
         jsonObject["ext"] = ext
         jsonObject["attachmentItems"] = attachmentItems
         return jsonObject
@@ -673,7 +668,6 @@ data class RoomRecord(
                 && totalLength == another.totalLength
                 && type == another.type
                 && subType == another.subType
-                && lifeCycles == another.lifeCycles
                 && label == another.label
                 && status == another.status
                 && theme == another.theme
@@ -716,7 +710,6 @@ data class RoomRecord(
         source.readLong(),
         source.readLong(),
         source.readLong(),
-        source.readSerializable() as LifeCycle,
         source.readInt(),
         source.readLong(),
         source.readInt(),
@@ -755,7 +748,6 @@ data class RoomRecord(
         writeLong(blockTime)
         writeLong(startTime)
         writeLong(totalLength)
-        writeSerializable(lifeCycles)
         writeInt(label)
         writeLong(status)
         writeInt(theme)
@@ -795,7 +787,6 @@ data class RoomRecord(
         record.blockTime,
         record.startTime,
         record.totalLength,
-        record.lifeCycles,
         record.label,
         record.status,
         record.theme,
@@ -921,7 +912,6 @@ data class RoomRecord(
             val totalLength: Long = jsonObject.getLong("totalLength")
             val type: Int = jsonObject.getInteger("type")
             val subType: Int = jsonObject.getInteger("subType")
-            val lifeCyclesObj: JSONObject = jsonObject.getJSONObject("lifeCycles")
             val label: Int = jsonObject.getInteger("label")
             val status: Long = jsonObject.getLong("status")
             val theme: Int = jsonObject.getInteger("theme")
@@ -933,7 +923,6 @@ data class RoomRecord(
             val parent: String = jsonObject.getString("parent")
             val extObj: JSONObject = jsonObject.getJSONObject("ext")
             val attachmentItemsObj: JSONObject = jsonObject.getJSONObject("attachmentItems")
-            val lifeCycles: LifeCycle = LifeCycle.fromJson(lifeCyclesObj)
             val ext: Json = Json.fromJson(extObj)
             val attachmentItems: AttachmentTail = AttachmentTail.fromJson(attachmentItemsObj)
             return RoomRecord(
@@ -958,7 +947,6 @@ data class RoomRecord(
                 totalLength = totalLength,
                 type = type,
                 subType = subType,
-                lifeCycles = lifeCycles,
                 label = label,
                 status = status,
                 theme = theme,

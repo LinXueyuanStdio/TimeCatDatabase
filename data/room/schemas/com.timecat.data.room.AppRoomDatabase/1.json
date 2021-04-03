@@ -1,0 +1,75 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "2a8073196be6ed9026f4724e5ba70363",
+    "entities": [
+      {
+        "tableName": "Widget",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uuid` TEXT, `mSize` INTEGER NOT NULL, `mAlpha` INTEGER NOT NULL, `mStyle` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "mId",
+            "columnName": "mId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mSize",
+            "columnName": "mSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mAlpha",
+            "columnName": "mAlpha",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mStyle",
+            "columnName": "mStyle",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "mId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_Widget_mId",
+            "unique": false,
+            "columnNames": [
+              "mId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Widget_mId` ON `${TABLE_NAME}` (`mId`)"
+          },
+          {
+            "name": "index_Widget_uuid",
+            "unique": false,
+            "columnNames": [
+              "uuid"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Widget_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2a8073196be6ed9026f4724e5ba70363')"
+    ]
+  }
+}

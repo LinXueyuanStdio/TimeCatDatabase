@@ -1,18 +1,16 @@
 package com.timecat.data.room.widget;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import androidx.annotation.IntDef;
+import androidx.annotation.IntRange;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-import com.timecat.data.room.record.RoomRecord;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-@Entity(tableName = "Widget", indices = {@Index("mId")})
+@Entity(tableName = "Widget", indices = {@Index("mId"), @Index("uuid")})
 public class Widget {
     public static final int SIZE_TINY = 0;
     public static final int SIZE_SMALL = 1;
@@ -36,24 +34,30 @@ public class Widget {
 
     @PrimaryKey(autoGenerate = true)
     private int mId;
-    @ForeignKey(entity = RoomRecord.class, parentColumns = "id", childColumns = "mThingId")
-    private long mThingId;
-    private @Size
-    int mSize;
+    private String uuid;
+    @Size
+    private int mSize;
+    @IntRange(from = 0, to = 100)
     private int mAlpha = 100; // from 0-100, 0 means transparent and 100 means solid
-    private @Style
-    int mStyle = 0;
+    @Style
+    private int mStyle = 0;
 
     @Ignore
     public Widget() {
     }
 
-    public Widget(int id, long thingId, @Size int size, int alpha, @Style int style) {
-        mId = id;
-        mThingId = thingId;
-        mSize = size;
-        mAlpha = alpha;
-        mStyle = style;
+    public Widget(
+            int id,
+            String uuid,
+            @Size int size,
+            @IntRange(from = 0, to = 100) int alpha,
+            @Style int style
+    ) {
+        this.mId = id;
+        this.uuid = uuid;
+        this.mSize = size;
+        this.mAlpha = alpha;
+        this.mStyle = style;
     }
 
     public int getId() {
@@ -64,16 +68,16 @@ public class Widget {
         mId = id;
     }
 
-    public long getThingId() {
-        return mThingId;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setThingId(long thingId) {
-        mThingId = thingId;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
-    public @Size
-    int getSize() {
+    @Size
+    public int getSize() {
         return mSize;
     }
 
@@ -81,16 +85,17 @@ public class Widget {
         mSize = size;
     }
 
+    @IntRange(from = 0, to = 100)
     public int getAlpha() {
         return mAlpha;
     }
 
-    public void setAlpha(int alpha) {
+    public void setAlpha(@IntRange(from = 0, to = 100) int alpha) {
         mAlpha = alpha;
     }
 
-    public @Style
-    int getStyle() {
+    @Style
+    public int getStyle() {
         return mStyle;
     }
 

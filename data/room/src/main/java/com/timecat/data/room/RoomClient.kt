@@ -19,15 +19,13 @@ object RoomClient {
     var caches: MutableMap<String, MessageCache> = Hashtable()
 
     @JvmStatic
-    fun messageDao() = TimeCatRoomDatabase.forFile(BaseApplication.getContext()).recordDao()
+    fun messageDao() = db().recordDao()
 
     @JvmStatic
-    fun conversationDao() =
-        TimeCatRoomDatabase.forFile(BaseApplication.getContext()).recordDao()
+    fun conversationDao() = db().recordDao()
 
     @JvmStatic
-    fun recordDao() =
-        TimeCatRoomDatabase.forFile(BaseApplication.getContext()).recordDao()
+    fun recordDao() = db().recordDao()
 
     @JvmStatic
     fun db() = TimeCatRoomDatabase.forFile(BaseApplication.getContext())

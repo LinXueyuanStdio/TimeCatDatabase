@@ -57,8 +57,6 @@ data class Markdown(
     var blockTime: Long = createTime,
     var startTime: Long = createTime,
     var totalLength: Long = LifeCycle.totalLengthFromNow2endOfToday(createTime),
-    @Embedded(prefix = "lifeCycles_")
-    var lifeCycles: LifeCycle = LifeCycle.now2endOfToday(),
     @TaskLabel
     var label: Int = TASK_LABEL_NOT_IMPORTANT_NOT_URGENT,
     var status: Long = TASK_MODE_INIT, //状态集

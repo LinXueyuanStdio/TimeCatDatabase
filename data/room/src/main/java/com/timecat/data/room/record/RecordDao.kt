@@ -151,6 +151,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     @Transaction
     open fun initConversation() {
+        //TODO 创建一个说明书文件夹，介绍每种类型，演示一遍
         insert(
             RoomRecord.forSystemConversation(
                 RoomConversationType.Novel.id,
@@ -184,41 +185,6 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         defaultConversation.setSystem(true)
         insert(defaultConversation)
         DEF.block().putString(DEFAULT_CONVERSATION_UUID, defaultConversation.uuid)
-
-        val examplePage = RoomRecord.forBlock(20200124, "示例之页")
-        examplePage.type = BLOCK_CONTAINER
-        examplePage.subType = PAGE_Record
-        examplePage.parent = defaultBook.uuid
-        examplePage.content = "页示例。"
-        insert(examplePage)
-
-        val exampleBook = RoomRecord.forBlock(202001240, "嵌套之书")
-        exampleBook.type = BLOCK_CONTAINER
-        exampleBook.content = "嵌套之书，示例。可无穷嵌套。相当于文件夹。"
-        exampleBook.coverImageUrl = "R.drawable.ic_folder"
-        exampleBook.parent = defaultBook.uuid
-        insert(exampleBook)
-
-        val exampleBook2 = RoomRecord.forBlock(202001241, "嵌套之书2")
-        exampleBook2.type = BLOCK_CONTAINER
-        exampleBook2.content = "嵌套之书2，示例。可无穷嵌套。相当于文件夹。"
-        exampleBook2.coverImageUrl = "R.drawable.ic_folder"
-        exampleBook2.parent = exampleBook.uuid
-        insert(exampleBook2)
-
-        val examplePage2 = RoomRecord.forBlock(202001242, "示例之页")
-        examplePage2.type = BLOCK_CONTAINER
-        examplePage2.subType = PAGE_Record
-        examplePage2.parent = exampleBook.uuid
-        examplePage2.content = "页示例。"
-        insert(examplePage2)
-
-        val examplePage3 = RoomRecord.forBlock(202001243, "示例之页")
-        examplePage3.type = BLOCK_CONTAINER
-        examplePage3.subType = PAGE_Record
-        examplePage3.parent = exampleBook2.uuid
-        examplePage3.content = "页示例。"
-        insert(examplePage3)
     }
     //endregion
 
