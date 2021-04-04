@@ -890,6 +890,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 BLOCK_CONVERSATION -> {
                     listener.onLoadConversation(i)
                 }
+                BLOCK_DATABASE -> {
+                    listener.onLoadDatabase(i)
+                }
                 BLOCK_CONTAINER -> {
                     listener.onLoadContainer(i)
                 }
@@ -914,7 +917,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     interface OnDataLoaded : OnConversationLoaded,
         OnHabitDataLoaded, OnReminderDataLoaded, OnNoteDataLoaded, OnGoalDataLoaded, OnContainerLoaded,
-        OnLinkLoaded, OnPathLoaded, OnButtonLoaded, OnBasicLoaded, OnMediaLoaded
+        OnLinkLoaded, OnPathLoaded, OnButtonLoaded, OnBasicLoaded, OnMediaLoaded, OnDatabaseLoaded
 
     interface OnConversationLoaded {
         fun onLoadConversation(record: RoomRecord)
@@ -938,6 +941,10 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     interface OnMediaLoaded {
         fun onLoadMedia(record: RoomRecord)
+    }
+
+    interface OnDatabaseLoaded {
+        fun onLoadDatabase(record: RoomRecord)
     }
 
     interface OnBasicLoaded {
@@ -992,6 +999,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     //region SimpleRecord
     @Query("SELECT uuid, type, subType, title FROM records WHERE uuid = :uuid LIMIT 1")
     abstract fun getSimpleRecordByUuid(uuid: String): SimpleRecord?
+
     @Query("SELECT id FROM records WHERE uuid = :uuid LIMIT 1")
     abstract fun getIdByUuid(uuid: String): Long
 

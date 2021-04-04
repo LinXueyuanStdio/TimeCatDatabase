@@ -297,10 +297,11 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                 TABLE_NAME = "note_widget"
                 database.execSQL("DROP TABLE `${TABLE_NAME}`")
                 TABLE_NAME = "records"
-                database.execSQL("ALTER TABLE `${TABLE_NAME}` DROP COLUMN lifeCycles_type")
-                database.execSQL("ALTER TABLE `${TABLE_NAME}` DROP COLUMN lifeCycles_start")
-                database.execSQL("ALTER TABLE `${TABLE_NAME}` DROP COLUMN lifeCycles_totalLen")
-                database.execSQL("ALTER TABLE `${TABLE_NAME}` DROP COLUMN lifeCycles_cycles")
+                execAlterRenameColume(TABLE_NAME, database) { db, oldTable, newTable ->
+                    database.execSQL("CREATE TABLE IF NOT EXISTS `${newTable}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `uuid` TEXT NOT NULL, `mtime` INTEGER, `icon` TEXT NOT NULL DEFAULT 'R.drawable.ic_notes_hint_24dp', `coverImageUrl` TEXT, `is_dummy` INTEGER NOT NULL, `type` INTEGER NOT NULL, `subType` INTEGER NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL, `finishTime` INTEGER NOT NULL, `deleteTime` INTEGER NOT NULL, `archiveTime` INTEGER NOT NULL, `pinTime` INTEGER NOT NULL, `lockTime` INTEGER NOT NULL, `blockTime` INTEGER NOT NULL, `startTime` INTEGER NOT NULL, `totalLength` INTEGER NOT NULL, `label` INTEGER NOT NULL, `status` INTEGER NOT NULL, `theme` INTEGER NOT NULL, `color` INTEGER NOT NULL, `miniShowType` INTEGER NOT NULL, `render_type` INTEGER NOT NULL, `order` INTEGER NOT NULL, `tags` TEXT NOT NULL, `topics` TEXT NOT NULL, `parent` TEXT NOT NULL, `ext_ext` TEXT NOT NULL, `attachmentItems_attachmentItems` TEXT NOT NULL)")
+                    database.execSQL("INSERT INTO $newTable SELECT `id`, `name`, `title`, `content`, `uuid`, `mtime`, `icon`, `coverImageUrl`, `is_dummy`, `type`, `subType`, `createTime`, `updateTime`, `finishTime`, `deleteTime`, `archiveTime`, `pinTime`, `lockTime`, `blockTime`, `startTime`, `totalLength`, `label`, `status`, `theme`, `color`, `miniShowType`, `render_type`, `order`, `tags`, `topics`, `parent`, `ext_ext`, `attachmentItems_attachmentItems` FROM $oldTable")
+                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_${newTable}_uuid` ON `${newTable}` (`uuid`)")
+                }
 
                 database.setTransactionSuccessful()
                 database.endTransaction()
