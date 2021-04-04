@@ -1,6 +1,7 @@
 package com.timecat.data.room.di.module
 
 import android.content.Context
+import com.timecat.component.setting.FILE
 import com.timecat.data.room.TimeCatRoomDatabase
 import dagger.Module
 import dagger.Provides
@@ -22,7 +23,7 @@ internal class DatabaseModule(val testing: Boolean = false) {
             TimeCatRoomDatabase.forFile(context, TimeCatRoomDatabase.NAME_FOR_TESTS)
             // return OrgzlyDatabase.forMemory(context)
         } else {
-            TimeCatRoomDatabase.forFile(context, TimeCatRoomDatabase.NAME)
+            TimeCatRoomDatabase.forFile(context, FILE.RoomDatabase.fileName)
         }
     }
 }

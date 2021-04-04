@@ -6,6 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.timecat.data.room.record.JsonTypeConverter
+import com.timecat.data.room.space.Space
+import com.timecat.data.room.space.SpaceDao
 import com.timecat.data.room.widget.Widget
 import com.timecat.data.room.widget.WidgetDao
 
@@ -14,6 +16,7 @@ import com.timecat.data.room.widget.WidgetDao
  */
 @Database(
     entities = [
+        Space::class,
         Widget::class
     ],
     version = AppRoomDatabase.EXPORT_VERSION,
@@ -22,6 +25,7 @@ import com.timecat.data.room.widget.WidgetDao
 @TypeConverters(TypeConverter::class, JsonTypeConverter::class)
 abstract class AppRoomDatabase : RoomDatabase() {
     abstract fun widgetDao(): WidgetDao
+    abstract fun spaceDao(): SpaceDao
 
     companion object {
         const val NAME = "timecat_app_room.db"

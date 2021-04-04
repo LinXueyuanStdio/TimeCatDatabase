@@ -8,6 +8,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.timecat.component.setting.FILE
 import com.timecat.data.room.doing.DoingDao
 import com.timecat.data.room.doing.DoingRecord
 import com.timecat.data.room.habit.*
@@ -98,7 +99,7 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
 
         @JvmStatic
         @JvmOverloads
-        fun forFile(context: Context, fileName: String = NAME): TimeCatRoomDatabase {
+        fun forFile(context: Context, fileName: String = FILE.RoomDatabase.fileName): TimeCatRoomDatabase {
             if (instance == null) {
                 instance = Room.databaseBuilder(
                     context.applicationContext, TimeCatRoomDatabase::class.java, fileName
