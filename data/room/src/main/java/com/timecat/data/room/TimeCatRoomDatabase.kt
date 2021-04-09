@@ -52,8 +52,6 @@ import com.timecat.data.room.views.*
 )
 @TypeConverters(TypeConverter::class, JsonTypeConverter::class)
 abstract class TimeCatRoomDatabase : RoomDatabase() {
-    //    abstract fun userDao(): UserDao
-//    abstract fun widgetDao(): WidgetDao
     abstract fun recordDao(): RecordDao
     abstract fun tagDao(): TagDao
     abstract fun repetitionDao(): RepetitionDao
@@ -66,13 +64,8 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
     abstract fun folderDao(): FolderDao
     abstract fun transDao(): TransDao
-//    abstract fun noteWidgetDao(): NoteWidgetDao
-//    abstract fun eventTypesDao(): EventTypesDao
 
     //view
-//    abstract fun BookDao(): BookDao
-//    abstract fun DialogDao(): DialogDao
-//    abstract fun EventDao(): EventDao
     abstract fun MarkdownDao(): MarkdownDao
     abstract fun PageDao(): PageDao
     abstract fun ThingDao(): ThingDao

@@ -866,6 +866,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                         }
                     }
                 }
+                BLOCK_DATABASE -> {
+                    listener.onLoadDatabase(i)
+                }
                 BLOCK_MARKDOWN -> {
                     when (i.subType) {
                         TEXT -> listener.onLoadText(i)
@@ -889,9 +892,6 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 }
                 BLOCK_CONVERSATION -> {
                     listener.onLoadConversation(i)
-                }
-                BLOCK_DATABASE -> {
-                    listener.onLoadDatabase(i)
                 }
                 BLOCK_CONTAINER -> {
                     listener.onLoadContainer(i)
