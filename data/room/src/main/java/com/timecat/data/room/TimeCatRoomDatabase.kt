@@ -88,11 +88,12 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
         }
 
         @JvmStatic
-        var instance: TimeCatRoomDatabase? = null
+        var instanceMap: MutableMap<String, TimeCatRoomDatabase> = mutableMapOf()
 
         @JvmStatic
         @JvmOverloads
         fun forFile(context: Context, fileName: String = FILE.RoomDatabase.fileName): TimeCatRoomDatabase {
+            var instance = instanceMap.get(fileName)
             if (instance == null) {
                 instance = Room.databaseBuilder(
                     context.applicationContext, TimeCatRoomDatabase::class.java, fileName
@@ -119,8 +120,9 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                         }
                     })
                     .build()
+                instanceMap.put(fileName, instance)
             }
-            return instance!!
+            return instance
         }
 
         @JvmField
