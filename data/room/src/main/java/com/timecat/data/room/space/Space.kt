@@ -1,5 +1,7 @@
 package com.timecat.data.room.space
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
@@ -36,7 +38,7 @@ data class Space(
     var icon: String = "R.drawable.ic_notes_hint_24dp",
     var coverImageUrl: String? = "R.drawable.ic_notes_hint_24dp",
     var order: Long = 0,
-) {
+) : Parcelable {
     val dbPath: String
         get() {
             if (url == FILE.RoomDatabase.fileName) {
@@ -55,5 +57,39 @@ data class Space(
             "R.drawable.ic_launcher",
             "R.drawable.ic_launcher"
         )
+
+        @JvmField
+        val CREATOR: Parcelable.Creator<Space> = object : Parcelable.Creator<Space> {
+            override fun createFromParcel(source: Parcel): Space = Space(source)
+            override fun newArray(size: Int): Array<Space?> = arrayOfNulls(size)
+        }
     }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        with(dest) {
+            writeLong(id)
+            writeString(title)
+            writeString(content)
+            writeString(url)
+            writeString(uuid)
+            writeString(icon)
+            writeString(coverImageUrl)
+            writeLong(order)
+        }
+    }
+
+    constructor(id: Parcel) : this(
+        id.readLong(),
+        id.readString()!!,
+        id.readString()!!,
+        id.readString()!!,
+        id.readString()!!,
+        id.readString()!!,
+        id.readString(),
+        id.readLong(),
+    )
 }
