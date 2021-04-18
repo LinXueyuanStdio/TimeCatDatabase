@@ -148,44 +148,6 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     @Query("SELECT * FROM records WHERE type = $BLOCK_CONVERSATION AND uuid = :conversationId")
     abstract fun getLiveData_BLOCK_CONVERSATION(conversationId: String): LiveData<RoomRecord> // null not allowed, use List
-
-    @Transaction
-    open fun initConversation() {
-        //TODO 创建一个说明书文件夹，介绍每种类型，演示一遍
-        insert(
-            RoomRecord.forSystemConversation(
-                RoomConversationType.Novel.id,
-                "逐书者",
-                "解析网页获取书",
-                ""
-            )
-        )
-        insert(
-            RoomRecord.forSystemConversation(
-                RoomConversationType.Record.id,
-                "著书者",
-                "记录，融合了笔记、任务、计划、目标",
-                ""
-            )
-        )
-
-        val defaultBook = RoomRecord.forBlock(DEFAULT_BOOK_ID, "默认之书")
-        defaultBook.type = BLOCK_CONTAINER
-        defaultBook.content = "默认之书，系统级，所有未归类的页都属于默认之书。"
-        defaultBook.coverImageUrl = "R.drawable.ic_folder"
-        defaultBook.setSystem(true)
-        insert(defaultBook)
-        DEF.block().putString(DEFAULT_BOOK_UUID, defaultBook.uuid)
-
-        val defaultConversation = RoomRecord.forBlock(DEFAULT_CONVERSATION_ID, "默认会话")
-        defaultConversation.type = BLOCK_CONVERSATION
-        defaultConversation.subType = BLOCK_Chat
-        defaultConversation.content = "默认会话，系统级。"
-        defaultConversation.coverImageUrl = "R.drawable.ic_comment"
-        defaultConversation.setSystem(true)
-        insert(defaultConversation)
-        DEF.block().putString(DEFAULT_CONVERSATION_UUID, defaultConversation.uuid)
-    }
     //endregion
 
     //region BLOCK_MESSAGE

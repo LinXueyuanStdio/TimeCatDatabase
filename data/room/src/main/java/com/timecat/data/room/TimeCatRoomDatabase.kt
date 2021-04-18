@@ -8,6 +8,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.jess.arms.utils.LogUtils
 import com.timecat.component.setting.FILE
 import com.timecat.data.room.doing.DoingDao
 import com.timecat.data.room.doing.DoingRecord
@@ -111,12 +112,11 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                     )
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
-                            AsyncTask.execute {
-                                forFile(context).recordDao().initConversation()
-                            }
+                            LogUtils.debugInfo("onCreateDatabase: filename=${fileName}\n${db.path}, ${db.attachedDbs}, version=${db.version}")
                         }
 
                         override fun onOpen(db: SupportSQLiteDatabase) {
+                            LogUtils.debugInfo("onOpenDatabase: filename=${fileName}\n${db.path}, ${db.attachedDbs}, version=${db.version}")
                         }
                     })
                     .build()
