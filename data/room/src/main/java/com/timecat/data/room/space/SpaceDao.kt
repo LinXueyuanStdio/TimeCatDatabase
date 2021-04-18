@@ -29,10 +29,8 @@ abstract class SpaceDao : BaseDao<Space> {
 
     @Transaction
     open fun listSpaces(): MutableList<Space> {
-        val list = getAll()
-        if (list.isNullOrEmpty()) {
-            return mutableListOf(Space.default())
-        }
+        val list = mutableListOf(Space.default())
+        list.addAll(getAll())
         return list
     }
 
