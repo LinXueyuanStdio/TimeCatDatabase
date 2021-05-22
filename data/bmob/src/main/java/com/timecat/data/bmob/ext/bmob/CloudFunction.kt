@@ -61,7 +61,6 @@ fun <T> buyItem(
     count: Int,
     value: Int,
     moneyId: String,
-    cost: Int,
     create: CloudFunction<T>.() -> Unit
 ): Disposable = cloudFunction<T>("buyItem") {
     params = mutableMapOf()
@@ -69,7 +68,6 @@ fun <T> buyItem(
     params["count"] = count
     params["value"] = value
     params["moneyId"] = moneyId
-    params["cost"] = cost
     apply(create)
 }
 
