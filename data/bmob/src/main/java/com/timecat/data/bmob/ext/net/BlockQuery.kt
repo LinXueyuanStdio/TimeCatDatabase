@@ -14,12 +14,25 @@ import com.timecat.identity.data.block.type.*
  * @usage null
  */
 //region all block (by  type)
+//moment
 fun allMoment() = allBlockByType(BLOCK_MOMENT)
+
+//forum
 fun allForum() = allBlockByType(BLOCK_FORUM)
+
+//topic
 fun allTopic() = allBlockByType(BLOCK_TOPIC)
+
+//tag
 fun allTag() = allBlockByType(BLOCK_TAG)
+
+//role
 fun allRole() = allBlockByType(BLOCK_ROLE)
+
+//identity
 fun allIdentity() = allBlockByType(BLOCK_IDENTITY)
+
+//app
 fun allApp() = allBlockByType(BLOCK_APP)
 fun allAndroidApp() = allApp().apply {
     whereEqualTo("subtype", APP_AndroidApp)
@@ -49,9 +62,19 @@ fun allPluginApp() = allApp().apply {
     whereEqualTo("subtype", APP_Plugin)
 }
 
+//cube
 fun allCube() = allIdentity()
+
+//message
 fun allMessage() = allBlockByType(BLOCK_MESSAGE)
+
+//mail
 fun allMail() = allBlockByType(BLOCK_MAIL)
+
+//shop
+fun allShop() = allBlockByType(BLOCK_SHOP)
+
+//item
 fun allItem() = allBlockByType(BLOCK_ITEM)
 fun allThingItem() = allItem().apply {
     whereEqualTo("subtype", ITEM_Thing)
@@ -73,11 +96,16 @@ fun allBuffItem() = allItem().apply {
     whereEqualTo("subtype", ITEM_Buff)
 }
 
+//activity
 fun allActivity() = allBlockByType(BLOCK_ACTIVITY)
+
+//task
 fun allTask() = allBlockByType(BLOCK_TASK)
 
+//leader board
 fun allLeaderBoard() = allBlockByType(BLOCK_LEADER_BOARD)
 
+//permission
 fun allPermission() = allBlockByType(BLOCK_PERMISSION)
 fun allMetaPermission() = allPermission().apply {
     whereEqualTo("subtype", PERMISSION_Meta)

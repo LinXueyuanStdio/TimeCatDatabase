@@ -12,8 +12,10 @@ import com.timecat.data.bmob.data.common.Block;
 import com.timecat.data.bmob.data.common.Block2Block;
 import com.timecat.data.bmob.data.common.InterAction;
 import com.timecat.data.bmob.data.common.User2User;
+import com.timecat.data.bmob.data.game.OwnActivity;
 import com.timecat.data.bmob.data.game.OwnCube;
 import com.timecat.data.bmob.data.game.OwnItem;
+import com.timecat.data.bmob.data.game.OwnTask;
 import com.timecat.data.bmob.data.mail.OwnMail;
 
 import java.util.List;
@@ -76,6 +78,8 @@ public class GlobalConfiguration implements ConfigModule {
                 AVObject.registerSubclass(OwnCube.class);
                 AVObject.registerSubclass(OwnItem.class);
                 AVObject.registerSubclass(OwnMail.class);
+                AVObject.registerSubclass(OwnTask.class);
+                AVObject.registerSubclass(OwnActivity.class);
 
                 String APP_ID = "lVumM4aviuXnmOCmyODnHaEs-MdYXbMMI";
                 String APP_KEY = "Cy0x5uhPiNlFPCp5W8YWKKJw";
