@@ -56,6 +56,23 @@ fun <T> useItem(
     apply(create)
 }
 
+fun <T> buyItem(
+    goodId: String,
+    count: Int,
+    value: Int,
+    moneyId: String,
+    cost: Int,
+    create: CloudFunction<T>.() -> Unit
+): Disposable = cloudFunction<T>("buyItem") {
+    params = mutableMapOf()
+    params["goodId"] = goodId
+    params["count"] = count
+    params["value"] = value
+    params["moneyId"] = moneyId
+    params["cost"] = cost
+    apply(create)
+}
+
 fun Any.asBlock(): Block {
     val json = JSONObject.Builder.create(this as Map<String, Any>)
     val rawObject = AVObject.parseAVObject(json.toJSONString())
