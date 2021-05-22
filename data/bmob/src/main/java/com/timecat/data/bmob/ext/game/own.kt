@@ -1,11 +1,13 @@
 package com.timecat.data.bmob.ext.game
 
-import cn.leancloud.AVObject
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
+import com.timecat.data.bmob.data.game.OwnActivity
 import com.timecat.data.bmob.data.game.OwnCube
 import com.timecat.data.bmob.data.game.OwnItem
+import com.timecat.data.bmob.data.game.OwnTask
 import com.timecat.data.bmob.data.mail.OwnMail
+import org.joda.time.DateTime
 
 /**
  * @author 林学渊
@@ -26,4 +28,22 @@ fun ownItem(user: User, item: Block, count: Int) = OwnItem().apply {
     this.user = user
     this.item = item
     this.count = count
+}
+
+fun ownActivity(
+    user: User,
+    block: Block,
+    activeDateTime: DateTime,
+    expireDateTime: DateTime
+) = OwnActivity().apply {
+    this.user = user
+    this.activity = block
+    this.activeDateTime = activeDateTime
+    this.expireDateTime = expireDateTime
+}
+
+fun ownTask(user: User, activity: Block, task: Block) = OwnTask().apply {
+    this.user = user
+    this.task = task
+    this.activity = activity
 }
