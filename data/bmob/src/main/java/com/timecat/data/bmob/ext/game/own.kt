@@ -2,10 +2,7 @@ package com.timecat.data.bmob.ext.game
 
 import com.timecat.data.bmob.data.User
 import com.timecat.data.bmob.data.common.Block
-import com.timecat.data.bmob.data.game.OwnActivity
-import com.timecat.data.bmob.data.game.OwnCube
-import com.timecat.data.bmob.data.game.OwnItem
-import com.timecat.data.bmob.data.game.OwnTask
+import com.timecat.data.bmob.data.game.*
 import com.timecat.data.bmob.data.mail.OwnMail
 import org.joda.time.DateTime
 
@@ -46,4 +43,18 @@ fun ownTask(user: User, activity: Block, task: Block) = OwnTask().apply {
     this.user = user
     this.task = task
     this.activity = activity
+}
+
+fun pay(user: User, shop: Block, pay: Int, money: Block, gain: Int, good: Block) = Pay().apply {
+    this.user = user
+    this.shop = shop
+    this.pay = pay
+    this.money = money
+    this.gain = gain
+    this.good = good
+}
+
+fun pay(user: User, shop: Block) = Pay().apply {
+    this.user = user
+    this.shop = shop
 }
