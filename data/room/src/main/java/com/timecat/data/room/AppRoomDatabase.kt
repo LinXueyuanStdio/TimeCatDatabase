@@ -49,8 +49,13 @@ abstract class AppRoomDatabase : RoomDatabase() {
         fun forFile(context: Context, fileName: String = NAME): AppRoomDatabase {
             if (instance == null) {
                 instance = Room.databaseBuilder(
-                    context.applicationContext, AppRoomDatabase::class.java, fileName
-                ).fallbackToDestructiveMigration().build()
+                    context.applicationContext,
+                    AppRoomDatabase::class.java,
+                    fileName
+                )
+                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
+                    .build()
             }
             return instance!!
         }

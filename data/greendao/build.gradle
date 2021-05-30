@@ -11,7 +11,7 @@ dependencies {
 }
 
 greendao {
-    schemaVersion 2
+    schemaVersion 3
     daoPackage 'com.timecat.data.greendao.dao'
     targetGenDir 'src/main/java'
 }
