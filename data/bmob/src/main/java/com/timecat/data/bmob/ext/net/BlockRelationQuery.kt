@@ -15,7 +15,7 @@ import com.timecat.identity.data.block_block.Block2Block_Role_has_permission
  * @usage null
  */
 fun children(blocks: List<Block>, type: List<Int>) = AVQuery<Block2Block>("Block2Block").apply {
-    whereContainedIn("from", blocks.map { it.objectId })
+    whereContainedIn("from", blocks)
     order("-createdAt")
     include("user,from.user,to.user")
     whereContainedIn("type", type)
