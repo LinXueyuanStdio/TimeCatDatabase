@@ -196,10 +196,10 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND subType IN ($REMINDER, $HABIT, $GOAL) AND ((status & $TASK_MODE_FALSE) = 0) ORDER BY updateTime DESC")
     abstract fun getAllTime_BLOCK_RECORD(): MutableList<RoomRecord>
 
-    @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND subType IN ($REMINDER, $HABIT, $GOAL) AND startTime<=:toTS AND (startTime+totalLength > :fromTS) AND ((status & $TASK_MODE_FALSE) = 0) ORDER BY updateTime DESC")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND subType IN ($REMINDER, $HABIT, $GOAL) AND  ( (startTime<=:fromTs AND (startTime+totalLength >= :toTs)) OR (startTime>=:fromTs AND (startTime+totalLength <= :toTs)) OR (startTime<=:fromTs AND (startTime+totalLength >= :fromTs)) OR (startTime<=:toTs AND (startTime+totalLength >= :toTs))  ) AND ((status & $TASK_MODE_FALSE) = 0) ORDER BY updateTime DESC")
     abstract fun getAllTime_BLOCK_RECORD(
-        fromTS: Long,
-        toTS: Long
+        fromTs: Long,
+        toTs: Long
     ): MutableList<RoomRecord>
 
     @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND id = :id LIMIT 1")
@@ -721,11 +721,11 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     @Transaction
     open fun getAllTimeRecordData(
-        fromTS: Long,
-        toTS: Long,
+        fromTs: Long,
+        toTs: Long,
         listener: OnTimeRecordDataLoaded
     ) {
-        val all = getAllTime_BLOCK_RECORD(fromTS * 1000, toTS * 1000)
+        val all = getAllTime_BLOCK_RECORD(fromTs, toTs)
         all.sortBy { it.subType }
         for (i in all) {
             when (i.subType) {
