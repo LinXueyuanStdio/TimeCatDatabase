@@ -1,16 +1,16 @@
 package com.timecat.data.room.tag;
 
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
-
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
 
 @Entity(tableName = "tag", indices = {@Index("uid")})
 public class Tag implements IJson {
@@ -68,5 +68,9 @@ public class Tag implements IJson {
 
     public static Tag fromJson(String jsonStr) {
         return JSONObject.parseObject(jsonStr, Tag.class);
+    }
+
+    public static Tag fromJson(JSONObject json) {
+        return fromJson(json.toJSONString());
     }
 }
