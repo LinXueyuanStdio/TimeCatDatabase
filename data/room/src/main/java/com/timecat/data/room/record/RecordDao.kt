@@ -3,12 +3,10 @@ package com.timecat.data.room.record
 import android.database.Cursor
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.timecat.component.setting.DEF
 import com.timecat.data.room.*
 import com.timecat.data.room.habit.Habit
 import com.timecat.data.room.habit.HabitRecord
 import com.timecat.data.room.habit.HabitReminder
-import com.timecat.data.room.message.RoomConversationType
 import com.timecat.data.room.reminder.Reminder
 import com.timecat.identity.data.base.*
 import com.timecat.identity.data.block.BLOCK_APP_WebApp
@@ -477,6 +475,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER ORDER BY createTime LIMIT $LIST_SIZE")
     abstract fun getAll_BLOCK_BOOK(): MutableList<RoomRecord>
+
+    @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER AND parent = :parentUuid ORDER BY createTime LIMIT $LIST_SIZE")
+    abstract fun getAll_BLOCK_BOOK(parentUuid: String): MutableList<RoomRecord>
     //endregion
 
     //region BLOCK_PLAN
@@ -974,6 +975,11 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     @Query("SELECT * FROM records WHERE title LIKE :query OR content LIKE :query OR name LIKE :query LIMIT :pageSize OFFSET :offset")
     abstract fun searchAll(query: String, offset: Int, pageSize: Int): MutableList<RoomRecord>
+    //endregion
+
+    //region Template
+    @Query("SELECT * FROM records WHERE (status & $TASK_TEMPLATE != 0) ORDER BY createTime LIMIT $LIST_SIZE")
+    abstract fun getAllTemplate(): MutableList<RoomRecord>
     //endregion
 
     companion object {

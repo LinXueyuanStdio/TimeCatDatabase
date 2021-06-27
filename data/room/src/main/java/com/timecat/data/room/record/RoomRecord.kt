@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.IntDef
 import androidx.room.*
+import butterknife.internal.Utils
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
@@ -45,8 +46,8 @@ data class RoomRecord(
      */
     var mtime: Long? = null,
     @ColumnInfo(defaultValue = "R.drawable.ic_notes_hint_24dp")
-    var icon: String = "R.drawable.ic_notes_hint_24dp",
-    var coverImageUrl: String? = "R.drawable.ic_notes_hint_24dp",
+    var icon: String = "avatar://$uuid",
+    var coverImageUrl: String? = "cover://$uuid",
 
     @ColumnInfo(name = "is_dummy")
     var isDummy: Boolean = false,
