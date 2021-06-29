@@ -126,12 +126,6 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     @Query("SELECT * FROM records WHERE type = $BLOCK_CONVERSATION ORDER BY updateTime DESC")
     abstract fun getAll_BLOCK_CONVERSATION(): MutableList<RoomRecord>
 
-    @Query("SELECT * FROM records WHERE type = $BLOCK_CONVERSATION AND uuid = :conversationUuid")
-    abstract fun get_BLOCK_CONVERSATION(conversationUuid: String): RoomRecord?
-
-    @Query("SELECT * FROM records WHERE type = $BLOCK_CONVERSATION AND id = :conversationId")
-    abstract fun get_BLOCK_CONVERSATION(conversationId: Long): RoomRecord?
-
     @Query("SELECT * FROM records WHERE type = $BLOCK_CONVERSATION AND parent = :bookUuid LIMIT 1")
     abstract fun getForBook_BLOCK_CONVERSATION(bookUuid: String): RoomRecord?
 
@@ -143,26 +137,14 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     @Query("SELECT * FROM records WHERE type = $BLOCK_CONVERSATION AND uuid = :conversationId AND subType = :conversationType")
     abstract fun get_BLOCK_CONVERSATION(conversationId: String, conversationType: Int): RoomRecord?
-
-    @Query("SELECT * FROM records WHERE type = $BLOCK_CONVERSATION AND uuid = :conversationId")
-    abstract fun getLiveData_BLOCK_CONVERSATION(conversationId: String): LiveData<RoomRecord> // null not allowed, use List
     //endregion
 
     //region BLOCK_MESSAGE
-    @Query("SELECT * FROM records WHERE type = $BLOCK_MESSAGE AND id = :id LIMIT 1")
-    abstract fun get_BLOCK_MESSAGE(id: Long): RoomRecord?
-
     @Query("SELECT * FROM records WHERE type = $BLOCK_MESSAGE ORDER BY createTime")
     abstract fun getAll_BLOCK_MESSAGE(): MutableList<RoomRecord>
 
     @Query("SELECT * FROM records WHERE type = $BLOCK_MESSAGE AND parent = :conversationId ORDER BY createTime LIMIT $LIST_SIZE")
     abstract fun getAll_BLOCK_MESSAGE(conversationId: String): MutableList<RoomRecord>
-
-    @Query("SELECT * FROM records WHERE type = $BLOCK_MESSAGE AND uuid = :msgId")
-    abstract fun get_BLOCK_MESSAGE(msgId: String): RoomRecord?
-
-    @Query("SELECT * FROM records WHERE type = $BLOCK_MESSAGE AND id = :id ORDER BY createTime")
-    abstract fun getLiveData_BLOCK_MESSAGE(id: Long): LiveData<RoomRecord> // null not allowed, use List
 
     @Query("SELECT count(*) FROM records WHERE type = $BLOCK_MESSAGE AND parent = :conversationId")
     abstract fun getAllMsgCount_BLOCK_MESSAGE(conversationId: String): Int
@@ -176,12 +158,6 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         createTime: Long,
         pageSize: Int
     ): MutableList<RoomRecord>
-
-    @Insert
-    abstract fun insertMessages(vararg message: RoomRecord): LongArray
-
-    @Update
-    abstract fun updateMessages(vararg message: RoomRecord): Int
     //endregion
 
     //region BLOCK_RECORD
@@ -200,8 +176,33 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         toTs: Long
     ): MutableList<RoomRecord>
 
-    @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND id = :id LIMIT 1")
-    abstract fun getBLOCK_RECORD(id: Long): RoomRecord?
+    @Query("SELECT * FROM records WHERE parent=:uuid AND (status & $TASK_DELETE) = 0")
+    abstract fun getAllLiveChildren(uuid: String): MutableList<RoomRecord>
+
+    @Transaction
+    open fun getLiveChildrenTree(record: RoomRecord, exist: MutableList<String>): TreeRecord? {
+        if (record.uuid in exist) return null
+        exist.add(record.uuid)
+        val ans = TreeRecord(record, mutableListOf())
+        val children = getAllLiveChildren(record.uuid)
+        if (children.isEmpty()) return ans
+        ans.children.addAll(children.map { getLiveChildrenTree(it, exist) }.filterNotNull())
+        return ans
+    }
+
+    @Query("SELECT * FROM records WHERE parent=:uuid")
+    abstract fun getAllChildren(uuid: String): MutableList<RoomRecord>
+
+    @Transaction
+    open fun getChildrenTree(record: RoomRecord, exist: MutableList<String>): TreeRecord? {
+        if (record.uuid in exist) return null
+        exist.add(record.uuid)
+        val ans = TreeRecord(record, mutableListOf())
+        val children = getAllChildren(record.uuid)
+        if (children.isEmpty()) return ans
+        ans.children.addAll(children.map { getChildrenTree(it, exist) }.filterNotNull())
+        return ans
+    }
 
     @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND subType IN (:subTypes) AND render_type = $RENDER_TYPE_Record AND ((status & :status) != 0) ORDER BY updateTime DESC")
     abstract fun getForDisplay_BLOCK_RECORD(
@@ -480,22 +481,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     abstract fun getAll_BLOCK_BOOK(parentUuid: String): MutableList<RoomRecord>
     //endregion
 
-    //region BLOCK_PLAN
-    @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND parent = :planUuid AND (status & $TASK_DELETE) = 0 ORDER BY createTime LIMIT $LIST_SIZE")
-    abstract fun getAllForPlan_BLOCK_RECORD(planUuid: String): MutableList<RoomRecord>
-    //endregion
-
-    //region BLOCK_APP
-    @Query("SELECT * FROM records WHERE type = $BLOCK_APP_WebApp ORDER BY createTime LIMIT $LIST_SIZE")
-    abstract fun getAll_BLOCK_APP_WebApp(): MutableList<RoomRecord>
-    //endregion
-
     //region BLOCK_COLLECTION
     @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER ORDER BY createTime LIMIT $LIST_SIZE")
     abstract fun getAll_BLOCK_COLLECTION(): MutableList<RoomRecord>
-    //endregion
-
-    //region
     //endregion
 
     //region Books
@@ -797,20 +785,6 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         }
     }
 
-    @Query("SELECT * FROM records WHERE parent=:uuid")
-    abstract fun getAllChildren(uuid: String): MutableList<RoomRecord>
-
-    @Transaction
-    open fun getTree(record: RoomRecord, exist: MutableList<String>): TreeRecord? {
-        if (record.uuid in exist) return null
-        exist.add(record.uuid)
-        val ans = TreeRecord(record, mutableListOf())
-        val children = getAllChildren(record.uuid)
-        if (children.isEmpty()) return ans
-        ans.children.addAll(children.map { getTree(it, exist) }.filterNotNull())
-        return ans
-    }
-
     @Transaction
     open fun getAllData(all: List<RoomRecord>, listener: OnDataLoaded) {
         for (i in all) {
@@ -845,7 +819,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                         BULLETED_LIST -> listener.onLoadBulletedList(i)
                         NUMBERED_LIST -> listener.onLoadNumberedList(i)
                         TOGGLE_LIST -> {
-                            val tree = getTree(i, mutableListOf())
+                            val tree = getLiveChildrenTree(i, mutableListOf())
                             listener.onLoadToggleList(i, tree!!)
                         }
                         QUOTE -> listener.onLoadQuote(i)
@@ -878,9 +852,40 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         }
     }
 
+    @Query("SELECT * FROM HabitReminder WHERE habitId = :habitId")
+    abstract fun getHabitRemindersByHabit(habitId: Long): List<HabitReminder>?
+
+    @Transaction
+    open fun getHabit(id: Long): Habit? {
+        val habit: Habit = getHabitById(id) ?: return null
+        habit.habitReminders = getHabitRemindersByHabit(id)
+        habit.habitRecords = getHabitRecordsByHabit(id)
+        return habit
+    }
+
+    @Transaction
+    open fun getHabit(uuid: String, onHabitDataLoaded: OnHabitDataLoaded) {
+        val record = getByUuid(uuid) ?: return
+        if (record.type == BLOCK_RECORD && record.subType == HABIT) {
+            val habit: Habit = getHabitById(record.id) ?: return
+            habit.habitReminders = getHabitRemindersByHabit(record.id)
+            habit.habitRecords = getHabitRecordsByHabit(record.id)
+            onHabitDataLoaded.onLoadHabit(record, habit)
+        }
+    }
+
+    @Query("SELECT * FROM HabitRecord WHERE habitId = :habitId AND (type = ${HabitRecord.TYPE_FINISHED} or type = ${HabitRecord.TYPE_FAKE_FINISHED}) ORDER BY recordTime ASC")
+    abstract fun getHabitRecordsByHabit(habitId: Long): List<HabitRecord>
+
     interface OnDataLoaded : OnConversationLoaded,
         OnHabitDataLoaded, OnReminderDataLoaded, OnNoteDataLoaded, OnGoalDataLoaded, OnContainerLoaded,
         OnLinkLoaded, OnPathLoaded, OnButtonLoaded, OnBasicLoaded, OnMediaLoaded, OnDatabaseLoaded
+
+    interface OnTimeRecordDataLoaded
+        : OnHabitDataLoaded, OnReminderDataLoaded, OnGoalDataLoaded
+
+    interface OnRecordDataLoaded
+        : OnHabitDataLoaded, OnReminderDataLoaded, OnNoteDataLoaded, OnGoalDataLoaded
 
     interface OnConversationLoaded {
         fun onLoadConversation(record: RoomRecord)
@@ -926,37 +931,6 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         fun onLoadDivider(record: RoomRecord)
         fun onLoadCallout(record: RoomRecord)
     }
-
-    @Query("SELECT * FROM HabitReminder WHERE habitId = :habitId")
-    abstract fun getHabitRemindersByHabit(habitId: Long): List<HabitReminder>?
-
-    @Transaction
-    open fun getHabit(id: Long): Habit? {
-        val habit: Habit = getHabitById(id) ?: return null
-        habit.habitReminders = getHabitRemindersByHabit(id)
-        habit.habitRecords = getHabitRecordsByHabit(id)
-        return habit
-    }
-
-    @Transaction
-    open fun getHabit(uuid: String, onHabitDataLoaded: OnHabitDataLoaded) {
-        val record = getByUuid(uuid) ?: return
-        if (record.type == BLOCK_RECORD && record.subType == HABIT) {
-            val habit: Habit = getHabitById(record.id) ?: return
-            habit.habitReminders = getHabitRemindersByHabit(record.id)
-            habit.habitRecords = getHabitRecordsByHabit(record.id)
-            onHabitDataLoaded.onLoadHabit(record, habit)
-        }
-    }
-
-    @Query("SELECT * FROM HabitRecord WHERE habitId = :habitId AND (type = ${HabitRecord.TYPE_FINISHED} or type = ${HabitRecord.TYPE_FAKE_FINISHED}) ORDER BY recordTime ASC")
-    abstract fun getHabitRecordsByHabit(habitId: Long): List<HabitRecord>
-
-    interface OnTimeRecordDataLoaded
-        : OnHabitDataLoaded, OnReminderDataLoaded, OnGoalDataLoaded
-
-    interface OnRecordDataLoaded
-        : OnHabitDataLoaded, OnReminderDataLoaded, OnNoteDataLoaded, OnGoalDataLoaded
     //endregion
 
     //region SimpleRecord

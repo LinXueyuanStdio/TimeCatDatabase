@@ -26,11 +26,11 @@ fun interaction(
     this.user = author
     this.block = source
     this.target = target
-    this.type= type
-    this.activeTime= AVDate(DateTime().toString(AVDate.DEFAULT_FORMAT))
-    this.expireTime= AVDate(DateTime().toString(AVDate.DEFAULT_FORMAT))
-    this.structure= ""
-    this.status= 0
+    this.type = type
+    this.activeTime = AVDate(DateTime().toString(AVDate.DEFAULT_FORMAT))
+    this.expireTime = AVDate(DateTime().toString(AVDate.DEFAULT_FORMAT))
+    this.structure = ""
+    this.status = 0
 }
 
 infix fun User.auth_Identity(p: Pair<Block, User>): InterAction {

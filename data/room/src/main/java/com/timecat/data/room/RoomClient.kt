@@ -33,7 +33,7 @@ object RoomClient {
     fun sendMessage(message: RoomRecord) {
         messageDao().insert(message)
         message.messageStatusCallBack?.onProgress(20, "发送中")
-        val c = conversationDao().get_BLOCK_CONVERSATION(message.parent)
+        val c = conversationDao().getByUuid(message.parent)
         message.messageStatusCallBack?.onProgress(50, "发送中")
         c?.let {
             it.record = message
@@ -77,7 +77,7 @@ object RoomClient {
      * @return EMConversation the existing conversation found by conversation, null if not found
      */
     fun getConversation(id: String): RoomRecord {
-        val con = conversationDao().get_BLOCK_CONVERSATION(id)
+        val con = conversationDao().getByUuid(id)
         return when {
             con != null -> con
             else -> {
@@ -100,7 +100,7 @@ object RoomClient {
     }
 
     fun getDefaultConversation(): RoomRecord {
-        val con = conversationDao().get_BLOCK_CONVERSATION(DEFAULT_CONVERSATION_ID)
+        val con = conversationDao().get(DEFAULT_CONVERSATION_ID)
         if (con == null) {
             val defaultConversation = RoomRecord.forBlock(DEFAULT_CONVERSATION_ID, "默认会话")
             defaultConversation.type = BLOCK_CONVERSATION
@@ -134,7 +134,7 @@ object RoomClient {
         id: String,
         createIfNotExists: Boolean
     ): RoomRecord? {
-        val con = conversationDao().get_BLOCK_CONVERSATION(id)
+        val con = conversationDao().getByUuid(id)
         return when {
             con != null -> con
             !createIfNotExists -> null
@@ -159,10 +159,8 @@ object RoomClient {
 
     fun markAllMessagesAsRead(conversationId: String) {
         val messages: MutableList<RoomRecord> = messageDao().getAll_BLOCK_MESSAGE(conversationId)
-        for (i in messages) {
-            i.unread = false
-            messageDao().updateMessages(i)
-        }
+        messages.forEach { it.unread = false }
+        messageDao().update(messages)
     }
 
     fun markMessageAsRead(msgId: String, read: Boolean) {
@@ -215,7 +213,7 @@ object RoomClient {
         id: String,
         deleteMessages: Boolean
     ): Boolean {
-        val c = conversationDao().get_BLOCK_CONVERSATION(id)
+        val c = conversationDao().getByUuid(id)
         c?.let {
             val msgs = messageDao().getAll_BLOCK_MESSAGE(it.uuid)
             if (deleteMessages) {

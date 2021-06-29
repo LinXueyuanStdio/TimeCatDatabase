@@ -195,8 +195,8 @@ fun RoomRecord.clearAllMessages() {
     val messages = RoomClient.conversationDao().getAll_BLOCK_MESSAGE(uuid)
     messages.forEach {
         it.setDeleted(true)
-        RoomClient.conversationDao().updateMessages(it)
     }
+    RoomClient.conversationDao().update(messages)
 }
 
 
