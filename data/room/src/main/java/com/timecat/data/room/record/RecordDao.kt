@@ -847,6 +847,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 BLOCK_MEDIA -> {
                     listener.onLoadMedia(i)
                 }
+                BLOCK_MESSAGE -> {
+                    listener.onLoadMessage(i)
+                }
             }
 
         }
@@ -877,7 +880,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     @Query("SELECT * FROM HabitRecord WHERE habitId = :habitId AND (type = ${HabitRecord.TYPE_FINISHED} or type = ${HabitRecord.TYPE_FAKE_FINISHED}) ORDER BY recordTime ASC")
     abstract fun getHabitRecordsByHabit(habitId: Long): List<HabitRecord>
 
-    interface OnDataLoaded : OnConversationLoaded,
+    interface OnDataLoaded : OnConversationLoaded, OnMessageLoaded,
         OnHabitDataLoaded, OnReminderDataLoaded, OnNoteDataLoaded, OnGoalDataLoaded, OnContainerLoaded,
         OnLinkLoaded, OnPathLoaded, OnButtonLoaded, OnBasicLoaded, OnMediaLoaded, OnDatabaseLoaded
 
@@ -889,6 +892,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     interface OnConversationLoaded {
         fun onLoadConversation(record: RoomRecord)
+    }
+    interface OnMessageLoaded {
+        fun onLoadMessage(record: RoomRecord)
     }
 
     interface OnContainerLoaded {
