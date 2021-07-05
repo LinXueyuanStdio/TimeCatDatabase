@@ -9,7 +9,6 @@ import com.timecat.data.room.habit.HabitRecord
 import com.timecat.data.room.habit.HabitReminder
 import com.timecat.data.room.reminder.Reminder
 import com.timecat.identity.data.base.*
-import com.timecat.identity.data.block.BLOCK_APP_WebApp
 import com.timecat.identity.data.block.type.*
 import org.joda.time.DateTime
 import java.util.*
@@ -498,16 +497,16 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     open fun markAsDeleted(list: List<RoomRecord>) {
         for (i in list) {
             i.setDeleted(true)
-            update(i)
         }
+        update(list)
     }
 
     @Transaction
     open fun markAsEx(list: List<RoomRecord>) {
         for (i in list) {
             i.setDeleted(true)
-            update(i)
         }
+        update(list)
     }
 
     @Transaction
@@ -522,8 +521,10 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     @Transaction
     open fun rebuildOrder(list: List<RoomRecord>, from: Int, to: Int, offset: Int) {
-        list.subList(from, to).forEach {
-            it.order += offset
+        list.subList(from, to).let {
+            it.forEach {
+                it.order += offset
+            }
             update(it)
         }
     }
@@ -893,6 +894,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     interface OnConversationLoaded {
         fun onLoadConversation(record: RoomRecord)
     }
+
     interface OnMessageLoaded {
         fun onLoadMessage(record: RoomRecord)
     }
@@ -950,6 +952,23 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     //endregion
 
     //region search
+    @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND ((status & $TASK_DELETE) = 0) ORDER BY updateTime DESC LIMIT :pageSize OFFSET :offset")
+    abstract fun getAll_BLOCK_RECORD(offset: Int, pageSize: Int): MutableList<RoomRecord>
+
+    @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND subType IN ($REMINDER, $HABIT, $GOAL) AND  ( (startTime<=:fromTs AND (startTime+totalLength >= :toTs)) OR (startTime>=:fromTs AND (startTime+totalLength <= :toTs)) OR (startTime<=:fromTs AND (startTime+totalLength >= :fromTs)) OR (startTime<=:toTs AND (startTime+totalLength >= :toTs))  ) AND ((status & $TASK_MODE_FALSE) = 0) ORDER BY updateTime DESC LIMIT :pageSize OFFSET :offset")
+    abstract fun getAllTime_BLOCK_RECORD(
+        fromTs: Long,
+        toTs: Long,
+        offset: Int,
+        pageSize: Int
+    ): MutableList<RoomRecord>
+
+    @Query("SELECT * FROM records WHERE parent=:uuid AND (status & $TASK_DELETE) = 0 LIMIT :pageSize OFFSET :offset")
+    abstract fun getAllLiveChildren(uuid: String, offset: Int, pageSize: Int): MutableList<RoomRecord>
+
+    @Query("SELECT * FROM records WHERE type = :type AND subType = :subType ORDER BY `order` DESC LIMIT :pageSize OFFSET :offset")
+    abstract fun getAllByTypeAndSubtype(type: Int, subType: Int, offset: Int, pageSize: Int): MutableList<RoomRecord>
+
     @Query("SELECT * FROM records WHERE type = :type AND subType = :subType ORDER BY `order` DESC")
     abstract fun getAllByTypeAndSubtype(type: Int, subType: Int): MutableList<RoomRecord>
 
