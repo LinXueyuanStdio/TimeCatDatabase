@@ -3,6 +3,7 @@ package com.timecat.data.room.record
 import android.database.Cursor
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.timecat.data.room.*
 import com.timecat.data.room.habit.Habit
 import com.timecat.data.room.habit.HabitRecord
@@ -10,6 +11,7 @@ import com.timecat.data.room.habit.HabitReminder
 import com.timecat.data.room.reminder.Reminder
 import com.timecat.identity.data.base.*
 import com.timecat.identity.data.block.type.*
+import org.intellij.lang.annotations.Language
 import org.joda.time.DateTime
 import java.util.*
 
@@ -976,6 +978,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     abstract fun searchAll(query: String, offset: Int, pageSize: Int): MutableList<RoomRecord>
     //endregion
 
+    @RawQuery
+    abstract fun exec(q: SupportSQLiteQuery): MutableList<RoomRecord>
+
     //region Template
     @Query("SELECT * FROM records WHERE (status & $TASK_TEMPLATE != 0) ORDER BY createTime LIMIT $LIST_SIZE")
     abstract fun getAllTemplate(): MutableList<RoomRecord>
@@ -983,5 +988,16 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     companion object {
         const val LIST_SIZE = 512
+        @Language("RoomSql")
+        const val ORDER_BY_USER = """
+            ORDER BY ((status & $TASK_PIN) = 1) DESC, (CASE :order 
+                when 0 then `order`
+                when 1 then createTime
+                when 2 then updateTime
+                when 3 then title
+                when 4 then type
+                ELSE `order`
+            end) (IF(:asc, ASC, DESC))
+        """
     }
 }
