@@ -687,6 +687,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 GOAL -> getReminderById(i.id)?.let {
                     listener.onLoadGoal(i, it)
                 }
+                else -> listener.onLoadUnknown(i)
             }
         }
     }
@@ -707,50 +708,23 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 GOAL -> getReminderById(i.id)?.let {
                     listener.onLoadGoal(i, it)
                 }
+                else -> listener.onLoadUnknown(i)
             }
         }
     }
 
     @Transaction
-    open fun getAllTimeRecordData(
-        fromTs: Long,
-        toTs: Long,
-        listener: OnTimeRecordDataLoaded
-    ) {
+    open fun getAllTimeRecordData(fromTs: Long, toTs: Long, listener: OnTimeRecordDataLoaded) {
         val all = getAllTime_BLOCK_RECORD(fromTs, toTs)
         all.sortBy { it.subType }
-        for (i in all) {
-            when (i.subType) {
-                REMINDER -> getReminderById(i.id)?.let {
-                    listener.onLoadReminder(i, it)
-                }
-                HABIT -> getHabit(i.id)?.let {
-                    listener.onLoadHabit(i, it)
-                }
-                GOAL -> getReminderById(i.id)?.let {
-                    listener.onLoadGoal(i, it)
-                }
-            }
-        }
+        getAllTimeRecordData(all, listener)
     }
 
     @Transaction
     open fun getAllTimeRecordData(listener: OnTimeRecordDataLoaded) {
         val all = getAllTime_BLOCK_RECORD()
         all.sortBy { it.subType }
-        for (i in all) {
-            when (i.subType) {
-                REMINDER -> getReminderById(i.id)?.let {
-                    listener.onLoadReminder(i, it)
-                }
-                HABIT -> getHabit(i.id)?.let {
-                    listener.onLoadHabit(i, it)
-                }
-                GOAL -> getReminderById(i.id)?.let {
-                    listener.onLoadGoal(i, it)
-                }
-            }
-        }
+        getAllTimeRecordData(all, listener)
     }
 
     @Transaction
@@ -766,6 +740,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 GOAL -> getReminderById(i.id)?.let {
                     listener.onLoadGoal(i, it)
                 }
+                else -> listener.onLoadUnknown(i)
             }
         }
     }
@@ -784,6 +759,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 GOAL -> getReminderById(i.id)?.let {
                     listener.onLoadGoal(i, it)
                 }
+                else -> listener.onLoadUnknown(i)
             }
         }
     }
@@ -804,6 +780,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                         GOAL -> getReminderById(i.id)?.let {
                             listener.onLoadGoal(i, it)
                         }
+                        else -> listener.onLoadUnknown(i)
                     }
                 }
                 BLOCK_DATABASE -> {
@@ -828,6 +805,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                         QUOTE -> listener.onLoadQuote(i)
                         DIVIDER -> listener.onLoadDivider(i)
                         CALLOUT -> listener.onLoadCallout(i)
+                        else -> listener.onLoadUnknown(i)
                     }
                 }
                 BLOCK_CONVERSATION -> {
@@ -853,6 +831,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 BLOCK_MESSAGE -> {
                     listener.onLoadMessage(i)
                 }
+                else -> listener.onLoadUnknown(i)
             }
 
         }
@@ -883,15 +862,19 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     @Query("SELECT * FROM HabitRecord WHERE habitId = :habitId AND (type = ${HabitRecord.TYPE_FINISHED} or type = ${HabitRecord.TYPE_FAKE_FINISHED}) ORDER BY recordTime ASC")
     abstract fun getHabitRecordsByHabit(habitId: Long): List<HabitRecord>
 
-    interface OnDataLoaded : OnConversationLoaded, OnMessageLoaded,
+    interface OnDataLoaded : OnUnknownLoaded, OnConversationLoaded, OnMessageLoaded,
         OnHabitDataLoaded, OnReminderDataLoaded, OnNoteDataLoaded, OnGoalDataLoaded, OnContainerLoaded,
         OnLinkLoaded, OnPathLoaded, OnButtonLoaded, OnBasicLoaded, OnMediaLoaded, OnDatabaseLoaded
 
     interface OnTimeRecordDataLoaded
-        : OnHabitDataLoaded, OnReminderDataLoaded, OnGoalDataLoaded
+        : OnUnknownLoaded, OnHabitDataLoaded, OnReminderDataLoaded, OnGoalDataLoaded
 
     interface OnRecordDataLoaded
-        : OnHabitDataLoaded, OnReminderDataLoaded, OnNoteDataLoaded, OnGoalDataLoaded
+        : OnUnknownLoaded, OnHabitDataLoaded, OnReminderDataLoaded, OnNoteDataLoaded, OnGoalDataLoaded
+
+    interface OnUnknownLoaded {
+        fun onLoadUnknown(record: RoomRecord)
+    }
 
     interface OnConversationLoaded {
         fun onLoadConversation(record: RoomRecord)
@@ -988,6 +971,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     companion object {
         const val LIST_SIZE = 512
+
         @Language("RoomSql")
         const val ORDER_BY_USER = """
             ORDER BY ((status & $TASK_PIN) = 1) DESC, (CASE :order 
