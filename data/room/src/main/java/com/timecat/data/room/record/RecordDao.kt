@@ -695,6 +695,11 @@ abstract class RecordDao : BaseDao<RoomRecord> {
             update(it)
         }
     }
+    @Transaction
+    open fun updateReminder(record: RoomRecord, reminder: Reminder) {
+        record.reminderSchema = reminder
+        update(record)
+    }
     //endregion
 
     //region Habit

@@ -42,9 +42,26 @@ interface HabitDao {
     fun updateHabitIntervalInfo(id: Long, intervalInfo: String)
 
     @Transaction
+    fun updateHabitIntervalInfo(record: RoomRecord, intervalInfo: String) {
+        val h = record.habitSchema ?: return
+        h.intervalInfo = intervalInfo
+        record.habitSchema = h
+        updateRoomRecords(record)
+    }
+
+    @Update
+    fun updateRoomRecords(vararg record: RoomRecord): Int
+
+    @Transaction
     fun addHabitIntervalInfo(id: Long, intervalInfoToAdd: String) {
         getByID(id)?.let {
             updateHabitIntervalInfo(id, it.intervalInfo + intervalInfoToAdd)
+        }
+    }
+    @Transaction
+    fun addHabitIntervalInfo(record: RoomRecord, intervalInfoToAdd: String) {
+        record.habitSchema?.let {
+            updateHabitIntervalInfo(record, it.intervalInfo + intervalInfoToAdd)
         }
     }
 
