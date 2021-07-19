@@ -7,9 +7,6 @@ interface HabitReminderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(widget: HabitReminder): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrReplace(vararg widget: HabitReminder)
-
     @Delete
     fun delete(tag: HabitReminder?)
 

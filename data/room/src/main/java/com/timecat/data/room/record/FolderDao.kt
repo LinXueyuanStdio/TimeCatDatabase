@@ -1,6 +1,7 @@
 package com.timecat.data.room.record
 
 import androidx.room.*
+import com.timecat.identity.data.block.type.BLOCK_CONTAINER
 
 /**
  * @author 林学渊
@@ -21,18 +22,18 @@ interface FolderDao {
     @Delete
     fun delete(note: RoomRecord?)
 
-    @Query("SELECT count(*) FROM view_page")
+    @Query("SELECT count(*) FROM records WHERE type = $BLOCK_CONTAINER")
     fun getCount(): Int
 
-    @Query("SELECT * FROM view_page ORDER BY createTime DESC")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER ORDER BY createTime DESC")
     fun getAll(): List<RoomRecord>
 
-    @Query("SELECT * FROM view_page WHERE id = :uid LIMIT 1")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER WHERE id = :uid LIMIT 1")
     fun getByID(uid: Int): RoomRecord?
 
-    @Query("SELECT * FROM view_page WHERE uuid = :uuid LIMIT 1")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER WHERE uuid = :uuid LIMIT 1")
     fun getByUUID(uuid: String): RoomRecord?
 
-    @Query("SELECT uuid FROM view_page")
+    @Query("SELECT uuid FROM records WHERE type = $BLOCK_CONTAINER")
     fun getAllUUIDs(): List<String>
 }

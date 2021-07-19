@@ -19,9 +19,28 @@ var RoomRecord.position: Int
     }
 
 fun RoomRecord.getReminder(context: Context): Reminder? {
-    return TimeCatRoomDatabase.forFile(context).reminderDao().getByID(id)
+    return reminderSchema
 }
 
 fun RoomRecord.getHabit(context: Context): Habit? {
-    return TimeCatRoomDatabase.forFile(context).habitDao().getHabit(id)
+    return habitSchema
 }
+
+var RoomRecord.habitSchema: Habit?
+    get() = extension.getJSONObject("habit")?.let {
+        val data = Habit.fromJson(it.toJSONString())
+        data.id = this.id
+        data
+    }
+    set(value) {
+        extension.put("habit", value?.toJsonObject())
+    }
+var RoomRecord.reminderSchema: Reminder?
+    get() = extension.getJSONObject("reminder")?.let {
+        val data = Reminder.fromJson(it.toJSONString())
+        data.id = this.id
+        data
+    }
+    set(value) {
+        extension.put("reminder", value?.toJsonObject())
+    }

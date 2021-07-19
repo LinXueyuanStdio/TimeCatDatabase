@@ -2,10 +2,7 @@ package com.timecat.data.room.reminder;
 
 import android.database.Cursor;
 
-import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
 
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
@@ -20,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
  * @description null
  * @usage null
  */
-@Entity(tableName = "Reminder", indices = {@Index("id")})
 public class Reminder implements IJson {
 
     /**
@@ -36,8 +32,7 @@ public class Reminder implements IJson {
     public static final int GOAL_DAYS = 28;
     public static final long GOAL_MILLIS = GOAL_DAYS * 24 * 60 * 60 * 1000L;
 
-    @PrimaryKey(autoGenerate = true)
-    public long id;
+    public long id; //跟随record的id，不要保存
     public long notifyTime;
     public int state;
     public long notifyMillis;
@@ -152,7 +147,6 @@ public class Reminder implements IJson {
     @Override
     public JSONObject toJsonObject() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", id);
         jsonObject.put("notifyTime", notifyTime);
         jsonObject.put("state", state);
         jsonObject.put("notifyMillis", notifyMillis);

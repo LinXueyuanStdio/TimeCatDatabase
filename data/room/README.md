@@ -1,0 +1,13 @@
+拆分habit和reminder的schema和记录
+
+RoomDatabase只保存schema，打卡记录，完成记录
+AppDatabase保存提醒时间
+
+全局提醒只能有一个 createAllAlarms
+但子RoomDatabase也希望能提醒
+所以全局提醒时需要gather
+RoomDatabase读写alarm需要通过统一的接口进行读写，这个接口由AppDatabase提供
+
+全局提醒是中心化的
+
+

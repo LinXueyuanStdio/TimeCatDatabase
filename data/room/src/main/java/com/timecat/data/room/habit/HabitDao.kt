@@ -1,6 +1,7 @@
 package com.timecat.data.room.habit
 
 import androidx.room.*
+import com.timecat.data.room.record.RoomRecord
 
 /**
  * @author 林学渊
@@ -21,23 +22,24 @@ interface HabitDao {
     @Delete
     fun delete(tag: Habit)
 
-    @Query("SELECT * FROM Habit WHERE id = :uid LIMIT 1")
-    fun getByID(uid: Long): Habit?
 
-    @Query("SELECT detail FROM Habit WHERE id = :uid LIMIT 1")
-    fun getDetailByID(uid: Long): String?
+    @Query("SELECT * FROM records WHERE id = :id LIMIT 1")
+    abstract fun get(id: Long): RoomRecord?
 
-    @Query("SELECT * FROM Habit")
-    fun getAll(): List<Habit>
+    @Transaction
+    open fun getByID(uid: Long): Habit?{
+        val data = get(uid)
+        return data?.habitSchema
+    }
+
+    @Transaction
+    open  fun getDetailByID(uid: Long): String?{
+        val data = get(uid)
+        return data?.habitSchema?.detail
+    }
 
     @Query("DELETE FROM Habit WHERE id = :id")
     fun delete(id: Long)
-
-    @Query("UPDATE Habit SET record = :record WHERE id =:id")
-    fun updateRecordOfHabit(id: Long, record: String)
-
-    @Query("UPDATE Habit SET remindedTimes = :remindedTimes WHERE id =:id")
-    fun updateHabitRemindedTimes(id: Long, remindedTimes: Long)
 
     @Query("UPDATE Habit SET intervalInfo = :intervalInfo WHERE id =:id")
     fun updateHabitIntervalInfo(id: Long, intervalInfo: String)

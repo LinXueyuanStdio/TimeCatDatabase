@@ -3,10 +3,7 @@ package com.timecat.data.room.habit;
 import android.database.Cursor;
 
 import androidx.annotation.Nullable;
-import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
 
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
@@ -32,9 +29,7 @@ import java.util.List;
  * @description 习惯
  * @usage null
  */
-@Entity(tableName = "Habit", indices = {@Index("id")})
 public class Habit implements IJson {
-    @PrimaryKey(autoGenerate = true)
     private long id;
     /**
      * Calendar.DATE
@@ -741,7 +736,6 @@ public class Habit implements IJson {
     @Override
     public JSONObject toJsonObject() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", id);
         jsonObject.put("type", type);
         jsonObject.put("remindedTimes", remindedTimes);
         jsonObject.put("detail", detail);

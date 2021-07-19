@@ -5,6 +5,7 @@ import com.timecat.identity.data.base.RENDER_TYPE_MARKDOWN
 import com.timecat.identity.data.base.TASK_DELETE
 import com.timecat.identity.data.base.TASK_PIN
 import com.timecat.identity.data.base.TASK_PRIVATE
+import com.timecat.identity.data.block.type.BLOCK_MARKDOWN
 import com.timecat.identity.data.block.type.BLOCK_RECORD
 
 /**
@@ -26,7 +27,7 @@ interface NoteDao {
     @Delete
     fun delete(note: RoomRecord?)
 
-    @Query("SELECT count(*) FROM view_markdown")
+    @Query("SELECT count(*) FROM records WHERE type = $BLOCK_MARKDOWN")
     fun getCount(): Int
 
     @Query("SELECT * FROM view_markdown ORDER BY (status & $TASK_PIN) DESC, createTime DESC")
@@ -47,16 +48,16 @@ interface NoteDao {
     @Query("SELECT COUNT(*) FROM view_markdown WHERE tags LIKE :uuidRegex ORDER BY (status & $TASK_PIN) DESC, createTime DESC")
     fun getNoteCountByTag(uuidRegex: String): Int
 
-    @Query("SELECT * FROM view_markdown WHERE id = :uid LIMIT 1")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_MARKDOWN AND id = :uid LIMIT 1")
     fun getByID(uid: Int): RoomRecord?
 
-    @Query("SELECT * FROM view_markdown WHERE uuid = :uuid LIMIT 1")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_MARKDOWN AND uuid = :uuid LIMIT 1")
     fun getByUUID(uuid: String): RoomRecord?
 
-    @Query("SELECT uuid FROM view_markdown")
+    @Query("SELECT uuid FROM records WHERE type = $BLOCK_MARKDOWN")
     fun getAllUUIDs(): List<String>
 
-    @Query("SELECT updateTime FROM view_markdown ORDER BY updateTime DESC LIMIT 1")
+    @Query("SELECT updateTime FROM records WHERE type = $BLOCK_MARKDOWN ORDER BY updateTime DESC LIMIT 1")
     fun getLastTimestamp(): Long
 
     @Query("UPDATE records SET status=(status & ~$TASK_PRIVATE) WHERE type = $BLOCK_RECORD AND render_type = $RENDER_TYPE_MARKDOWN AND (status & $TASK_PRIVATE != 0)")

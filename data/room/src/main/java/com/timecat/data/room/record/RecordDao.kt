@@ -5,9 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.timecat.data.room.*
-import com.timecat.data.room.habit.Habit
-import com.timecat.data.room.habit.HabitRecord
-import com.timecat.data.room.habit.HabitReminder
+import com.timecat.data.room.habit.*
 import com.timecat.data.room.reminder.Reminder
 import com.timecat.identity.data.base.*
 import com.timecat.identity.data.block.type.*
@@ -256,9 +254,6 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
     data class IdAndType(val id: Long, val subType: Int)
 
-    @Update
-    abstract fun updateReminder(reminder: Reminder): Int
-
     @Transaction
     open fun createAllAlarms(
         updateHabitRemindedTimes: Boolean,
@@ -292,11 +287,23 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     @Query("SELECT * FROM HabitReminder WHERE id = :uid LIMIT 1")
     abstract fun getHabitReminderById(uid: Long): HabitReminder?
 
-    @Query("UPDATE Habit SET record = :record WHERE id =:id")
-    abstract fun updateRecordOfHabit(id: Long, record: String)
+    @Transaction
+    open fun updateRecordOfHabit(id: Long, record: String) {
+        val data = get(id)
+        data?.let {
+            it.habitSchema?.record = record
+            update(it)
+        }
+    }
 
-    @Query("UPDATE Habit SET remindedTimes = :remindedTimes WHERE id =:id")
-    abstract fun updateHabitRemindedTimes(id: Long, remindedTimes: Long)
+    @Transaction
+    open fun updateHabitRemindedTimes(id: Long, remindedTimes: Int) {
+        val data = get(id)
+        data?.let {
+            it.habitSchema?.remindedTimes = remindedTimes
+            update(it)
+        }
+    }
 
     @Transaction
     open fun updateHabitToLatest(
@@ -312,7 +319,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         if (updateRemindedTimes && forceToUpdateRemindedTimes) {
             // This will prevent this habit from finishing in this T if it was notified but
             // user didn't finish it at once.
-            updateHabitRemindedTimes(id, recordTimes.toLong())
+            updateHabitRemindedTimes(id, recordTimes)
         }
 
         var habitReminders = habit.habitReminders
@@ -370,14 +377,14 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 val curTime = System.currentTimeMillis()
                 if (curTime in (maxLastTime + 1) until minTime) {
                     if (DateTimeUtil.calculateTimeGap(maxLastTime, curTime, habitType) != 0) {
-                        updateHabitRemindedTimes(id, recordTimes.toLong())
+                        updateHabitRemindedTimes(id, recordTimes)
                     }
                     // else 用户还能“补”掉这一次未完成的情况，因此不更新remindedTimes
                 } else {
-                    updateHabitRemindedTimes(id, recordTimes.toLong())
+                    updateHabitRemindedTimes(id, recordTimes)
                 }
             } else if (recordTimes > remindedTimes) {
-                updateHabitRemindedTimes(id, recordTimes.toLong())
+                updateHabitRemindedTimes(id, recordTimes)
             }
         }
     }
@@ -664,13 +671,42 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     }
     //endregion
 
+    //region Reminder
+    @Transaction
+    open fun getReminderById(uid: Long): Reminder? {
+        val record = get(uid)
+        return record?.reminderSchema
+    }
+
+    @Transaction
+    open fun deleteReminderById(uid: Long) {
+        val record = get(uid)
+        record?.let {
+            it.reminderSchema = null
+            update(it)
+        }
+    }
+
+    @Transaction
+    open fun updateReminder(reminder: Reminder) {
+        val record = get(reminder.id)
+        record?.let {
+            it.reminderSchema = reminder
+            update(it)
+        }
+    }
+    //endregion
+
+    //region Habit
+    @Transaction
+    open fun getHabitById(uid: Long): Habit? {
+        val record = get(uid)
+        return record?.habitSchema
+    }
+
+    //endregion
+
     //region Things
-    @Query("SELECT * FROM Habit WHERE id = :uid LIMIT 1")
-    abstract fun getHabitById(uid: Long): Habit?
-
-    @Query("SELECT * FROM Reminder WHERE id = :uid LIMIT 1")
-    abstract fun getReminderById(uid: Long): Reminder?
-
     @Transaction
     open fun getRecordData(date: DateTime, listener: OnRecordDataLoaded) {
         val all = getBetween_BLOCK_RECORD(date)
