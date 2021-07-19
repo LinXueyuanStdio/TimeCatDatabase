@@ -16,9 +16,6 @@ interface HabitDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(widget: Habit): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrReplace(vararg widget: Habit)
-
     @Delete
     fun delete(tag: Habit)
 
@@ -27,13 +24,13 @@ interface HabitDao {
     abstract fun get(id: Long): RoomRecord?
 
     @Transaction
-    open fun getByID(uid: Long): Habit?{
+    open fun getByID(uid: Long): Habit? {
         val data = get(uid)
         return data?.habitSchema
     }
 
     @Transaction
-    open  fun getDetailByID(uid: Long): String?{
+    open fun getDetailByID(uid: Long): String? {
         val data = get(uid)
         return data?.habitSchema?.detail
     }
@@ -73,9 +70,6 @@ interface HabitDao {
         intervalInfo: String
     )
 
-    @Query("SELECT id FROM HabitReminder ORDER BY id DESC")
-    fun getHabitReminderNewestId(): Long?
-
     //region transaction 1
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertHabitReminder(reminder: HabitReminder): Long
@@ -83,7 +77,6 @@ interface HabitDao {
     @Transaction
     fun createHabitReminder(habitReminders: List<HabitReminder>, listener: OnTransactionFinish) {
         for (habitReminder in habitReminders) {
-            val mHabitReminderId = listener.getHabitReminderId()
             val notifyTime = habitReminder.notifyTime
             insertHabitReminder(HabitReminder(mHabitReminderId, habitReminder.habitId, notifyTime))
             listener.setHabitReminderAlarm(mHabitReminderId, notifyTime)
@@ -94,7 +87,6 @@ interface HabitDao {
     fun createHabit(habit: Habit, listener: OnTransactionFinish) {
         insert(habit)
         for (habitReminder in habit.habitReminders) {
-            val mHabitReminderId = listener.getHabitReminderId()
             val notifyTime = habitReminder.notifyTime
             insertHabitReminder(HabitReminder(mHabitReminderId, habitReminder.habitId, notifyTime))
             listener.setHabitReminderAlarm(mHabitReminderId, notifyTime)
@@ -102,27 +94,19 @@ interface HabitDao {
     }
 
     interface OnTransactionFinish {
-        fun getHabitReminderId(): Long
         fun setHabitReminderAlarm(id: Long, notifyTime: Long)
     }
     //endregion
 
     //region transaction 2
     @Transaction
-    fun deleteHabit(id: Long, listener: OnTransactionDeleteHabit) {
+    fun deleteHabit(id: Long, listener: OnTransactionDeleteHabitReminder) {
         delete(id)
         getHabitRemindersByHabit(id)?.let {
             listener.deleteHabitReminderAlarm(it)
         }
         deleteHabitReminderByHabit(id)
         deleteHabitRecordByHabit(id)
-        listener.initDefaultHabitReminderId()
-        getNewestHabitReminderId()?.let {
-            listener.setNewestHabitReminderId(it)
-        }
-        getNewestHabitRecordId()?.let {
-            listener.setNewestHabitRecordId(it)
-        }
     }
 
     @Query("SELECT * FROM HabitReminder WHERE habitId = :habitId")
@@ -134,20 +118,8 @@ interface HabitDao {
     @Query("DELETE FROM HabitRecord WHERE habitId = :habitId")
     fun deleteHabitRecordByHabit(habitId: Long)
 
-    @Query("SELECT id FROM HabitReminder ORDER BY id DESC LIMIT 1")
-    fun getNewestHabitReminderId(): Long?
-
-    @Query("SELECT id FROM HabitRecord ORDER BY id DESC LIMIT 1")
-    fun getNewestHabitRecordId(): Long?
-
     interface OnTransactionDeleteHabitReminder {
         fun deleteHabitReminderAlarm(habitReminders: List<HabitReminder>)
-    }
-
-    interface OnTransactionDeleteHabit : OnTransactionDeleteHabitReminder {
-        fun initDefaultHabitReminderId()
-        fun setNewestHabitReminderId(id: Long)
-        fun setNewestHabitRecordId(id: Long)
     }
 
     //endregion
@@ -163,27 +135,18 @@ interface HabitDao {
         deleteHabitReminderByHabit(id)
         // 3. delete HabitRecords
         deleteHabitRecordByHabit(id)
-        // 4. refresh
-        listener.initDefaultHabitReminderId()
-        getNewestHabitReminderId()?.let {
-            listener.setNewestHabitReminderId(it)
-        }
-        getNewestHabitRecordId()?.let {
-            listener.setNewestHabitRecordId(it)
-        }
 
         // 5. create Habit
         insert(habit)
         // 6. create HabitReminders
         for (habitReminder in habit.habitReminders) {
-            val mHabitReminderId = listener.getHabitReminderId()
             val notifyTime = habitReminder.notifyTime
             insertHabitReminder(HabitReminder(mHabitReminderId, habitReminder.habitId, notifyTime))
             listener.setHabitReminderAlarm(mHabitReminderId, notifyTime)
         }
     }
 
-    interface OnTransactionRecreateHabit : OnTransactionDeleteHabit, OnTransactionFinish
+    interface OnTransactionRecreateHabit : OnTransactionDeleteHabitReminder, OnTransactionFinish
 
     //endregion
     //region transaction 4

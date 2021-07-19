@@ -325,7 +325,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         var habitReminders = habit.habitReminders
         val hrIds: MutableList<Long> = ArrayList()
         for (habitReminder in habitReminders) {
-            hrIds.add(habitReminder.id)
+            hrIds.add(habitReminder.createTime)
         }
 
         habit.initHabitReminders() // habitReminders have become latest.
@@ -362,7 +362,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 val now = System.currentTimeMillis()
                 val gap = DateTimeUtil.calculateTimeGap(now, hr.notifyTime, habitType)
                 if (gap == 0) {
-                    updateHabitReminderToNext(hr.id, notify)
+                    updateHabitReminderToNext(hr.createTime, notify)
                 }
             }
         }

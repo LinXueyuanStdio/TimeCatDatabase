@@ -2,10 +2,7 @@ package com.timecat.data.room.habit;
 
 import android.database.Cursor;
 
-import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
 
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
@@ -19,10 +16,8 @@ import org.jetbrains.annotations.NotNull;
  * @description 与习惯一一对应，notifyTime 是下一次的提醒时间
  * @usage null
  */
-@Entity(tableName = "HabitReminder", indices = {@Index("id")})
 public class HabitReminder implements IJson {
-    @PrimaryKey(autoGenerate = true)
-    private long id;
+    private long createTime;
     private long habitId;
     private long notifyTime;
 
@@ -30,8 +25,8 @@ public class HabitReminder implements IJson {
     }
 
     @Ignore
-    public HabitReminder(long id, long habitId, long notifyTime) {
-        this.id = id;
+    public HabitReminder(long createTime, long habitId, long notifyTime) {
+        this.createTime = createTime;
         this.habitId = habitId;
         this.notifyTime = notifyTime;
     }
@@ -41,12 +36,12 @@ public class HabitReminder implements IJson {
         this(c.getLong(0), c.getLong(1), c.getLong(2));
     }
 
-    public long getId() {
-        return id;
+    public long getCreateTime() {
+        return createTime;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
     }
 
     public long getHabitId() {
@@ -70,7 +65,7 @@ public class HabitReminder implements IJson {
     @Override
     public JSONObject toJsonObject() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", id);
+        jsonObject.put("id", createTime);
         jsonObject.put("habitId", habitId);
         jsonObject.put("notifyTime", notifyTime);
         return jsonObject;

@@ -513,7 +513,7 @@ public class Habit implements IJson {
             while (System.currentTimeMillis() >= remMillis) {
                 remMillis += 86400000;//86400000 ms == 1 day
             }
-            mHabitReminders.add(new HabitReminder(0, id, remMillis));
+            mHabitReminders.add(new HabitReminder(System.currentTimeMillis(), id, remMillis));
             dt = dt.withMillis(System.currentTimeMillis());
         }
     }
@@ -534,7 +534,7 @@ public class Habit implements IJson {
             while (System.currentTimeMillis() >= remMillis) {
                 remMillis += 604800000;
             }
-            mHabitReminders.add(new HabitReminder(0, id, remMillis));
+            mHabitReminders.add(new HabitReminder(System.currentTimeMillis(), id, remMillis));
             dt = dt.withMillis(System.currentTimeMillis())
                     .withHourOfDay(hour)
                     .withMinuteOfHour(minute)

@@ -7,9 +7,6 @@ interface HabitRecordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(widget: HabitRecord): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrReplace(vararg widget: HabitRecord)
-
     @Delete
     fun delete(tag: HabitRecord)
 
