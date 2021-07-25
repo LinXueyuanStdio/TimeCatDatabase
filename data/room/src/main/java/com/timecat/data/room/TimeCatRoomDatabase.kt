@@ -7,10 +7,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.alibaba.fastjson.JSON
+import com.alibaba.fastjson.JSONObject
 import com.jess.arms.utils.LogUtils
 import com.timecat.component.setting.FILE
+import com.timecat.data.room.doing.DoingRecord
 import com.timecat.data.room.habit.*
 import com.timecat.data.room.record.*
+import com.timecat.data.room.reminder.Reminder
 import com.timecat.data.room.tag.Tag
 import com.timecat.data.room.tag.TagDao
 
@@ -290,21 +294,149 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                 VIEW_NAME = "view_thing"
                 database.execSQL("DROP VIEW `${VIEW_NAME}`")
 
-                var TABLE_NAME = "Habit" //将表里的数据迁移到item的json里
                 //Habit
-                val q = database.query("SELECT * FROM ${TABLE_NAME}")
-                while(q.moveToNext()) {
-                    val habit = Habit(q)
+                val habitQuery = database.query("SELECT * FROM Habit")
+                while (habitQuery.moveToNext()) {
+                    val recordId = habitQuery.getLong(0)
+                    val recordQuery = database.query("SELECT ext_ext FROM records WHERE id = ${recordId} LIMIT 1")
+                    if (recordQuery.count <= 0) {
+                        recordQuery.close()
+                        continue
+                    }
+                    val ext = recordQuery.getString(0)
+                    LogUtils.debugInfo(ext)
+                    recordQuery.close()
 
+                    val habit = Habit(
+                        recordId,
+                        habitQuery.getInt(1),
+                        habitQuery.getInt(2),
+                        habitQuery.getString(3),
+                        habitQuery.getString(4),
+                        habitQuery.getString(5),
+                        habitQuery.getLong(6),
+                        habitQuery.getLong(7)
+                    )
+                    val habitReminderQuery = database.query("SELECT * FROM HabitReminder WHERE habitId = ${recordId}")
+                    val habitReminders: MutableList<HabitReminder> = mutableListOf()
+                    while (habitReminderQuery.moveToNext()) {
+                        val hr = HabitReminder(
+                            habitReminderQuery.getLong(0),
+                            habitReminderQuery.getLong(1),
+                            habitReminderQuery.getLong(2)
+                        )
+                        habitReminders.add(hr)
+                    }
+                    habitReminderQuery.close()
+                    habit.habitReminders = habitReminders
+
+                    val habitRecordQuery = database.query("SELECT * FROM HabitRecord WHERE habitId = ${recordId}")
+                    val habitRecords: MutableList<HabitRecord> = mutableListOf()
+                    while (habitRecordQuery.moveToNext()) {
+                        val hr = HabitRecord(
+                            habitRecordQuery.getLong(0),
+                            habitRecordQuery.getLong(1),
+                            habitRecordQuery.getLong(2),
+                            habitRecordQuery.getLong(3),
+                            habitRecordQuery.getInt(4),
+                            habitRecordQuery.getInt(5),
+                            habitRecordQuery.getInt(6),
+                            habitRecordQuery.getInt(7),
+                            habitRecordQuery.getInt(8)
+                        )
+                        habitRecords.add(hr)
+                    }
+                    habitRecordQuery.close()
+                    habit.habitRecords = habitRecords
+
+                    val json = JSON.parseObject(ext)
+                    json.put("habit", habit.toJsonObject())
+                    val ext_str = json.toJSONString()
+                    // update
+                    database.execSQL("UPDATE records SET ext_ext = ${ext_str} WHERE id = ${recordId}")
                 }
+                var TABLE_NAME = "Habit" //将表里的数据迁移到item的json里
                 database.execSQL("DROP TABLE `${TABLE_NAME}`")
-
                 TABLE_NAME = "HabitReminder"
                 database.execSQL("DROP TABLE `${TABLE_NAME}`")
                 TABLE_NAME = "HabitRecord"
                 database.execSQL("DROP TABLE `${TABLE_NAME}`")
 
+                //reminder
+                val reminderQuery = database.query("SELECT * FROM Reminder")
+                while (reminderQuery.moveToNext()) {
+                    val recordId = reminderQuery.getLong(0)
+                    val recordQuery = database.query("SELECT ext_ext FROM records WHERE id = ${recordId} LIMIT 1")
+                    if (recordQuery.count <= 0) {
+                        recordQuery.close()
+                        continue
+                    }
+                    val ext = recordQuery.getString(0)
+                    LogUtils.debugInfo(ext)
+                    recordQuery.close()
+
+                    val reminder = Reminder(
+                        recordId,
+                        reminderQuery.getLong(1),
+                        reminderQuery.getInt(2),
+                        reminderQuery.getLong(3),
+                        reminderQuery.getLong(4),
+                        reminderQuery.getLong(5)
+                    )
+
+                    val json = JSON.parseObject(ext)
+                    json.put("reminder", reminder.toJsonObject())
+                    val ext_str = json.toJSONString()
+                    // update
+                    database.execSQL("UPDATE records SET ext_ext = ${ext_str} WHERE id = ${recordId}")
+                }
                 TABLE_NAME = "Reminder"
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
+
+                //DoingRecord
+                val doingRecordQuery = database.query("SELECT * FROM DoingRecord")
+                while (doingRecordQuery.moveToNext()) {
+                    val recordId = doingRecordQuery.getLong(1)  // thingId
+                    val recordQuery = database.query("SELECT ext_ext FROM records WHERE id = ${recordId} LIMIT 1")
+                    if (recordQuery.count <= 0) {
+                        recordQuery.close()
+                        continue
+                    }
+                    val ext = recordQuery.getString(0)
+                    LogUtils.debugInfo(ext)
+                    recordQuery.close()
+
+                    val doingRecord = DoingRecord(
+                        doingRecordQuery.getLong(0),
+                        recordId,
+                        doingRecordQuery.getInt(2),
+                        doingRecordQuery.getInt(3),
+                        doingRecordQuery.getInt(4),
+                        doingRecordQuery.getLong(5),
+                        doingRecordQuery.getLong(6),
+                        doingRecordQuery.getLong(7),
+                        doingRecordQuery.getLong(8),
+                        doingRecordQuery.getInt(9),
+                        doingRecordQuery.getInt(10),
+                        doingRecordQuery.getInt(11) != 0
+                    )
+
+                    val jsonObject = JSON.parseObject(ext)
+                    val data = jsonObject.getJSONArray("doingRecords").map {
+                        val json = it as? JSONObject
+                        json?.let {
+                            DoingRecord.fromJson(it.toJSONString())
+                        }
+                    }.filterNotNull().toMutableList()
+                    data.add(doingRecord)
+                    jsonObject.put("doingRecords", data.map { it.toJsonObject() })
+                    val ext_str = jsonObject.toJSONString()
+                    // update
+                    database.execSQL("UPDATE records SET ext_ext = ${ext_str} WHERE id = ${recordId}")
+                }
+                TABLE_NAME = "DoingRecord"
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
+                TABLE_NAME = "RoomRepetition"
                 database.execSQL("DROP TABLE `${TABLE_NAME}`")
 
                 database.setTransactionSuccessful()

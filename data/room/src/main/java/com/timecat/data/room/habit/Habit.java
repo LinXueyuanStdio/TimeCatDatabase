@@ -1,7 +1,5 @@
 package com.timecat.data.room.habit;
 
-import android.database.Cursor;
-
 import androidx.annotation.Nullable;
 import androidx.room.Ignore;
 
@@ -90,12 +88,6 @@ public class Habit implements IJson {
         this.intervalInfo = intervalInfo;
         this.createTime = createTime;
         this.firstTime = firstTime;
-    }
-
-    @Ignore
-    public Habit(Cursor c) {
-        this(c.getLong(0), c.getInt(1), c.getInt(2), c.getString(3), c.getString(4), c.getString(5),
-                c.getLong(6), c.getLong(7));
     }
 
     @Ignore

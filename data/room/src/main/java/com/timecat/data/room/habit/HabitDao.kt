@@ -92,15 +92,6 @@ interface HabitDao {
     fun insertHabitReminder(reminder: HabitReminder): Long
 
     @Transaction
-    fun createHabitReminder(habitReminders: List<HabitReminder>, listener: OnTransactionFinish) {
-        for (habitReminder in habitReminders) {
-            val notifyTime = habitReminder.notifyTime
-            insertHabitReminder(HabitReminder(mHabitReminderId, habitReminder.habitId, notifyTime))
-            listener.setHabitReminderAlarm(mHabitReminderId, notifyTime)
-        }
-    }
-
-    @Transaction
     fun createHabit(habit: Habit, listener: OnTransactionFinish) {
         insert(habit)
         for (habitReminder in habit.habitReminders) {

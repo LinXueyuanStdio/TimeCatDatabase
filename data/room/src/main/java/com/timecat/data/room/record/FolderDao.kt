@@ -16,9 +16,6 @@ interface FolderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertFolder(note: RoomRecord): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertFolders(vararg note: RoomRecord)
-
     @Delete
     fun delete(note: RoomRecord?)
 
@@ -34,6 +31,4 @@ interface FolderDao {
     @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER WHERE uuid = :uuid LIMIT 1")
     fun getByUUID(uuid: String): RoomRecord?
 
-    @Query("SELECT uuid FROM records WHERE type = $BLOCK_CONTAINER")
-    fun getAllUUIDs(): List<String>
 }
