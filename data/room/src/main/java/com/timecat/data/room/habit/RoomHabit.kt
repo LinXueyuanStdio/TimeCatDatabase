@@ -1,7 +1,8 @@
 package com.timecat.data.room.habit
 
 import android.content.Context
-import com.timecat.data.room.TimeCatRoomDatabase
+import com.alibaba.fastjson.JSONObject
+import com.timecat.data.room.doing.DoingRecord
 import com.timecat.data.room.record.RoomRecord
 import com.timecat.data.room.reminder.Reminder
 
@@ -43,4 +44,17 @@ var RoomRecord.reminderSchema: Reminder?
     }
     set(value) {
         extension.put("reminder", value?.toJsonObject())
+    }
+var RoomRecord.doingRecords: MutableList<DoingRecord>
+    get() = extension.getJSONArray("doingRecords")?.let {
+        val data = it.map {
+            val json = it as? JSONObject
+            json?.let {
+                DoingRecord.fromJson(it.toJSONString())
+            }
+        }.filterNotNull().toMutableList()
+        data
+    } ?: mutableListOf()
+    set(value) {
+        extension.put("doingRecords", value.map { it.toJsonObject() })
     }

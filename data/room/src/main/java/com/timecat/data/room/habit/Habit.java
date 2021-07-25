@@ -73,9 +73,7 @@ public class Habit implements IJson {
     private long createTime;
     private long firstTime;
 
-    @Ignore
     private List<HabitReminder> mHabitReminders;
-    @Ignore
     private List<HabitRecord> mHabitRecords;
 
     public Habit() {
@@ -573,7 +571,7 @@ public class Habit implements IJson {
                     remMillis = dt.getMillis();
                 }
             }
-            mHabitReminders.add(new HabitReminder(0, id, remMillis));
+            mHabitReminders.add(new HabitReminder(System.currentTimeMillis(), id, remMillis));
             dt = dt.withMillis(System.currentTimeMillis())
                     .withHourOfDay(hour)
                     .withMinuteOfHour(minute)
@@ -608,7 +606,7 @@ public class Habit implements IJson {
                     remMillis = dt.plusYears(1).getMillis();
                 }
             }
-            mHabitReminders.add(new HabitReminder(0, id, remMillis));
+            mHabitReminders.add(new HabitReminder(System.currentTimeMillis(), id, remMillis));
             dt = dt.withMillis(System.currentTimeMillis())
                     .withHourOfDay(hour)
                     .withMinuteOfHour(minute)
@@ -743,6 +741,8 @@ public class Habit implements IJson {
         jsonObject.put("intervalInfo", intervalInfo);
         jsonObject.put("createTime", createTime);
         jsonObject.put("firstTime", firstTime);
+        jsonObject.put("mHabitReminders", mHabitReminders);
+        jsonObject.put("mHabitRecords", mHabitRecords);
         return jsonObject;
     }
 
@@ -754,5 +754,23 @@ public class Habit implements IJson {
 
     public static Habit fromJson(String jsonStr) {
         return JSONObject.parseObject(jsonStr, Habit.class);
+    }
+
+    @Nullable
+    public HabitReminder getHabitReminderByCreateTime(long createTime) {
+        for (HabitReminder hr : mHabitReminders) {
+            if (hr.getCreateTime() == createTime) {
+                return hr;
+            }
+        }
+        return null;
+    }
+
+    public void replaceHabitReminder(@NotNull HabitReminder habitReminder) {
+        for (HabitReminder hr : mHabitReminders) {
+            if (hr.getCreateTime() == habitReminder.getCreateTime()) {
+                hr.copyFrom(habitReminder);
+            }
+        }
     }
 }

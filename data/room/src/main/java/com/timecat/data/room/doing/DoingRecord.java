@@ -3,10 +3,7 @@ package com.timecat.data.room.doing;
 import android.database.Cursor;
 
 import androidx.annotation.IntDef;
-import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
 
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
@@ -24,7 +21,6 @@ import java.lang.annotation.RetentionPolicy;
  * @description null
  * @usage null
  */
-@Entity(tableName = "DoingRecord", indices = {@Index("id")})
 public class DoingRecord implements IJson {
 
     public static final int STOP_REASON_CANCEL_CARELESS = 0;
@@ -53,7 +49,6 @@ public class DoingRecord implements IJson {
     public @interface StartType {
     }
 
-    @PrimaryKey(autoGenerate = true)
     private long id;
     private long thingId;
     @Type

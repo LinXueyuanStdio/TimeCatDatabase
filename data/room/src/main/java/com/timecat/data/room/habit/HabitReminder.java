@@ -65,7 +65,7 @@ public class HabitReminder implements IJson {
     @Override
     public JSONObject toJsonObject() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", createTime);
+        jsonObject.put("createTime", createTime);
         jsonObject.put("habitId", habitId);
         jsonObject.put("notifyTime", notifyTime);
         return jsonObject;
@@ -79,5 +79,11 @@ public class HabitReminder implements IJson {
 
     public static HabitReminder fromJson(String jsonStr) {
         return JSONObject.parseObject(jsonStr, HabitReminder.class);
+    }
+
+    public void copyFrom(HabitReminder habitReminder) {
+        this.createTime = habitReminder.createTime;
+        this.habitId = habitReminder.habitId;
+        this.notifyTime = habitReminder.notifyTime;
     }
 }

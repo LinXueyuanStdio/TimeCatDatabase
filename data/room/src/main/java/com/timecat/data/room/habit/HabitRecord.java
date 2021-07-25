@@ -3,10 +3,7 @@ package com.timecat.data.room.habit;
 import android.database.Cursor;
 
 import androidx.annotation.IntDef;
-import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
 
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
@@ -24,7 +21,6 @@ import java.lang.annotation.RetentionPolicy;
  * @description 习惯打卡记录
  * @usage null
  */
-@Entity(tableName = "HabitRecord", indices = {@Index("id")})
 public class HabitRecord implements IJson {
     public static final int TYPE_FINISHED = 0;
     public static final int TYPE_CANCEL_FINISHED = 1;
@@ -41,10 +37,9 @@ public class HabitRecord implements IJson {
     public @interface Type {
     }
 
-    @PrimaryKey(autoGenerate = true)
     private long id;
     private long habitId;//-> Habit
-    private long habitReminderId; //-> HabitReminder(id, habitId, notifyTime)
+    private long habitReminderCreateTime; //-> HabitReminder(id, habitId, notifyTime)
     private long recordTime;
     private int recordYear;
     private int recordMonth;
@@ -57,15 +52,15 @@ public class HabitRecord implements IJson {
     }
 
     @Ignore
-    public HabitRecord(long habitId, long habitReminderId) {
-        this(habitId, habitReminderId, System.currentTimeMillis());
+    public HabitRecord(long habitId, long habitReminderCreateTime) {
+        this(habitId, habitReminderCreateTime, System.currentTimeMillis());
     }
 
     @Ignore
-    public HabitRecord(long habitId, long habitReminderId, long recordTime) {
+    public HabitRecord(long habitId, long habitReminderCreateTime, long recordTime) {
         this.id = 0;
         this.habitId = habitId;
-        this.habitReminderId = habitReminderId;
+        this.habitReminderCreateTime = habitReminderCreateTime;
         this.recordTime = recordTime;
         DateTime dt = new DateTime(recordTime);
         this.recordYear = dt.getYear();
@@ -76,11 +71,11 @@ public class HabitRecord implements IJson {
     }
 
     @Ignore
-    public HabitRecord(long id, long habitId, long habitReminderId, long recordTime,
+    public HabitRecord(long id, long habitId, long habitReminderCreateTime, long recordTime,
                        int recordYear, int recordMonth, int recordWeek, int recordDay, @Type int type) {
         this.id = id;
         this.habitId = habitId;
-        this.habitReminderId = habitReminderId;
+        this.habitReminderCreateTime = habitReminderCreateTime;
         this.recordTime = recordTime;
         this.recordYear = recordYear;
         this.recordMonth = recordMonth;
@@ -99,7 +94,7 @@ public class HabitRecord implements IJson {
     public HabitRecord(HabitRecord c) {
         this(c.id,
                 c.habitId,
-                c.habitReminderId,
+                c.habitReminderCreateTime,
                 c.recordTime,
                 c.recordYear,
                 c.recordMonth,
@@ -123,12 +118,12 @@ public class HabitRecord implements IJson {
         this.habitId = habitId;
     }
 
-    public long getHabitReminderId() {
-        return habitReminderId;
+    public long getHabitReminderCreateTime() {
+        return habitReminderCreateTime;
     }
 
-    public void setHabitReminderId(long habitReminderId) {
-        this.habitReminderId = habitReminderId;
+    public void setHabitReminderCreateTime(long habitReminderCreateTime) {
+        this.habitReminderCreateTime = habitReminderCreateTime;
     }
 
     public long getRecordTime() {
@@ -186,7 +181,7 @@ public class HabitRecord implements IJson {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", id);
         jsonObject.put("habitId", habitId);
-        jsonObject.put("habitReminderId", habitReminderId);
+        jsonObject.put("habitReminderCreateTime", habitReminderCreateTime);
         jsonObject.put("recordTime", recordTime);
         jsonObject.put("recordYear", recordYear);
         jsonObject.put("recordMonth", recordMonth);

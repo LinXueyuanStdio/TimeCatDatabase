@@ -1,13 +1,12 @@
 package com.timecat.data.room.habit
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 import com.timecat.data.room.BaseDao
 
 @Dao
 abstract class RepetitionDao : BaseDao<RoomRepetition>{
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertOrReplace(vararg widget: RoomRepetition)
-
     @Insert
     abstract fun newRep(widget: RoomRepetition): Long
 

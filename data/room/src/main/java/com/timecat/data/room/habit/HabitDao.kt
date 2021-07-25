@@ -166,42 +166,7 @@ interface HabitDao {
     interface OnTransactionRecreateHabit : OnTransactionDeleteHabitReminder, OnTransactionFinish
 
     //endregion
-    //region transaction 4
-    @Transaction
-    fun recreateHabitReminders(habit: Habit, listener: OnTransactionRecreateHabitReminders) {
-        val id = habit.id
-        // 1. update Habit
-        updateHabit(
-            habit.id,
-            habit.type,
-            habit.remindedTimes,
-            habit.detail,
-            habit.record,
-            habit.intervalInfo
-        );
 
-        // 2. delete HabitReminders
-        getHabitRemindersByHabit(id)?.let {
-            listener.deleteHabitReminderAlarm(it)
-        }
-        deleteHabitReminderByHabit(id)
-
-        // 3. reInit HabitReminders
-        habit.initHabitReminders()
-
-        // 4. create HabitReminders
-        for (habitReminder in habit.habitReminders) {
-            val mHabitReminderId = listener.getHabitReminderId()
-            val notifyTime = habitReminder.notifyTime
-            insertHabitReminder(HabitReminder(mHabitReminderId, habitReminder.habitId, notifyTime))
-            listener.setHabitReminderAlarm(mHabitReminderId, notifyTime)
-        }
-    }
-
-    interface OnTransactionRecreateHabitReminders
-        : OnTransactionFinish, OnTransactionDeleteHabitReminder
-
-    //endregion
     //region transaction 5
     @Transaction
     fun getHabit(id: Long): Habit? {

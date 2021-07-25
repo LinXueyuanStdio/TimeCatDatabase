@@ -1,12 +1,12 @@
 package com.timecat.data.room.widget;
 
-import java.util.List;
-
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+
+import java.util.List;
 
 @Dao
 public interface WidgetDao {
@@ -21,10 +21,7 @@ public interface WidgetDao {
     Widget getByID(int uid);
 
     @Query("SELECT * FROM Widget WHERE uuid = :uuid")
-    List<Widget> getAllByThing(long uuid);
-
-    @Query("SELECT * FROM Widget WHERE uuid = :uuid")
-    List<Widget> getByNote(String uuid);
+    List<Widget> getAllByThing(String uuid);
 
     @Query("SELECT * FROM Widget")
     List<Widget> getAll();

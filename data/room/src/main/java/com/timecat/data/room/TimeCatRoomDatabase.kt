@@ -9,11 +9,8 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.jess.arms.utils.LogUtils
 import com.timecat.component.setting.FILE
-import com.timecat.data.room.doing.DoingDao
-import com.timecat.data.room.doing.DoingRecord
 import com.timecat.data.room.habit.*
 import com.timecat.data.room.record.*
-import com.timecat.data.room.reminder.Reminder
 import com.timecat.data.room.tag.Tag
 import com.timecat.data.room.tag.TagDao
 
@@ -23,13 +20,13 @@ import com.timecat.data.room.tag.TagDao
 @Database(
     entities = [
         RoomRecord::class,//export
-        DoingRecord::class,//export
-        Reminder::class,//export
+//        DoingRecord::class,//export
+//        Reminder::class,//export
         Tag::class,//export
-        RoomRepetition::class,//export
-        Habit::class,//export
-        HabitRecord::class,//export
-        HabitReminder::class,//export
+//        RoomRepetition::class,//export
+//        Habit::class,//export
+//        HabitRecord::class,//export
+//        HabitReminder::class,//export
     ],
     version = TimeCatRoomDatabase.EXPORT_VERSION,
     exportSchema = true
@@ -39,7 +36,6 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
     abstract fun recordDao(): RecordDao
     abstract fun tagDao(): TagDao
     abstract fun repetitionDao(): RepetitionDao
-    abstract fun doingDao(): DoingDao
     abstract fun habitDao(): HabitDao
     abstract fun habitRecordDao(): HabitRecordDao
     abstract fun habitReminderDao(): HabitReminderDao
@@ -293,26 +289,23 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                 database.execSQL("DROP VIEW `${VIEW_NAME}`")
                 VIEW_NAME = "view_thing"
                 database.execSQL("DROP VIEW `${VIEW_NAME}`")
+
                 var TABLE_NAME = "Habit" //将表里的数据迁移到item的json里
+                //Habit
+                val q = database.query("SELECT * FROM ${TABLE_NAME}")
+                while(q.moveToNext()) {
+                    val habit = Habit(q)
+
+                }
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
+
+                TABLE_NAME = "HabitReminder"
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
+                TABLE_NAME = "HabitRecord"
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
+
                 TABLE_NAME = "Reminder"
-//                var TABLE_NAME = "users"
-//                database.execSQL("DROP TABLE `${TABLE_NAME}`")
-//                TABLE_NAME = "Widget"
-//                database.execSQL("DROP TABLE `${TABLE_NAME}`")
-//                TABLE_NAME = "event_types"
-//                database.execSQL("DROP TABLE `${TABLE_NAME}`")
-//                TABLE_NAME = "import_export"
-//                database.execSQL("DROP TABLE `${TABLE_NAME}`")
-//                TABLE_NAME = "import_record"
-//                database.execSQL("DROP TABLE `${TABLE_NAME}`")
-//                TABLE_NAME = "note_widget"
-//                database.execSQL("DROP TABLE `${TABLE_NAME}`")
-//                TABLE_NAME = "records"
-//                execAlterRenameColume(TABLE_NAME, database) { db, oldTable, newTable ->
-//                    database.execSQL("CREATE TABLE IF NOT EXISTS `${newTable}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `uuid` TEXT NOT NULL, `mtime` INTEGER, `icon` TEXT NOT NULL DEFAULT 'R.drawable.ic_notes_hint_24dp', `coverImageUrl` TEXT, `is_dummy` INTEGER NOT NULL, `type` INTEGER NOT NULL, `subType` INTEGER NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL, `finishTime` INTEGER NOT NULL, `deleteTime` INTEGER NOT NULL, `archiveTime` INTEGER NOT NULL, `pinTime` INTEGER NOT NULL, `lockTime` INTEGER NOT NULL, `blockTime` INTEGER NOT NULL, `startTime` INTEGER NOT NULL, `totalLength` INTEGER NOT NULL, `label` INTEGER NOT NULL, `status` INTEGER NOT NULL, `theme` INTEGER NOT NULL, `color` INTEGER NOT NULL, `miniShowType` INTEGER NOT NULL, `render_type` INTEGER NOT NULL, `order` INTEGER NOT NULL, `tags` TEXT NOT NULL, `topics` TEXT NOT NULL, `parent` TEXT NOT NULL, `ext_ext` TEXT NOT NULL, `attachmentItems_attachmentItems` TEXT NOT NULL)")
-//                    database.execSQL("INSERT INTO $newTable SELECT `id`, `name`, `title`, `content`, `uuid`, `mtime`, `icon`, `coverImageUrl`, `is_dummy`, `type`, `subType`, `createTime`, `updateTime`, `finishTime`, `deleteTime`, `archiveTime`, `pinTime`, `lockTime`, `blockTime`, `startTime`, `totalLength`, `label`, `status`, `theme`, `color`, `miniShowType`, `render_type`, `order`, `tags`, `topics`, `parent`, `ext_ext`, `attachmentItems_attachmentItems` FROM $oldTable")
-//                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_${newTable}_uuid` ON `${newTable}` (`uuid`)")
-//                }
+                database.execSQL("DROP TABLE `${TABLE_NAME}`")
 
                 database.setTransactionSuccessful()
                 database.endTransaction()

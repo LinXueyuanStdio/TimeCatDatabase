@@ -246,10 +246,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         keyword: String
     ): MutableList<RoomRecord>
 
-    @Query("SELECT attachmentItems_attachmentItems FROM records")
-    abstract fun getAllAttachments(): MutableList<AttachmentTail>
-
-    @Query("SELECT id, subType FROM records WHERE type = $BLOCK_RECORD AND render_type = $RENDER_TYPE_Record AND ((status & $TASK_UNDERWAY) != 0) ")
+    @Query("SELECT id, subType FROM records WHERE type = $BLOCK_RECORD AND render_type = $RENDER_TYPE_Record AND ((status & $TASK_UNDERWAY) != 0) AND ((status & $TASK_DELETE) = 0)")
     abstract fun getAllUnderWay(): MutableList<IdAndType>
 
     data class IdAndType(val id: Long, val subType: Int)
@@ -295,14 +292,25 @@ abstract class RecordDao : BaseDao<RoomRecord> {
             update(it)
         }
     }
+    @Transaction
+    open fun updateRecordOfHabit(roomRecord: RoomRecord, record: String) {
+        val h = roomRecord.habitSchema?:return
+        h.record = record
+        roomRecord.habitSchema = h
+        update(roomRecord)
+    }
 
     @Transaction
     open fun updateHabitRemindedTimes(id: Long, remindedTimes: Int) {
-        val data = get(id)
-        data?.let {
-            it.habitSchema?.remindedTimes = remindedTimes
-            update(it)
-        }
+        val roomRecord = get(id) ?:return
+        updateHabitRemindedTimes(roomRecord, remindedTimes)
+    }
+    @Transaction
+    open fun updateHabitRemindedTimes(roomRecord: RoomRecord, remindedTimes: Int) {
+        val habit = roomRecord.habitSchema?:return
+        habit.remindedTimes = remindedTimes
+        roomRecord.habitSchema = habit
+        update(roomRecord)
     }
 
     @Transaction
@@ -354,10 +362,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
 
         // 将已经提前完成的habitReminder更新至新的周期里
         val habitType = habit.type
-        val habitRecordsThisT =
-            habit.habitRecordsThisT
+        val habitRecordsThisT = habit.habitRecordsThisT
         for (habitRecord in habitRecordsThisT) {
-            val hr: HabitReminder? = getHabitReminderById(habitRecord.habitReminderId)
+            val hr: HabitReminder? = habit.getHabitReminderByCreateTime(habitRecord.habitReminderCreateTime)
             hr?.let {
                 val now = System.currentTimeMillis()
                 val gap = DateTimeUtil.calculateTimeGap(now, hr.notifyTime, habitType)
@@ -372,8 +379,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
             if (recordTimes < remindedTimes) {
                 val minTime = habit.minHabitReminderTime
                 val maxTime = habit.finalHabitReminder.notifyTime
-                val maxLastTime: Long =
-                    DateTimeUtil.getHabitReminderTime(habitType, maxTime, -1)
+                val maxLastTime: Long = DateTimeUtil.getHabitReminderTime(habitType, maxTime, -1)
                 val curTime = System.currentTimeMillis()
                 if (curTime in (maxLastTime + 1) until minTime) {
                     if (DateTimeUtil.calculateTimeGap(maxLastTime, curTime, habitType) != 0) {
@@ -472,7 +478,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     abstract fun getCount_BLOCK_RECORD(subType: Int, status: Long): Int
 
     @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND subType=$HABIT AND (status & $TASK_UNDERWAY > 0)")
-    abstract fun getAllHabitUnderway_BLOCK_RECORD(): Cursor
+    abstract fun getAllHabitUnderway_BLOCK_RECORD(): List<RoomRecord>
     //endregion
 
     //region BLOCK_BOOK, BLOCK_PAGE
@@ -654,20 +660,6 @@ abstract class RecordDao : BaseDao<RoomRecord> {
             r.order = pos++
             replace(r)
         }
-    }
-    //endregion
-
-    //region removeAll
-    @Query("DELETE FROM records WHERE type = $BLOCK_RECORD AND subType = $HABIT")
-    abstract fun removeAllHabit()
-
-    @Query("DELETE FROM habitrecord")
-    abstract fun removeAllHabitRecord()
-
-    @Transaction
-    open fun removeAll() {
-        removeAllHabit()
-        removeAllHabitRecord()
     }
     //endregion
 

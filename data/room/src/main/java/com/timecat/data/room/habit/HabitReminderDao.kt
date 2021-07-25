@@ -26,7 +26,7 @@ interface HabitReminderDao {
         notify: OnUpdateNotifyTime
     ) {
         for (i in ids.indices) {
-            val newTime: Long = habitReminders.get(i).notifyTime
+            val newTime: Long = habitReminders[i].notifyTime
             val id = ids[i]
             updateNotifyTime(id, newTime)
             notify.updateHabitReminder(id, newTime)
