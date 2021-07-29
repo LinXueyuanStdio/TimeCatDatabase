@@ -281,33 +281,15 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         listener.end()
     }
 
-    @Query("SELECT * FROM HabitReminder WHERE id = :uid LIMIT 1")
-    abstract fun getHabitReminderById(uid: Long): HabitReminder?
-
-    @Transaction
-    open fun updateRecordOfHabit(id: Long, record: String) {
-        val data = get(id)
-        data?.let {
-            it.habitSchema?.record = record
-            update(it)
-        }
-    }
-    @Transaction
-    open fun updateRecordOfHabit(roomRecord: RoomRecord, record: String) {
-        val h = roomRecord.habitSchema?:return
-        h.record = record
-        roomRecord.habitSchema = h
-        update(roomRecord)
-    }
-
     @Transaction
     open fun updateHabitRemindedTimes(id: Long, remindedTimes: Int) {
-        val roomRecord = get(id) ?:return
+        val roomRecord = get(id) ?: return
         updateHabitRemindedTimes(roomRecord, remindedTimes)
     }
+
     @Transaction
     open fun updateHabitRemindedTimes(roomRecord: RoomRecord, remindedTimes: Int) {
-        val habit = roomRecord.habitSchema?:return
+        val habit = roomRecord.habitSchema ?: return
         habit.remindedTimes = remindedTimes
         roomRecord.habitSchema = habit
         update(roomRecord)
@@ -369,7 +351,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 val now = System.currentTimeMillis()
                 val gap = DateTimeUtil.calculateTimeGap(now, hr.notifyTime, habitType)
                 if (gap == 0) {
-                    updateHabitReminderToNext(hr.createTime, notify)
+                    updateHabitReminderToNext(habit, hr, notify)
                 }
             }
         }
@@ -424,14 +406,12 @@ abstract class RecordDao : BaseDao<RoomRecord> {
      *
      * @param hrId 习惯 id
      */
-    @Transaction
     open fun updateHabitReminderToNext(
-        hrId: Long,
+        habit: Habit,
+        habitReminder: HabitReminder,
         notify: OnUpdateNotifyTime
     ) {
-        val habitReminder = getHabitReminderById(hrId)
-        val habit = getHabitById(habitReminder!!.habitId)
-        val type = habit!!.type
+        val type = habit.type
         var time = habitReminder.notifyTime
 
         // do one time before loop if user finish a habit for 1 time in advance
@@ -439,11 +419,11 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         while (time < System.currentTimeMillis()) {
             time = DateTimeUtil.getHabitReminderTime(type, time, 1)
         }
-        notify.updateHabitReminder(hrId, time)
+        notify.updateHabitReminder(habitReminder.habitId, habitReminder.createTime, time)
     }
 
     interface OnUpdateNotifyTime {
-        fun updateHabitReminder(hrId: Long, notifyTime: Long)
+        fun updateHabitReminder(id: Long, hrId: Long, notifyTime: Long)
     }
 
     @Query("SELECT `order` FROM records ORDER BY `order` ASC LIMIT 1")
@@ -597,40 +577,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         val all = getAllHabit()
         all.sortBy { it.updateTime }
         for (i in all) {
-            getHabit(i.id)?.let {
+            i.habitSchema?.let {
                 listener.onLoadHabit(i, it)
             }
-        }
-    }
-
-    @Transaction
-    open fun getAllReminderData(listener: OnReminderDataLoaded) {
-        val all = getAllReminder()
-        all.sortBy { it.updateTime }
-        for (i in all) {
-            getReminderById(i.id)?.let {
-                listener.onLoadReminder(i, it)
-            }
-        }
-    }
-
-    @Transaction
-    open fun getAllGoalData(listener: OnGoalDataLoaded) {
-        val all = getAllGoal()
-        all.sortBy { it.updateTime }
-        for (i in all) {
-            getReminderById(i.id)?.let {
-                listener.onLoadGoal(i, it)
-            }
-        }
-    }
-
-    @Transaction
-    open fun getAllNoteData(listener: OnNoteDataLoaded) {
-        val all = getAllNote()
-        all.sortBy { it.updateTime }
-        for (i in all) {
-            listener.onLoadNote(i)
         }
     }
 
@@ -687,6 +636,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
             update(it)
         }
     }
+
     @Transaction
     open fun updateReminder(record: RoomRecord, reminder: Reminder) {
         record.reminderSchema = reminder
@@ -711,13 +661,13 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         for (i in all) {
             when (i.subType) {
                 NOTE -> listener.onLoadNote(i)
-                REMINDER -> getReminderById(i.id)?.let {
+                REMINDER -> i.reminderSchema?.let {
                     listener.onLoadReminder(i, it)
                 }
-                HABIT -> getHabit(i.id)?.let {
+                HABIT -> i.habitSchema?.let {
                     listener.onLoadHabit(i, it)
                 }
-                GOAL -> getReminderById(i.id)?.let {
+                GOAL -> i.reminderSchema?.let {
                     listener.onLoadGoal(i, it)
                 }
                 else -> listener.onLoadUnknown(i)
@@ -732,13 +682,13 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         for (i in all) {
             when (i.subType) {
                 NOTE -> listener.onLoadNote(i)
-                REMINDER -> getReminderById(i.id)?.let {
+                REMINDER -> i.reminderSchema?.let {
                     listener.onLoadReminder(i, it)
                 }
-                HABIT -> getHabit(i.id)?.let {
+                HABIT -> i.habitSchema?.let {
                     listener.onLoadHabit(i, it)
                 }
-                GOAL -> getReminderById(i.id)?.let {
+                GOAL -> i.reminderSchema?.let {
                     listener.onLoadGoal(i, it)
                 }
                 else -> listener.onLoadUnknown(i)
@@ -764,13 +714,13 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     open fun getAllTimeRecordData(all: List<RoomRecord>, listener: OnTimeRecordDataLoaded) {
         for (i in all) {
             when (i.subType) {
-                REMINDER -> getReminderById(i.id)?.let {
+                REMINDER -> i.reminderSchema?.let {
                     listener.onLoadReminder(i, it)
                 }
-                HABIT -> getHabit(i.id)?.let {
+                HABIT -> i.habitSchema?.let {
                     listener.onLoadHabit(i, it)
                 }
-                GOAL -> getReminderById(i.id)?.let {
+                GOAL -> i.reminderSchema?.let {
                     listener.onLoadGoal(i, it)
                 }
                 else -> listener.onLoadUnknown(i)
@@ -783,13 +733,13 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         for (i in all) {
             when (i.subType) {
                 NOTE -> listener.onLoadNote(i)
-                REMINDER -> getReminderById(i.id)?.let {
+                REMINDER -> i.reminderSchema?.let {
                     listener.onLoadReminder(i, it)
                 }
-                HABIT -> getHabit(i.id)?.let {
+                HABIT -> i.habitSchema?.let {
                     listener.onLoadHabit(i, it)
                 }
-                GOAL -> getReminderById(i.id)?.let {
+                GOAL -> i.reminderSchema?.let {
                     listener.onLoadGoal(i, it)
                 }
                 else -> listener.onLoadUnknown(i)
@@ -804,13 +754,13 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 BLOCK_RECORD -> {
                     when (i.subType) {
                         NOTE -> listener.onLoadNote(i)
-                        REMINDER -> getReminderById(i.id)?.let {
+                        REMINDER -> i.reminderSchema?.let {
                             listener.onLoadReminder(i, it)
                         }
-                        HABIT -> getHabit(i.id)?.let {
+                        HABIT -> i.habitSchema?.let {
                             listener.onLoadHabit(i, it)
                         }
-                        GOAL -> getReminderById(i.id)?.let {
+                        GOAL -> i.reminderSchema?.let {
                             listener.onLoadGoal(i, it)
                         }
                         else -> listener.onLoadUnknown(i)
@@ -870,14 +820,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         }
     }
 
-    @Query("SELECT * FROM HabitReminder WHERE habitId = :habitId")
-    abstract fun getHabitRemindersByHabit(habitId: Long): List<HabitReminder>?
-
     @Transaction
     open fun getHabit(id: Long): Habit? {
         val habit: Habit = getHabitById(id) ?: return null
-        habit.habitReminders = getHabitRemindersByHabit(id)
-        habit.habitRecords = getHabitRecordsByHabit(id)
         return habit
     }
 
@@ -886,8 +831,6 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         val record = getByUuid(uuid) ?: return
         if (record.type == BLOCK_RECORD && record.subType == HABIT) {
             val habit: Habit = getHabitById(record.id) ?: return
-            habit.habitReminders = getHabitRemindersByHabit(record.id)
-            habit.habitRecords = getHabitRecordsByHabit(record.id)
             onHabitDataLoaded.onLoadHabit(record, habit)
         }
     }
