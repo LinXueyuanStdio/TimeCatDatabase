@@ -77,17 +77,6 @@ interface HabitDao {
         }
     }
 
-    @Query("UPDATE Habit SET type = :type , remindedTimes = :remindedTimes , detail=:detail , record = :record , intervalInfo = :intervalInfo WHERE id =:id")
-    fun updateHabit(
-        id: Long,
-        type: Int,
-        remindedTimes: Int,
-        detail: String,
-        record: String,
-        intervalInfo: String
-    )
-
-    //region transaction 1
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertHabitReminder(reminder: HabitReminder): Long
 
@@ -104,9 +93,7 @@ interface HabitDao {
     interface OnTransactionFinish {
         fun setHabitReminderAlarm(id: Long, notifyTime: Long)
     }
-    //endregion
 
-    //region transaction 2
     @Transaction
     fun deleteHabit(id: Long, listener: OnTransactionDeleteHabitReminder) {
         delete(id)
@@ -130,8 +117,6 @@ interface HabitDao {
         fun deleteHabitReminderAlarm(habitReminders: List<HabitReminder>)
     }
 
-    //endregion
-    //region transaction 3
     @Transaction
     fun recreateHabit(id: Long, habit: Habit, listener: OnTransactionRecreateHabit) {
         // 1. delete Habit
@@ -155,21 +140,5 @@ interface HabitDao {
     }
 
     interface OnTransactionRecreateHabit : OnTransactionDeleteHabitReminder, OnTransactionFinish
-
-    //endregion
-
-    //region transaction 5
-    @Transaction
-    fun getHabit(id: Long): Habit? {
-        val habit: Habit = getByID(id) ?: return null
-        habit.habitReminders = getHabitRemindersByHabit(id)
-        habit.habitRecords = getHabitRecordsByHabit(id)
-        return habit
-    }
-
-    @Query("SELECT * FROM HabitRecord WHERE habitId = :habitId AND (type = ${HabitRecord.TYPE_FINISHED} or type = ${HabitRecord.TYPE_FAKE_FINISHED}) ORDER BY recordTime ASC")
-    fun getHabitRecordsByHabit(habitId: Long): List<HabitRecord>
-    //endregion
-
 
 }
