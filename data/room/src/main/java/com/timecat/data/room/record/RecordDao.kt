@@ -660,9 +660,6 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         }
     }
 
-    @Query("SELECT * FROM HabitRecord WHERE habitId = :habitId AND (type = ${HabitRecord.TYPE_FINISHED} or type = ${HabitRecord.TYPE_FAKE_FINISHED}) ORDER BY recordTime ASC")
-    abstract fun getHabitRecordsByHabit(habitId: Long): List<HabitRecord>
-
     interface OnDataLoaded : OnUnknownLoaded, OnConversationLoaded, OnMessageLoaded,
         OnHabitDataLoaded, OnReminderDataLoaded, OnNoteDataLoaded, OnGoalDataLoaded, OnContainerLoaded,
         OnLinkLoaded, OnPathLoaded, OnButtonLoaded, OnBasicLoaded, OnMediaLoaded, OnDatabaseLoaded

@@ -24,10 +24,10 @@ interface NoteDao {
     @Query("SELECT count(*) FROM records WHERE type = $BLOCK_MARKDOWN")
     fun getCount(): Int
 
-    @Query("SELECT * FROM view_markdown ORDER BY (status & $TASK_PIN) DESC, createTime DESC")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_MARKDOWN ORDER BY (status & $TASK_PIN) DESC, createTime DESC")
     fun getAll(): List<RoomRecord>
 
-    @Query("SELECT * FROM view_markdown WHERE (status & $TASK_DELETE <> 0) AND updateTime < :timestamp")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_MARKDOWN AND (status & $TASK_DELETE <> 0) AND updateTime < :timestamp")
     fun getOldTrashedNotes(timestamp: Long): List<RoomRecord>
 
     @Query("SELECT * FROM records WHERE type = $BLOCK_MARKDOWN AND id = :uid LIMIT 1")
