@@ -4,14 +4,16 @@ import android.database.Cursor
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
-import com.timecat.data.room.*
-import com.timecat.data.room.habit.*
+import com.timecat.data.room.BaseDao
+import com.timecat.data.room.habit.Habit
+import com.timecat.data.room.habit.HabitRecord
+import com.timecat.data.room.habit.habitSchema
+import com.timecat.data.room.habit.reminderSchema
 import com.timecat.data.room.reminder.Reminder
 import com.timecat.identity.data.base.*
 import com.timecat.identity.data.block.type.*
 import org.intellij.lang.annotations.Language
 import org.joda.time.DateTime
-import java.util.*
 
 /**
  * @author 林学渊
@@ -246,185 +248,8 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         keyword: String
     ): MutableList<RoomRecord>
 
-    @Query("SELECT id, subType FROM records WHERE type = $BLOCK_RECORD AND render_type = $RENDER_TYPE_Record AND ((status & $TASK_UNDERWAY) != 0) AND ((status & $TASK_DELETE) = 0)")
-    abstract fun getAllUnderWay(): MutableList<IdAndType>
-
-    data class IdAndType(val id: Long, val subType: Int)
-
-    @Transaction
-    open fun createAllAlarms(
-        updateHabitRemindedTimes: Boolean,
-        forceToUpdateRemindedTimes: Boolean,
-        listener: OnCreateAllAlarms,
-        notify: OnUpdateNotifyTime
-    ) {
-        val cursor: List<IdAndType> = getAllUnderWay()
-        for ((id, type) in cursor) {
-            if (type == REMINDER || type == GOAL) {
-                val reminder: Reminder? = getReminderById(id)
-                if (reminder == null || !reminder.isUnderWay) {
-                    continue
-                }
-                val notifyTime = reminder.getNotifyTime()
-                if (notifyTime < System.currentTimeMillis()) {
-                    reminder.setState(Reminder.EXPIRED)
-                    updateReminder(reminder)
-                } else {
-                    listener.sendAlarmBroadcast(id, notifyTime)
-                }
-            } else if (type == HABIT) {
-                // 直接将习惯的提醒时间更新到最新时刻
-                // 当用户收到提醒但未完成一次，备份应用，并在下一个周期恢复时，该习惯将不会为这一次添加记录"0"
-                updateHabitToLatest(id, updateHabitRemindedTimes, false, notify)
-            }
-        }
-        listener.end()
-    }
-
-    @Transaction
-    open fun updateHabitRemindedTimes(id: Long, remindedTimes: Int) {
-        val roomRecord = get(id) ?: return
-        updateHabitRemindedTimes(roomRecord, remindedTimes)
-    }
-
-    @Transaction
-    open fun updateHabitRemindedTimes(roomRecord: RoomRecord, remindedTimes: Int) {
-        val habit = roomRecord.habitSchema ?: return
-        habit.remindedTimes = remindedTimes
-        roomRecord.habitSchema = habit
-        update(roomRecord)
-    }
-
-    @Transaction
-    open fun updateHabitToLatest(
-        id: Long,
-        updateRemindedTimes: Boolean,
-        forceToUpdateRemindedTimes: Boolean,
-        notify: OnUpdateNotifyTime
-    ) {
-        // This may happen if the universe boom, so we should consider it strictly.
-        val habit = getHabit(id) ?: return
-
-        val recordTimes = habit.record.length
-        if (updateRemindedTimes && forceToUpdateRemindedTimes) {
-            // This will prevent this habit from finishing in this T if it was notified but
-            // user didn't finish it at once.
-            updateHabitRemindedTimes(id, recordTimes)
-        }
-
-        var habitReminders = habit.habitReminders
-        val hrIds: MutableList<Long> = ArrayList()
-        for (habitReminder in habitReminders) {
-            hrIds.add(habitReminder.createTime)
-        }
-
-        habit.initHabitReminders() // habitReminders have become latest.
-
-        // You may see that Habit#initHabitReminders() will also set member firstTime again,
-        // but this makes no change here because we don't update habit to database.
-
-        // You may see that Habit#initHabitReminders() will also set member firstTime again,
-        // but this makes no change here because we don't update habit to database.
-        habitReminders = habit.habitReminders
-        val hrIdsSize = hrIds.size
-        if (hrIdsSize != habitReminders.size) {
-            /**
-             * it seems that this cannot happen but it did happen according to a user log.
-             * I've tried to solve this problem by ensuring old habit is deleted successfully
-             * when updating a habit in DetailActivity.
-             * See [com.timecat.module.everything.activities.DetailActivity.setOrUpdateHabit]
-             * and [.deleteHabit] for more details.
-             * Maybe I didn't actually solve it. Let's see if there are more logs about that.
-             */
-            return
-        }
-        updateNotifyTime(hrIds, habitReminders, notify)
-
-        // 将已经提前完成的habitReminder更新至新的周期里
-
-        // 将已经提前完成的habitReminder更新至新的周期里
-        val habitType = habit.type
-        val habitRecordsThisT = habit.habitRecordsThisT
-        for (habitRecord in habitRecordsThisT) {
-            val hr: HabitReminder? = habit.getHabitReminderByCreateTime(habitRecord.habitReminderCreateTime)
-            hr?.let {
-                val now = System.currentTimeMillis()
-                val gap = DateTimeUtil.calculateTimeGap(now, hr.notifyTime, habitType)
-                if (gap == 0) {
-                    updateHabitReminderToNext(habit, hr, notify)
-                }
-            }
-        }
-
-        if (updateRemindedTimes && !forceToUpdateRemindedTimes) {
-            val remindedTimes = habit.remindedTimes
-            if (recordTimes < remindedTimes) {
-                val minTime = habit.minHabitReminderTime
-                val maxTime = habit.finalHabitReminder.notifyTime
-                val maxLastTime: Long = DateTimeUtil.getHabitReminderTime(habitType, maxTime, -1)
-                val curTime = System.currentTimeMillis()
-                if (curTime in (maxLastTime + 1) until minTime) {
-                    if (DateTimeUtil.calculateTimeGap(maxLastTime, curTime, habitType) != 0) {
-                        updateHabitRemindedTimes(id, recordTimes)
-                    }
-                    // else 用户还能“补”掉这一次未完成的情况，因此不更新remindedTimes
-                } else {
-                    updateHabitRemindedTimes(id, recordTimes)
-                }
-            } else if (recordTimes > remindedTimes) {
-                updateHabitRemindedTimes(id, recordTimes)
-            }
-        }
-    }
-
-    interface OnCreateAllAlarms {
-        fun sendAlarmBroadcast(id: Long, notifyTime: Long)
-        fun end()
-    }
-
-
-    @Query("UPDATE HabitReminder SET notifyTime= :notifyTime WHERE id =:id")
-    abstract fun updateNotifyTime(id: Long, notifyTime: Long)
-
-    @Transaction
-    open fun updateNotifyTime(
-        ids: List<Long>,
-        habitReminders: List<HabitReminder>,
-        notify: OnUpdateNotifyTime
-    ) {
-        for (i in ids.indices) {
-            val newTime: Long = habitReminders.get(i).notifyTime
-            val id = ids[i]
-            updateNotifyTime(id, newTime)
-            notify.updateHabitReminder(id, newTime)
-        }
-    }
-
-
-    /**
-     * 这次的提醒已完成，计算出下一次的提醒时间
-     *
-     * @param hrId 习惯 id
-     */
-    open fun updateHabitReminderToNext(
-        habit: Habit,
-        habitReminder: HabitReminder,
-        notify: OnUpdateNotifyTime
-    ) {
-        val type = habit.type
-        var time = habitReminder.notifyTime
-
-        // do one time before loop if user finish a habit for 1 time in advance
-        time = DateTimeUtil.getHabitReminderTime(type, time, 1)
-        while (time < System.currentTimeMillis()) {
-            time = DateTimeUtil.getHabitReminderTime(type, time, 1)
-        }
-        notify.updateHabitReminder(habitReminder.habitId, habitReminder.createTime, time)
-    }
-
-    interface OnUpdateNotifyTime {
-        fun updateHabitReminder(id: Long, hrId: Long, notifyTime: Long)
-    }
+    @Query("SELECT * FROM records WHERE type = $BLOCK_RECORD AND ((status & $TASK_UNDERWAY) != 0) AND ((status & $TASK_DELETE) = 0)")
+    abstract fun getAllUnderWay(): MutableList<RoomRecord>
 
     @Query("SELECT `order` FROM records ORDER BY `order` ASC LIMIT 1")
     abstract fun getMinLocation(): Int
