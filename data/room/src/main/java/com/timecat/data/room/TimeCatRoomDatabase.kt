@@ -40,7 +40,6 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
     abstract fun recordDao(): RecordDao
     abstract fun tagDao(): TagDao
     abstract fun repetitionDao(): RepetitionDao
-    abstract fun habitReminderDao(): HabitReminderDao
 
     abstract fun noteDao(): NoteDao
     abstract fun folderDao(): FolderDao
