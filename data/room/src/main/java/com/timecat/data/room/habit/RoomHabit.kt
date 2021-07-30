@@ -19,14 +19,6 @@ var RoomRecord.position: Int
         extension.put("position", value)
     }
 
-fun RoomRecord.getReminder(context: Context): Reminder? {
-    return reminderSchema
-}
-
-fun RoomRecord.getHabit(context: Context): Habit? {
-    return habitSchema
-}
-
 var RoomRecord.habitSchema: Habit?
     get() = extension.getJSONObject("habit")?.let {
         val data = Habit.fromJson(it.toJSONString())
