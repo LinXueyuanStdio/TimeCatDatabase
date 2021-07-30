@@ -15,7 +15,6 @@ import com.timecat.data.room.doing.DoingRecord
 import com.timecat.data.room.habit.Habit
 import com.timecat.data.room.habit.HabitRecord
 import com.timecat.data.room.habit.HabitReminder
-import com.timecat.data.room.habit.RepetitionDao
 import com.timecat.data.room.record.*
 import com.timecat.data.room.reminder.Reminder
 import com.timecat.data.room.tag.Tag
@@ -42,7 +41,6 @@ import com.timecat.data.room.tag.TagDao
 abstract class TimeCatRoomDatabase : RoomDatabase() {
     abstract fun recordDao(): RecordDao
     abstract fun tagDao(): TagDao
-    abstract fun repetitionDao(): RepetitionDao
 
     abstract fun noteDao(): NoteDao
     abstract fun folderDao(): FolderDao
