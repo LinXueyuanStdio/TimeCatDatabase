@@ -12,7 +12,10 @@ import com.alibaba.fastjson.JSONObject
 import com.jess.arms.utils.LogUtils
 import com.timecat.component.setting.FILE
 import com.timecat.data.room.doing.DoingRecord
-import com.timecat.data.room.habit.*
+import com.timecat.data.room.habit.Habit
+import com.timecat.data.room.habit.HabitRecord
+import com.timecat.data.room.habit.HabitReminder
+import com.timecat.data.room.habit.RepetitionDao
 import com.timecat.data.room.record.*
 import com.timecat.data.room.reminder.Reminder
 import com.timecat.data.room.tag.Tag
