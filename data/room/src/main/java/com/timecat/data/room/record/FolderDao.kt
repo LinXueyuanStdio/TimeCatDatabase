@@ -25,10 +25,10 @@ interface FolderDao {
     @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER ORDER BY createTime DESC")
     fun getAll(): List<RoomRecord>
 
-    @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER WHERE id = :uid LIMIT 1")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER AND id = :uid LIMIT 1")
     fun getByID(uid: Int): RoomRecord?
 
-    @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER WHERE uuid = :uuid LIMIT 1")
+    @Query("SELECT * FROM records WHERE type = $BLOCK_CONTAINER AND uuid = :uuid LIMIT 1")
     fun getByUUID(uuid: String): RoomRecord?
 
 }
