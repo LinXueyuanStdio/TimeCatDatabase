@@ -1,9 +1,6 @@
 package com.timecat.data.room.habit;
 
-import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
 
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
@@ -18,9 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * 我们会从这里计算出用户实际看到的打卡 checkmark，根据习惯频率自动假打卡
  * @usage null
  */
-@Entity(tableName = "RoomRepetition", indices = {@Index("id")})
 public class RoomRepetition implements IJson {
-    @PrimaryKey(autoGenerate = true)
     public int id;
 
     public long recordId;
