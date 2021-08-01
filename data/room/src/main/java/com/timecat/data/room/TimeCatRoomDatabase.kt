@@ -301,8 +301,8 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                         recordQuery.close()
                         continue
                     }
+                    recordQuery.moveToFirst()
                     val ext = recordQuery.getString(0)
-                    LogUtils.debugInfo(ext)
                     recordQuery.close()
 
                     val habit = Habit(
@@ -369,8 +369,8 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                         recordQuery.close()
                         continue
                     }
+                    recordQuery.moveToFirst()
                     val ext = recordQuery.getString(0)
-                    LogUtils.debugInfo(ext)
                     recordQuery.close()
 
                     val reminder = Reminder(
