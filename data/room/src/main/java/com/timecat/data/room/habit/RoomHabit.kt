@@ -1,10 +1,7 @@
 package com.timecat.data.room.habit
 
-import android.content.Context
 import com.alibaba.fastjson.JSONObject
-import com.timecat.data.room.doing.DoingRecord
 import com.timecat.data.room.record.RoomRecord
-import com.timecat.data.room.reminder.Reminder
 
 /**
  * @author 林学渊

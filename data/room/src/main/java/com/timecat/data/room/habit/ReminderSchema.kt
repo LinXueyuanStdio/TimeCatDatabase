@@ -1,7 +1,6 @@
 package com.timecat.data.room.habit
 
 import com.timecat.data.room.record.RoomRecord
-import com.timecat.data.room.reminder.Reminder
 
 /**
  * @author 林学渊

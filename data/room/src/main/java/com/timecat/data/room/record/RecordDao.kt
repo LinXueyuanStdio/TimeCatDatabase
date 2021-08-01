@@ -6,10 +6,9 @@ import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.timecat.data.room.BaseDao
 import com.timecat.data.room.habit.Habit
-import com.timecat.data.room.habit.HabitRecord
 import com.timecat.data.room.habit.habitSchema
 import com.timecat.data.room.habit.reminderSchema
-import com.timecat.data.room.reminder.Reminder
+import com.timecat.data.room.habit.Reminder
 import com.timecat.identity.data.base.*
 import com.timecat.identity.data.block.type.*
 import org.intellij.lang.annotations.Language
