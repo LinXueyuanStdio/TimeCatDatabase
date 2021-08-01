@@ -2,9 +2,6 @@ package com.timecat.data.room.habit;
 
 import android.database.Cursor;
 
-import androidx.annotation.IntDef;
-import androidx.room.Ignore;
-
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
 
@@ -13,6 +10,9 @@ import org.joda.time.DateTime;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import androidx.annotation.IntDef;
+import androidx.room.Ignore;
 
 /**
  * @author 林学渊
@@ -51,12 +51,10 @@ public class HabitRecord implements IJson {
     public HabitRecord() {
     }
 
-    @Ignore
     public HabitRecord(long habitId, long habitReminderCreateTime) {
         this(habitId, habitReminderCreateTime, System.currentTimeMillis());
     }
 
-    @Ignore
     public HabitRecord(long habitId, long habitReminderCreateTime, long recordTime) {
         this.id = 0;
         this.habitId = habitId;
@@ -70,9 +68,12 @@ public class HabitRecord implements IJson {
         this.type = TYPE_FINISHED;
     }
 
-    @Ignore
-    public HabitRecord(long id, long habitId, long habitReminderCreateTime, long recordTime,
-                       int recordYear, int recordMonth, int recordWeek, int recordDay, @Type int type) {
+    public HabitRecord(
+            long id, long habitId,
+            long habitReminderCreateTime, long recordTime,
+            int recordYear, int recordMonth, int recordWeek,
+            int recordDay, @Type int type
+    ) {
         this.id = id;
         this.habitId = habitId;
         this.habitReminderCreateTime = habitReminderCreateTime;

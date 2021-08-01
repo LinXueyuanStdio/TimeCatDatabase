@@ -2,8 +2,6 @@ package com.timecat.data.room.habit;
 
 import android.database.Cursor;
 
-import androidx.room.Ignore;
-
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
 import com.timecat.identity.data.base.ReminderStatus;
@@ -42,7 +40,6 @@ public class Reminder implements IJson {
     public Reminder() {
     }
 
-    @Ignore
     public Reminder(long id, long notifyTime) {
         this.id = id;
         this.notifyTime = notifyTime;
@@ -52,7 +49,6 @@ public class Reminder implements IJson {
         this.updateTime = curTime;
     }
 
-    @Ignore
     public Reminder(long id, long notifyTime, int state, long notifyMillis, long createTime, long updateTime) {
         this.id = id;
         this.notifyTime = notifyTime;
@@ -62,7 +58,6 @@ public class Reminder implements IJson {
         this.updateTime = updateTime;
     }
 
-    @Ignore
     public Reminder(Cursor c) {
         this(c.getLong(0), c.getLong(1), c.getInt(2),
                 c.getLong(3), c.getLong(4), c.getLong(5));

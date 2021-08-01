@@ -1,8 +1,5 @@
 package com.timecat.data.room.habit;
 
-import androidx.annotation.Nullable;
-import androidx.room.Ignore;
-
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
 
@@ -19,6 +16,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 /**
  * @author 林学渊
@@ -71,15 +70,17 @@ public class Habit implements IJson {
     private long createTime;
     private long firstTime;
 
-    private List<HabitReminder> mHabitReminders;
-    private List<HabitRecord> mHabitRecords;
+    private List<HabitReminder> mHabitReminders = new ArrayList<>();
+    private List<HabitRecord> mHabitRecords = new ArrayList<>();
 
     public Habit() {
     }
 
-    @Ignore
-    public Habit(long id, int type, int remindedTimes, String detail, String record, String intervalInfo,
-                 long createTime, long firstTime) {
+    public Habit(
+            long id, int type, int remindedTimes,
+            String detail, String record, String intervalInfo,
+            long createTime, long firstTime
+    ) {
         this.id = id;
         this.type = type;
         this.remindedTimes = remindedTimes;
@@ -88,9 +89,9 @@ public class Habit implements IJson {
         this.intervalInfo = intervalInfo;
         this.createTime = createTime;
         this.firstTime = firstTime;
+        initHabitReminders();
     }
 
-    @Ignore
     public Habit(Habit habit) {
         id = habit.id;
         type = habit.type;
@@ -192,7 +193,7 @@ public class Habit implements IJson {
     public long getMinHabitReminderTime() {
         //TODO 这里reminder 可能为空，返回的时间可能非法，需要检查上层调用
         HabitReminder reminder = getClosestHabitReminder();
-        if (reminder == null) return -1;
+        if (reminder == null) { return -1; }
         return reminder.getNotifyTime();
     }
 
@@ -202,7 +203,7 @@ public class Habit implements IJson {
     public int getFinishedTimes() {
         int times = 0;
         for (int i = 0; i < record.length(); i++) {
-            if (record.charAt(i) == '1') times++;
+            if (record.charAt(i) == '1') { times++; }
         }
         return times;
     }
@@ -307,7 +308,7 @@ public class Habit implements IJson {
 
     public int getTotalIntervalT() {
         int total = 0;
-        if (intervalInfo.isEmpty()) return total;
+        if (intervalInfo.isEmpty()) { return total; }
         String[] intervals = intervalInfo.split(";");
         for (String interval : intervals) {
             String[] times = interval.split(",");
@@ -322,7 +323,7 @@ public class Habit implements IJson {
     }
 
     public boolean allowFinish() {
-        if (isPaused()) return false;
+        if (isPaused()) { return false; }
         DateTime dt = new DateTime();
         DateTimeFieldType jodaType = getJodaType(type);
         int ct = dt.get(jodaType), t;
@@ -368,7 +369,7 @@ public class Habit implements IJson {
      * @return {@code true} if user can finish Habit once now. {@code false} otherwise.
      */
     public boolean allowFinish(long notifyTime) {
-        if (isPaused()) return false;
+        if (isPaused()) { return false; }
         DateTime dt = new DateTime();
         DateTimeFieldType jodaType = getJodaType(type);
         return dt.get(jodaType) == dt.withMillis(notifyTime).get(jodaType);
@@ -403,9 +404,7 @@ public class Habit implements IJson {
                 public int compare(HabitReminder hr1, HabitReminder hr2) {
                     long hrTime1 = hr1.getNotifyTime();
                     long hrTime2 = hr2.getNotifyTime();
-                    if (hrTime1 == hrTime2) return 0;
-                    else if (hrTime1 < hrTime2) return -1;
-                    else return 1;
+                    if (hrTime1 == hrTime2) { return 0; } else if (hrTime1 < hrTime2) { return -1; } else { return 1; }
                 }
             });
             return newHrs.get(1).getNotifyTime();
@@ -425,7 +424,7 @@ public class Habit implements IJson {
         for (int i = 0; i < times.size(); i += 2) {
             String minute = String.valueOf(times.get(i + 1));
             sb.append(times.get(i)).append(":")
-                    .append(minute.length() == 1 ? "0" + minute : minute).append(",");
+              .append(minute.length() == 1 ? "0" + minute : minute).append(",");
         }
         return sb.substring(0, sb.length() - 1);
     }
@@ -477,7 +476,7 @@ public class Habit implements IJson {
         }
         sb.deleteCharAt(sb.length() - 1);
         sb.append(" ").append(day).append(" ").append(hour).append(":")
-                .append(minute < 10 ? "0" + minute : minute);
+          .append(minute < 10 ? "0" + minute : minute);
         return sb.toString();
     }
 
@@ -514,7 +513,7 @@ public class Habit implements IJson {
         int hour = Integer.parseInt(times[0]);
         int minute = Integer.parseInt(times[1]);
         DateTime dt = new DateTime().withHourOfDay(hour)
-                .withMinuteOfHour(minute).withSecondOfMinute(0);
+                                    .withMinuteOfHour(minute).withSecondOfMinute(0);
         String[] days = dateTimes[0].split(",");
         for (String dayStr : days) {
             int day = Integer.parseInt(dayStr);
@@ -526,9 +525,9 @@ public class Habit implements IJson {
             }
             mHabitReminders.add(new HabitReminder(System.currentTimeMillis(), id, remMillis));
             dt = dt.withMillis(System.currentTimeMillis())
-                    .withHourOfDay(hour)
-                    .withMinuteOfHour(minute)
-                    .withSecondOfMinute(0);
+                   .withHourOfDay(hour)
+                   .withMinuteOfHour(minute)
+                   .withSecondOfMinute(0);
         }
     }
 
@@ -538,7 +537,7 @@ public class Habit implements IJson {
         int hour = Integer.parseInt(times[0]);
         int minute = Integer.parseInt(times[1]);
         DateTime dt = new DateTime().withHourOfDay(hour)
-                .withMinuteOfHour(minute).withSecondOfMinute(0);
+                                    .withMinuteOfHour(minute).withSecondOfMinute(0);
         String[] days = dateTimes[0].split(",");
         for (String dayStr : days) {
             int day = Integer.parseInt(dayStr);
@@ -565,9 +564,9 @@ public class Habit implements IJson {
             }
             mHabitReminders.add(new HabitReminder(System.currentTimeMillis(), id, remMillis));
             dt = dt.withMillis(System.currentTimeMillis())
-                    .withHourOfDay(hour)
-                    .withMinuteOfHour(minute)
-                    .withSecondOfMinute(0);
+                   .withHourOfDay(hour)
+                   .withMinuteOfHour(minute)
+                   .withSecondOfMinute(0);
         }
     }
 
@@ -600,9 +599,9 @@ public class Habit implements IJson {
             }
             mHabitReminders.add(new HabitReminder(System.currentTimeMillis(), id, remMillis));
             dt = dt.withMillis(System.currentTimeMillis())
-                    .withHourOfDay(hour)
-                    .withMinuteOfHour(minute)
-                    .withSecondOfMinute(0);
+                   .withHourOfDay(hour)
+                   .withMinuteOfHour(minute)
+                   .withSecondOfMinute(0);
         }
     }
 

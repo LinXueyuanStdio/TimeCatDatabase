@@ -401,18 +401,16 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         val all = getAllHabit()
         all.sortBy { it.updateTime }
         for (i in all) {
-            i.habitSchema?.let {
-                listener.onLoadHabit(i, it)
-            }
+            listener.onLoadHabit(i)
         }
     }
 
     interface OnHabitDataLoaded {
-        fun onLoadHabit(record: RoomRecord, habit: Habit)
+        fun onLoadHabit(record: RoomRecord)
     }
 
     interface OnReminderDataLoaded {
-        fun onLoadReminder(record: RoomRecord, reminder: Reminder)
+        fun onLoadReminder(record: RoomRecord)
     }
 
     interface OnNoteDataLoaded {
@@ -420,7 +418,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     }
 
     interface OnGoalDataLoaded {
-        fun onLoadGoal(record: RoomRecord, reminder: Reminder)
+        fun onLoadGoal(record: RoomRecord)
     }
     //endregion
 
@@ -485,15 +483,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         for (i in all) {
             when (i.subType) {
                 NOTE -> listener.onLoadNote(i)
-                REMINDER -> i.reminderSchema?.let {
-                    listener.onLoadReminder(i, it)
-                }
-                HABIT -> i.habitSchema?.let {
-                    listener.onLoadHabit(i, it)
-                }
-                GOAL -> i.reminderSchema?.let {
-                    listener.onLoadGoal(i, it)
-                }
+                REMINDER -> listener.onLoadReminder(i)
+                HABIT -> listener.onLoadHabit(i)
+                GOAL -> listener.onLoadGoal(i)
                 else -> listener.onLoadUnknown(i)
             }
         }
@@ -506,15 +498,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         for (i in all) {
             when (i.subType) {
                 NOTE -> listener.onLoadNote(i)
-                REMINDER -> i.reminderSchema?.let {
-                    listener.onLoadReminder(i, it)
-                }
-                HABIT -> i.habitSchema?.let {
-                    listener.onLoadHabit(i, it)
-                }
-                GOAL -> i.reminderSchema?.let {
-                    listener.onLoadGoal(i, it)
-                }
+                REMINDER -> listener.onLoadReminder(i)
+                HABIT -> listener.onLoadHabit(i)
+                GOAL -> listener.onLoadGoal(i)
                 else -> listener.onLoadUnknown(i)
             }
         }
@@ -538,15 +524,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     open fun getAllTimeRecordData(all: List<RoomRecord>, listener: OnTimeRecordDataLoaded) {
         for (i in all) {
             when (i.subType) {
-                REMINDER -> i.reminderSchema?.let {
-                    listener.onLoadReminder(i, it)
-                }
-                HABIT -> i.habitSchema?.let {
-                    listener.onLoadHabit(i, it)
-                }
-                GOAL -> i.reminderSchema?.let {
-                    listener.onLoadGoal(i, it)
-                }
+                REMINDER -> listener.onLoadReminder(i)
+                HABIT -> listener.onLoadHabit(i)
+                GOAL -> listener.onLoadGoal(i)
                 else -> listener.onLoadUnknown(i)
             }
         }
@@ -557,15 +537,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         for (i in all) {
             when (i.subType) {
                 NOTE -> listener.onLoadNote(i)
-                REMINDER -> i.reminderSchema?.let {
-                    listener.onLoadReminder(i, it)
-                }
-                HABIT -> i.habitSchema?.let {
-                    listener.onLoadHabit(i, it)
-                }
-                GOAL -> i.reminderSchema?.let {
-                    listener.onLoadGoal(i, it)
-                }
+                REMINDER -> listener.onLoadReminder(i)
+                HABIT -> listener.onLoadHabit(i)
+                GOAL -> listener.onLoadGoal(i)
                 else -> listener.onLoadUnknown(i)
             }
         }
@@ -578,15 +552,9 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                 BLOCK_RECORD -> {
                     when (i.subType) {
                         NOTE -> listener.onLoadNote(i)
-                        REMINDER -> i.reminderSchema?.let {
-                            listener.onLoadReminder(i, it)
-                        }
-                        HABIT -> i.habitSchema?.let {
-                            listener.onLoadHabit(i, it)
-                        }
-                        GOAL -> i.reminderSchema?.let {
-                            listener.onLoadGoal(i, it)
-                        }
+                        REMINDER -> listener.onLoadReminder(i)
+                        HABIT -> listener.onLoadHabit(i)
+                        GOAL -> listener.onLoadGoal(i)
                         else -> listener.onLoadUnknown(i)
                     }
                 }
@@ -654,8 +622,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     open fun getHabit(uuid: String, onHabitDataLoaded: OnHabitDataLoaded) {
         val record = getByUuid(uuid) ?: return
         if (record.type == BLOCK_RECORD && record.subType == HABIT) {
-            val habit: Habit = getHabitById(record.id) ?: return
-            onHabitDataLoaded.onLoadHabit(record, habit)
+            onHabitDataLoaded.onLoadHabit(record)
         }
     }
 

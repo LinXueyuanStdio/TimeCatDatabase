@@ -303,6 +303,7 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                     }
                     recordQuery.moveToFirst()
                     val ext = recordQuery.getString(0)
+                    LogUtils.debugInfo(ext)
                     recordQuery.close()
 
                     val habit = Habit(
@@ -351,7 +352,7 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                     json.put("habit", habit.toJsonObject())
                     val ext_str = json.toJSONString()
                     // update
-                    database.execSQL("UPDATE records SET ext_ext = ${ext_str} WHERE id = ${recordId}")
+                    database.execSQL("UPDATE `records` SET `ext_ext` = ? WHERE `id` = ?", arrayOf(ext_str, recordId))
                 }
                 var TABLE_NAME = "Habit" //将表里的数据迁移到item的json里
                 database.execSQL("DROP TABLE `${TABLE_NAME}`")
@@ -371,6 +372,7 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                     }
                     recordQuery.moveToFirst()
                     val ext = recordQuery.getString(0)
+                    LogUtils.debugInfo(ext)
                     recordQuery.close()
 
                     val reminder = Reminder(
@@ -386,7 +388,7 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                     json.put("reminder", reminder.toJsonObject())
                     val ext_str = json.toJSONString()
                     // update
-                    database.execSQL("UPDATE records SET ext_ext = ${ext_str} WHERE id = ${recordId}")
+                    database.execSQL("UPDATE `records` SET `ext_ext` = ? WHERE `id` = ?", arrayOf(ext_str, recordId))
                 }
                 TABLE_NAME = "Reminder"
                 database.execSQL("DROP TABLE `${TABLE_NAME}`")
@@ -400,6 +402,7 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                         recordQuery.close()
                         continue
                     }
+                    recordQuery.moveToFirst()
                     val ext = recordQuery.getString(0)
                     LogUtils.debugInfo(ext)
                     recordQuery.close()
@@ -430,7 +433,7 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                     jsonObject.put("doingRecords", data.map { it.toJsonObject() })
                     val ext_str = jsonObject.toJSONString()
                     // update
-                    database.execSQL("UPDATE records SET ext_ext = ${ext_str} WHERE id = ${recordId}")
+                    database.execSQL("UPDATE `records` SET `ext_ext` = ? WHERE `id` = ?", arrayOf(ext_str, recordId))
                 }
                 TABLE_NAME = "DoingRecord"
                 database.execSQL("DROP TABLE `${TABLE_NAME}`")

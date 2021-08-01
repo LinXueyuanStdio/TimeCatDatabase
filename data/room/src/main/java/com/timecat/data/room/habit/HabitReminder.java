@@ -2,8 +2,6 @@ package com.timecat.data.room.habit;
 
 import android.database.Cursor;
 
-import androidx.room.Ignore;
-
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
 
@@ -24,14 +22,12 @@ public class HabitReminder implements IJson {
     public HabitReminder() {
     }
 
-    @Ignore
     public HabitReminder(long createTime, long habitId, long notifyTime) {
         this.createTime = createTime;
         this.habitId = habitId;
         this.notifyTime = notifyTime;
     }
 
-    @Ignore
     public HabitReminder(Cursor c) {
         this(c.getLong(0), c.getLong(1), c.getLong(2));
     }
