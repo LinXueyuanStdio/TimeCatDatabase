@@ -1,5 +1,6 @@
 package com.timecat.data.room.habit;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
 
@@ -744,7 +745,30 @@ public class Habit implements IJson {
     }
 
     public static Habit fromJson(String jsonStr) {
-        return JSONObject.parseObject(jsonStr, Habit.class);
+        JSONObject json = JSONObject.parseObject(jsonStr);
+        Habit h = new Habit();
+        h.type = json.getInteger("type");
+        h.remindedTimes = json.getInteger("remindedTimes");
+        h.detail = json.getString("detail");
+        h.record = json.getString("record");
+        h.intervalInfo = json.getString("intervalInfo");
+        h.createTime = json.getLong("createTime");
+        h.firstTime = json.getLong("firstTime");
+        h.mHabitReminders = new ArrayList<>();
+        JSONArray array = json.getJSONArray("mHabitReminders");
+        for (Object j: array) {
+            if (j instanceof JSONObject) {
+                h.mHabitReminders.add(HabitReminder.fromJson(((JSONObject) j).toJSONString()));
+            }
+        }
+        h.mHabitRecords = new ArrayList<>();
+        JSONArray array2 = json.getJSONArray("mHabitRecords");
+        for (Object j: array2) {
+            if (j instanceof JSONObject) {
+                h.mHabitRecords.add(HabitRecord.fromJson(((JSONObject) j).toJSONString()));
+            }
+        }
+        return h;
     }
 
     @Nullable
