@@ -7,6 +7,8 @@ import com.timecat.identity.data.base.IJson;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 /**
  * @author 林学渊
  * @email linxy59@mail2.sysu.edu.cn
@@ -14,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  * @description 与习惯一一对应，notifyTime 是下一次的提醒时间
  * @usage null
  */
-public class HabitReminder implements IJson {
+public class HabitReminder implements IJson, Serializable {
     private long createTime;
     private long habitId;
     private long notifyTime;

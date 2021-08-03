@@ -1,5 +1,6 @@
 package com.timecat.data.room.widget;
 
+import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -11,7 +12,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "Widget", indices = {@Index("mId"), @Index("uuid")})
-public class Widget {
+public class Widget  implements Serializable {
     public static final int SIZE_TINY = 0;
     public static final int SIZE_SMALL = 1;
     public static final int SIZE_MIDDLE = 2;

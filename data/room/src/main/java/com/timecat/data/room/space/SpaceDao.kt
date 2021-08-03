@@ -27,6 +27,9 @@ abstract class SpaceDao : BaseDao<Space> {
     @Query("SELECT * FROM Space ORDER BY `order` DESC")
     abstract fun getAll(): MutableList<Space>
 
+    @Query("SELECT * FROM Space ORDER BY `order` DESC LIMIT :pageSize OFFSET :offset")
+    abstract fun getAll(pageSize: Int, offset: Int): MutableList<Space>
+
     @Transaction
     open fun listSpaces(): MutableList<Space> {
         val list = mutableListOf(Space.default())

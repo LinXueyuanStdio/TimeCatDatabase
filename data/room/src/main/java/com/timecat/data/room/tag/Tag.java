@@ -5,6 +5,7 @@ import com.timecat.identity.data.base.IJson;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import androidx.room.Entity;
@@ -13,7 +14,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "tag", indices = {@Index("uid")})
-public class Tag implements IJson {
+public class Tag implements IJson, Serializable {
     @PrimaryKey(autoGenerate = true)
     public int uid;
 

@@ -8,6 +8,7 @@ import com.timecat.identity.data.base.IJson;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -21,7 +22,7 @@ import androidx.room.Ignore;
  * @description 习惯打卡记录
  * @usage null
  */
-public class HabitRecord implements IJson {
+public class HabitRecord implements IJson, Serializable {
     public static final int TYPE_FINISHED = 0;
     public static final int TYPE_CANCEL_FINISHED = 1;
     public static final int TYPE_FAKE_FINISHED = 2;

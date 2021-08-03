@@ -2,17 +2,18 @@ package com.timecat.data.room.habit;
 
 import android.database.Cursor;
 
-import androidx.annotation.IntDef;
-import androidx.room.Ignore;
-
 import com.alibaba.fastjson.JSONObject;
 import com.timecat.identity.data.base.IJson;
 import com.timecat.identity.data.base.Type;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import androidx.annotation.IntDef;
+import androidx.room.Ignore;
 
 /**
  * @author 林学渊
@@ -21,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
  * @description null
  * @usage null
  */
-public class DoingRecord implements IJson {
+public class DoingRecord implements IJson, Serializable {
 
     public static final int STOP_REASON_CANCEL_CARELESS = 0;
     public static final int STOP_REASON_CANCEL_NEXT_ALARM = 1;

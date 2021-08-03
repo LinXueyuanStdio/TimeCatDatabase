@@ -8,6 +8,8 @@ import com.timecat.identity.data.base.ReminderStatus;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 /**
  * @author 林学渊
  * @email linxy59@mail2.sysu.edu.cn
@@ -15,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * @description null
  * @usage null
  */
-public class Reminder implements IJson {
+public class Reminder implements IJson, Serializable {
 
     /**
      * if you want to change the determined time for goal, you should change it in

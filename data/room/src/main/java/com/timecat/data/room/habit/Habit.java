@@ -11,6 +11,7 @@ import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 
+import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,7 +28,7 @@ import androidx.annotation.Nullable;
  * @description 习惯
  * @usage null
  */
-public class Habit implements IJson {
+public class Habit implements IJson, Serializable {
     private long id;
     /**
      * Calendar.DATE
