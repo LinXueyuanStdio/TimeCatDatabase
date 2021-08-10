@@ -573,10 +573,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
                         Heading6 -> listener.onLoadHeading6(i)
                         BULLETED_LIST -> listener.onLoadBulletedList(i)
                         NUMBERED_LIST -> listener.onLoadNumberedList(i)
-                        TOGGLE_LIST -> {
-                            val tree = getLiveChildrenTree(i, mutableListOf())
-                            listener.onLoadToggleList(i, tree!!)
-                        }
+                        TOGGLE_LIST -> listener.onLoadToggleList(i)
                         QUOTE -> listener.onLoadQuote(i)
                         DIVIDER -> listener.onLoadDivider(i)
                         CALLOUT -> listener.onLoadCallout(i)
@@ -683,7 +680,7 @@ abstract class RecordDao : BaseDao<RoomRecord> {
         fun onLoadHeading6(record: RoomRecord)
         fun onLoadBulletedList(record: RoomRecord)
         fun onLoadNumberedList(record: RoomRecord)
-        fun onLoadToggleList(record: RoomRecord, list: TreeRecord)
+        fun onLoadToggleList(record: RoomRecord)
         fun onLoadQuote(record: RoomRecord)
         fun onLoadDivider(record: RoomRecord)
         fun onLoadCallout(record: RoomRecord)
