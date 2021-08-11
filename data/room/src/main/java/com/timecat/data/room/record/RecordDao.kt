@@ -30,8 +30,11 @@ abstract class RecordDao : BaseDao<RoomRecord> {
     @Query("SELECT * FROM records WHERE title = :title LIMIT 1")
     abstract fun get(title: String): RoomRecord?
 
-    @Query("SELECT * FROM records WHERE uuid = :uuid")
+    @Query("SELECT * FROM records WHERE uuid = :uuid LIMIT 1")
     abstract fun getByUuid(uuid: String): RoomRecord?
+
+    @Query("SELECT * FROM records WHERE uuid IN (:uuids)")
+    abstract fun getByUuids(uuids: List<String>): List<RoomRecord>
 
     @Query("SELECT * FROM records WHERE type IN (:type) AND subType IN (:subTypes) AND (status & :status != 0)")
     abstract fun getByDomain(
