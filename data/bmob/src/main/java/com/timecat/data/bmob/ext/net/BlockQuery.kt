@@ -211,6 +211,7 @@ fun Block.findAllComment() = childrenOf(this, BLOCK_COMMENT)
 fun Block.findAllSubComment() = AVQuery<Block>("Block").apply {
     whereStartsWith("title", "$title/$objectId")
     whereEqualTo("parent", parent)
+    whereEqualTo("space", space)
     whereEqualTo("type", type)
     order("-createdAt")
     include("user")

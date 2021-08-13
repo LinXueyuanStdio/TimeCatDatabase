@@ -115,6 +115,11 @@ class Block : AVObject("Block"), Parcelable, IStatus {
         set(value) {
             put("parent", value)
         }
+    var space: Block?
+        get() = getAVObject("space")
+        set(value) {
+            put("space", value)
+        }
 
     //endregion
 
@@ -194,6 +199,7 @@ class Block : AVObject("Block"), Parcelable, IStatus {
                 this.followers = 0
                 this.usedBy = 0
                 this.parent = null
+                this.space = null
             }
         }
 

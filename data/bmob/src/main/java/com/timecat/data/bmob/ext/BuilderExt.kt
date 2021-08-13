@@ -47,6 +47,7 @@ infix fun User.createBlock(builder: BlockBuilder): Block {
         this.content = builder.content
         this.className = builder.tableName
         this.parent = builder.parent
+        this.space = builder.space
     }
 }
 
@@ -150,6 +151,7 @@ abstract class BlockBuilder(
     var title: String = ""
     var content: String = ""
     var parent: Block? = null
+    var space: Block? = null
 }
 
 class CommentBuilder : BlockBuilder(BLOCK_COMMENT) {
