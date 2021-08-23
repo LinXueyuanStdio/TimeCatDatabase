@@ -12,6 +12,7 @@ import com.timecat.data.bmob.ext.bmob.EasyRequestUserNull;
 import com.timecat.identity.data.service.DataError;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -52,7 +53,7 @@ public class UserDao extends BaseModel {
             listener.getOnError().invoke(new DataError(CODE_NULL, "请填写密码"));
             return null;
         }
-        final User user = new User();
+        final User user = User.newSignUpUser();
         if (StaticKt.isEmail(username)) {
             user.setEmail(username);
         }
@@ -61,6 +62,7 @@ public class UserDao extends BaseModel {
         }
         user.setUsername(username);
         user.setPassword(password);
+        user.setLastSettleTime(new Date());
         return user.signUpInBackground().subscribe(
                 avUser -> listener.getOnSuccess().invoke(user),
                 e -> listener.getOnError().invoke(new DataError(CODE_NULL, e.getMessage()))
@@ -230,7 +232,7 @@ public class UserDao extends BaseModel {
      * @return
      */
     public static Observable<AVUser> signUp(String phone, String password) {
-        User user = new User();
+        User user = User.newSignUpUser();
         user.setUsername(phone);
         if (StaticKt.isEmail(phone)) {
             user.setEmail(phone);

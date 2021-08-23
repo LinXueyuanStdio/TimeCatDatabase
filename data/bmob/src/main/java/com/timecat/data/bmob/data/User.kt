@@ -98,14 +98,14 @@ class User() : AVUser(), Parcelable {
             put("lastSettleTime", value)
         }
 
-    //通用货币,用于抽取角色
+    //流通货币
     var currency: Long
         get() = getLong("currency")
         set(value) {
             put("currency", value)
         }
 
-    //充值货币
+    //通用货币,用于抽取角色
     var charge: Long
         get() = getLong("charge")
         set(value) {
@@ -165,10 +165,27 @@ class User() : AVUser(), Parcelable {
             val rawObject = parseAVObject(jsonString)
             return Transformer.transform(rawObject, User::class.java)
         }
+
         @JvmStatic
         fun transform(jsonString: String): User {
             val rawObject = parseAVObject(jsonString)
             return Transformer.transform(rawObject, User::class.java)
+        }
+
+        @JvmStatic
+        fun newSignUpUser() = User().apply {
+            lastSettleTime = Date()
+            exp = 0
+            star = 0
+            water = 20
+            currency = 0
+            charge = 0
+            moneyCharge = 0
+        }
+
+        @JvmStatic
+        fun officialVirtualUser() = User().apply {
+            objectId = "6123a628ed028f2ed88d0737"
         }
     }
     //endregion

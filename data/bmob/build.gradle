@@ -27,6 +27,7 @@ repositories {
 dependencies {
     api rootProject.ext.timecat["component-SelfArms"]
     api rootProject.ext.timecat["component-SelfData"]
+    compileOnly rootProject.ext.androidx_lib["appcompat"]
 
     // bmob需要
     api rootProject.ext.dependencies["retrofit-adapter-rxjava"]
