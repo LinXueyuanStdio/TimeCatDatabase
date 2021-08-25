@@ -124,16 +124,12 @@ class User() : AVUser(), Parcelable {
     }
 
     var avatar: String
-        get() = if (headPortrait == null) {
-            "https://lc-gluttony.s3.amazonaws.com/lVumM4aviuXn/fb9add291c586437b3de.png/ic_launcher.png"
-        } else headPortrait!!.getThumbnailUrl(true, 48, 48)
+        get() = headPortrait?.url ?: "https://lc-gluttony.s3.amazonaws.com/lVumM4aviuXn/fb9add291c586437b3de.png/ic_launcher.png"
         set(avatar) {
             headPortrait = AVFile("avatar", avatar)
         }
     var cover: String
-        get() = if (coverPage == null) {
-            "http://d.hiphotos.baidu.com/zhidao/pic/item/bf096b63f6246b601ffeb44be9f81a4c510fa218.jpg"
-        } else coverPage!!.url
+        get() = coverPage?.url ?: "http://d.hiphotos.baidu.com/zhidao/pic/item/bf096b63f6246b601ffeb44be9f81a4c510fa218.jpg"
         set(cover) {
             coverPage = AVFile("cover", cover)
         }
