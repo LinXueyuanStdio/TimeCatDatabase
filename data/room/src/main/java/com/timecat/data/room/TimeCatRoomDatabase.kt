@@ -423,12 +423,12 @@ abstract class TimeCatRoomDatabase : RoomDatabase() {
                     )
 
                     val jsonObject = JSON.parseObject(ext)
-                    val data = jsonObject.getJSONArray("doingRecords").map {
+                    val data = jsonObject.getJSONArray("doingRecords")?.map {
                         val json = it as? JSONObject
                         json?.let {
                             DoingRecord.fromJson(it.toJSONString())
                         }
-                    }.filterNotNull().toMutableList()
+                    }?.filterNotNull()?.toMutableList() ?: mutableListOf()
                     data.add(doingRecord)
                     jsonObject.put("doingRecords", data.map { it.toJsonObject() })
                     val ext_str = jsonObject.toJSONString()

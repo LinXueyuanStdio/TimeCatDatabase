@@ -4,7 +4,6 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.IntDef
 import androidx.room.*
-import butterknife.internal.Utils
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
@@ -12,7 +11,10 @@ import com.timecat.data.room.message.EMCallbackHolder
 import com.timecat.data.room.message.RoomCallBack
 import com.timecat.data.room.message.Status
 import com.timecat.identity.data.base.*
-import com.timecat.identity.data.block.type.*
+import com.timecat.identity.data.block.type.BLOCK_CONTAINER
+import com.timecat.identity.data.block.type.BLOCK_CONVERSATION
+import com.timecat.identity.data.block.type.BLOCK_DATABASE
+import com.timecat.identity.data.block.type.BLOCK_RECORD
 import com.timecat.identity.data.randomColor
 import org.joda.time.DateTime
 import java.io.Serializable
@@ -649,38 +651,38 @@ data class RoomRecord(
     //region 9. equals
     fun eq(another: RoomRecord): Boolean {
         return (id == another.id
-                && name == another.name
-                && title == another.title
-                && content == another.content
-                && uuid == another.uuid
-                && mtime == another.mtime
-                && icon == another.icon
-                && coverImageUrl == another.coverImageUrl
-                && isDummy == another.isDummy
-                && createTime == another.createTime
-                && updateTime == another.updateTime
-                && finishTime == another.finishTime
-                && deleteTime == another.deleteTime
-                && archiveTime == another.archiveTime
-                && pinTime == another.pinTime
-                && lockTime == another.lockTime
-                && blockTime == another.blockTime
-                && startTime == another.startTime
-                && totalLength == another.totalLength
-                && type == another.type
-                && subType == another.subType
-                && label == another.label
-                && status == another.status
-                && theme == another.theme
-                && color == another.color
-                && order == another.order
-                && miniShowType == another.miniShowType
-                && render_type == another.render_type
-                && tags == another.tags
-                && topics == another.topics
-                && parent == another.parent
-                && ext == another.ext
-                && attachmentItems == another.attachmentItems)
+            && name == another.name
+            && title == another.title
+            && content == another.content
+            && uuid == another.uuid
+            && mtime == another.mtime
+            && icon == another.icon
+            && coverImageUrl == another.coverImageUrl
+            && isDummy == another.isDummy
+            && createTime == another.createTime
+            && updateTime == another.updateTime
+            && finishTime == another.finishTime
+            && deleteTime == another.deleteTime
+            && archiveTime == another.archiveTime
+            && pinTime == another.pinTime
+            && lockTime == another.lockTime
+            && blockTime == another.blockTime
+            && startTime == another.startTime
+            && totalLength == another.totalLength
+            && type == another.type
+            && subType == another.subType
+            && label == another.label
+            && status == another.status
+            && theme == another.theme
+            && color == another.color
+            && order == another.order
+            && miniShowType == another.miniShowType
+            && render_type == another.render_type
+            && tags == another.tags
+            && topics == another.topics
+            && parent == another.parent
+            && ext == another.ext
+            && attachmentItems == another.attachmentItems)
     }
     //endregion
 
