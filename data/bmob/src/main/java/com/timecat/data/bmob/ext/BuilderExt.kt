@@ -184,7 +184,7 @@ class LeaderBoardBuilder : BlockBuilder(BLOCK_LEADER_BOARD) {
 
 fun LeaderBoard(create: LeaderBoardBuilder.() -> Unit) = LeaderBoardBuilder().apply(create)
 
-class AppBuilder : BlockBuilder(BLOCK_LEADER_BOARD) {
+class AppBuilder : BlockBuilder(BLOCK_APP) {
     lateinit var headerBlock: AppBlock
 }
 
