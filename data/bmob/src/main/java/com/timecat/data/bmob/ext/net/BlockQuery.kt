@@ -32,6 +32,9 @@ fun allRole() = allBlockByType(BLOCK_ROLE)
 //identity
 fun allIdentity() = allBlockByType(BLOCK_IDENTITY)
 
+//skin
+fun allSkin() = allBlockByType(BLOCK_SKIN)
+
 //app
 fun allApp() = allBlockByType(BLOCK_APP)
 fun allAndroidApp() = allApp().apply {
