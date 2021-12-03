@@ -332,7 +332,6 @@ enum class RoomConversationType(val id: Int) {
     Skin(BLOCK_Skin),
     Plugin(BLOCK_Plugin),
     Record(BLOCK_Record),
-    Novel(BLOCK_NOVEL)
 }
 
 var RoomRecord.timestamp: Long

@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.Log
+import com.alibaba.fastjson.JSONObject
+import com.timecat.identity.data.base.IJson
 import java.io.File
 
 /**
@@ -43,6 +45,13 @@ class RoomTextMessageBody(
 
     override fun toString(): String {
         return "txt:\"$msg\""
+    }
+
+    override fun toJsonObject(): JSONObject {
+        val json = JSONObject()
+        json["msg"] = msg
+        json["type"] = type
+        return json
     }
 
     constructor(parcel: Parcel) : this(parcel.readString()!!) {
@@ -108,6 +117,15 @@ class RoomLocationMessageBody(
     var longitude: Double
 ) : RoomMessageBody(EMAMessageBodyType_LOCATION) {
     constructor() : this("", 0.0, 0.0)
+
+    override fun toJsonObject(): JSONObject {
+        val json = JSONObject()
+        json["address"] = address
+        json["latitude"] = latitude
+        json["longitude"] = longitude
+        json["type"] = type
+        return json
+    }
 
     constructor(parcel: Parcel) : this(
         parcel.readString(),
@@ -181,6 +199,13 @@ class RoomCmdMessageBody(
 
     override fun toString(): String {
         return "RoomCmdMessageBody(action='$action')"
+    }
+
+    override fun toJsonObject(): JSONObject {
+        val json = JSONObject()
+        json["action"] = action
+        json["type"] = type
+        return json
     }
 
     constructor(parcel: Parcel) : this(parcel.readString()!!)
@@ -289,6 +314,7 @@ class RoomImageMessageBody(
      * @return
      */
     var width: Int = 0
+
     /**
      * \~chinese
      * 获取图片的高度
@@ -451,6 +477,17 @@ class RoomVideoMessageBody(
         return "RoomVideoMessageBody(videoFilePath='$videoFilePath', thumbPath=$thumbPath, duration=$duration, filelength=$filelength)"
     }
 
+    override fun toJsonObject(): JSONObject {
+        val json = JSONObject()
+        json["videoFilePath"] = videoFilePath
+        json["thumbPath"] = thumbPath
+        json["duration"] = duration
+        json["filelength"] = filelength
+        json["localPath"] = localPath
+        json["type"] = type
+        return json
+    }
+
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString(),
@@ -534,6 +571,14 @@ class RoomVoiceMessageBody(
         return ("voice:localPath:$localPath,length:$length")
     }
 
+    override fun toJsonObject(): JSONObject {
+        val json = JSONObject()
+        json["length"] = length
+        json["localPath"] = localPath
+        json["type"] = type
+        return json
+    }
+
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readLong()
@@ -543,6 +588,7 @@ class RoomVoiceMessageBody(
         dest.writeString(localPath)
         dest.writeLong(length)
     }
+
 
     override fun describeContents(): Int {
         return 0
@@ -617,11 +663,18 @@ open abstract class RoomFileMessageBody(
     open fun setFileLength(length: Long) {
         localPath!!.length
     }
+
+    override fun toJsonObject(): JSONObject {
+        val json = JSONObject()
+        json["localPath"] = localPath
+        json["type"] = type
+        return json
+    }
 }
 
 open abstract class RoomMessageBody(
     open var type: Int = EMAMessageBodyType_TEXT
-) : Parcelable {
+) : Parcelable, IJson {
     companion object {
         const val EMAMessageBodyType_TEXT = 0
         const val EMAMessageBodyType_IMAGE = 1

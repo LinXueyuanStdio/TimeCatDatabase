@@ -94,10 +94,7 @@ class EMCallbackHolder(callback: RoomCallBack?) : RoomCallBack {
 
     override fun onProgress(progress: Int, status: String?) {
         innerCallback?.onProgress(progress, status)
-        val callback: RoomCallBack? = ref
-        if (callback != null) {
-            callback.onProgress(progress, status)
-        }
+        ref?.onProgress(progress, status)
     }
 
     // strong & weak are used for external callback reference

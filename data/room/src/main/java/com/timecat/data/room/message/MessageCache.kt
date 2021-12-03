@@ -20,12 +20,10 @@ class MessageCache {
     internal inner class MessageComparator : Comparator<Long> {
         override fun compare(time0: Long, time1: Long): Int {
             val `val` = time0 - time1
-            return if (`val` > 0) {
-                1
-            } else if (`val` == 0L) {
-                0
-            } else {
-                -1
+            return when {
+                `val` > 0 -> 1
+                `val` == 0L -> 0
+                else -> -1
             }
         }
     }

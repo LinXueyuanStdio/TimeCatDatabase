@@ -127,6 +127,9 @@ data class RoomRecord(
     var selected: Boolean = false
 
     @Ignore
+    var bag: JSONObject = JSONObject()
+
+    @Ignore
     var thingState: TaskStatus = TaskStatus(status)
     //endregion
 
