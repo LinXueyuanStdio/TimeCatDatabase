@@ -443,7 +443,7 @@ fun RoomRecord.getType(): MessageType {
  * @param body the message body
  */
 fun RoomRecord.addBody(body: RoomMessageBody) {
-    this.bodyStr = JSONObject.toJSONString(body)
+    this.bodyStr = body.toJson()
 }
 
 fun RoomRecord.getBody(): RoomMessageBody {
