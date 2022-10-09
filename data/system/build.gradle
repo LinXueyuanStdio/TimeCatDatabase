@@ -19,6 +19,7 @@ android {
             buildConfigField "String", "BILIBILI_APPKEY", "\"" + BILIBILI_APPKEY + "\""
         }
     }
+    namespace 'com.timecat.data.system'
 }
 
 dependencies {

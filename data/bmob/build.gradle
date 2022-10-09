@@ -18,6 +18,7 @@ android {
     defaultConfig {
         buildConfigField "String", "BMOB_APP_ID", (buildProperties.secrets['BMOB_APP_ID'] | buildProperties.notThere['BMOB_APP_ID']).string
     }
+    namespace 'com.timecat.data.bmob'
 }
 
 repositories {

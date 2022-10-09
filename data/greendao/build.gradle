@@ -16,4 +16,8 @@ greendao {
     targetGenDir 'src/main/java'
 }
 
+android {
+    namespace 'com.timecat.data.greendao'
+}
+
 apply from: "${project.rootDir}/gradle/library_tail.gradle"
